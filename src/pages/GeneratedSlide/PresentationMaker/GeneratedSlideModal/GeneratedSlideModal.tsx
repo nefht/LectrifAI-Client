@@ -1,0 +1,283 @@
+import { useEffect, useState, Fragment } from "react";
+import { Dialog, DialogPanel, Transition } from "@headlessui/react";
+import { SparklesIcon } from "@heroicons/react/24/outline";
+import { IoDocumentText } from "react-icons/io5";
+import { FaImages } from "react-icons/fa";
+import { MdDashboardCustomize } from "react-icons/md";
+import { IoMdSettings } from "react-icons/io";
+import helperService from "../../../../services/helperService";
+import InformationTab from "./InformationTab";
+import TemplatesTab from "./TemplatesTab";
+import {
+  EGeneratedSlideForm,
+  GeneratedSlideFormModal,
+} from "../../constants/generated-slide-form";
+import { validateRequiredFields } from "../../../../utils/ComponentBase";
+import { useToast } from "../../../../hooks/useToast";
+import {
+  templateSamples,
+  templateStyles,
+} from "../../constants/template-constants";
+import { useNavigate } from "react-router";
+import generatedSlideService from "../../service/generatedSlideService";
+
+interface GeneratedSlideModalProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export default function GeneratedSlideModal({
+  open,
+  setOpen,
+}: GeneratedSlideModalProps) {
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+  const [selectedTab, setSelectedTab] = useState("Information");
+  const [languages, setLanguages] = useState([
+    { code: "eng", name: "English" },
+  ]);
+
+  // Form options
+  const [presentationOptions, setPresentationOptions] =
+    useState<GeneratedSlideFormModal>({
+      [EGeneratedSlideForm.TOPIC]: "",
+      [EGeneratedSlideForm.WRITING_TONE]: "",
+      [EGeneratedSlideForm.LANGUAGE]: "",
+      [EGeneratedSlideForm.NUMBER_OF_SLIDES]: 0,
+      [EGeneratedSlideForm.TEMPLATE_STYLE]: templateStyles[0].value || "",
+      [EGeneratedSlideForm.TEMPLATE_CODE]:
+        templateSamples?.find(
+          (sample) => sample.style === templateStyles[0].value
+        )?.samples[0].code || "",
+      [EGeneratedSlideForm.SPECIFIC_REQUIREMENTS]: "",
+    });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Lấy danh sách ngôn ngữ
+  useEffect(() => {
+    const fetLanguages = async () => {
+      const response = await helperService.getAllLanguages();
+      setLanguages(response);
+    };
+    fetLanguages();
+  }, []);
+
+  // Đổi tab
+  const handleSetSelectedTab = (event: any) => {
+    setSelectedTab(event.target.title);
+  };
+
+  // Lấy giá trị form
+  const handleGetPresentationOptions = (event: {
+    target: { name: any; value: any };
+  }) => {
+    const { name, value } = event.target;
+    let options = { ...presentationOptions, [name]: value };
+    setPresentationOptions(options);
+    console.log(presentationOptions);
+
+    if (value) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  // Validate form
+  const validateForm = () => {
+    const requiredFields = [
+      EGeneratedSlideForm.TOPIC,
+      EGeneratedSlideForm.NUMBER_OF_SLIDES,
+    ];
+    const fieldLabels = {
+      [EGeneratedSlideForm.TOPIC]: "Topic",
+      [EGeneratedSlideForm.NUMBER_OF_SLIDES]: "Number of slides",
+    };
+    const newErrors = validateRequiredFields(
+      presentationOptions,
+      requiredFields,
+      fieldLabels
+    );
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Submit form
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (validateForm()) {
+      showToast("success", "Form is valid, submitting...");
+      try {
+        const response = await generatedSlideService.generateSlideContent(
+          presentationOptions
+        );
+
+        if (response) {
+          const blob = new Blob([response], {
+            type: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          });
+
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute(
+            "download",
+            `${
+              presentationOptions[EGeneratedSlideForm.TOPIC]
+            }_Presentation.pptx`
+          );
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+
+          showToast("success", "Presentation downloaded successfully.");
+        } else {
+          showToast("error", "Failed to generate presentation.");
+        }
+      } catch (error) {
+        console.error("Error generating presentation:", error);
+        showToast(
+          "error",
+          "An error occurred while generating the presentation."
+        );
+      }
+    } else {
+      showToast("error", "Form is invalid.");
+    }
+  };
+
+  // Đóng modal
+  const handleCloseModal = () => {
+    setPresentationOptions({
+      [EGeneratedSlideForm.TOPIC]: "",
+      [EGeneratedSlideForm.WRITING_TONE]: "",
+      [EGeneratedSlideForm.LANGUAGE]: "",
+      [EGeneratedSlideForm.NUMBER_OF_SLIDES]: 0,
+      [EGeneratedSlideForm.TEMPLATE_STYLE]: templateStyles[0].value || "",
+      [EGeneratedSlideForm.TEMPLATE_CODE]:
+        templateSamples?.find(
+          (sample) => sample.style === templateStyles[0].value
+        )?.samples[0].code || "",
+      [EGeneratedSlideForm.SPECIFIC_REQUIREMENTS]: "",
+    });
+    setOpen(false);
+    setErrors({});
+  };
+
+  // Tabs trong modal
+  const modalTabs = [
+    {
+      title: "Information",
+      icon: <IoDocumentText />,
+      tab: (
+        <InformationTab
+          presentationOptions={presentationOptions as GeneratedSlideFormModal}
+          handleGetPresentationOptions={handleGetPresentationOptions}
+          languages={languages}
+          errors={errors}
+        />
+      ),
+    },
+    {
+      title: "Templates",
+      icon: <FaImages />,
+      tab: (
+        <TemplatesTab
+          presentationOptions={presentationOptions as GeneratedSlideFormModal}
+          handleGetPresentationOptions={handleGetPresentationOptions}
+        />
+      ),
+    },
+    {
+      title: "Custom",
+      icon: <MdDashboardCustomize />,
+    },
+    {
+      title: "Setting",
+      icon: <IoMdSettings />,
+    },
+  ];
+
+  return (
+    <Transition show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={() => {}}>
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-gray-500/50"
+            onClick={handleCloseModal}
+          />
+
+          <Transition.Child
+            as={Fragment}
+            enter="transform transition ease-out duration-500"
+            enterFrom="translate-y-4 opacity-0"
+            enterTo="translate-y-0 opacity-100"
+            leave="transform transition ease-in duration-500"
+            leaveFrom="translate-y-0 opacity-100"
+            leaveTo="translate-y-4 opacity-0"
+          >
+            <DialogPanel className="pointer-events-auto relative bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] lg:max-h-full overflow-auto hide-scrollbar">
+              <form className="px-10 py-8" onSubmit={handleSubmit}>
+                <div className="space-y-8">
+                  <div className="border-b border-gray-900/10 pb-2 font-degular font-semibold text-[28px] mb-4">
+                    Create your presentation
+                  </div>
+
+                  <div className="flex flex-col lg:flex-row">
+                    <ul className="flex flex-row flex-wrap gap-x-2 gap-y-4 lg:flex-col text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0">
+                      {modalTabs.map((tab) => (
+                        <li key={tab.title}>
+                          <button
+                            type="button"
+                            title={tab.title}
+                            className={`inline-flex gap-2 items-center px-4 py-3 rounded-lg bg-gray-50 w-full dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white ${
+                              selectedTab === tab.title
+                                ? "text-white bg-purple-700 dark:bg-purple-600"
+                                : "hover:text-gray-900 hover:bg-gray-100"
+                            }`}
+                            onClick={(e) => handleSetSelectedTab(e)}
+                          >
+                            {tab.icon}
+                            {tab.title}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Hiển thị nội dung tab */}
+                    {modalTabs.map((tab) => {
+                      if (tab.title === selectedTab) return tab.tab;
+                      return null;
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-y-4 sm:flex-row items-center justify-end gap-x-6">
+                  <button
+                    type="button"
+                    className="text-sm/6 font-semibold text-gray-900"
+                    onClick={handleCloseModal}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex gap-2 rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500"
+                  >
+                    <SparklesIcon className="size-5" />
+                    Generate presentation
+                  </button>
+                </div>
+              </form>
+            </DialogPanel>
+          </Transition.Child>
+        </div>
+      </Dialog>
+    </Transition>
+  );
+}

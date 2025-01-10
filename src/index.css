@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .custom-scrollbar {
+    @apply [&::-webkit-scrollbar]:w-2 
+    [&::-webkit-scrollbar-track]:rounded-full 
+    [&::-webkit-scrollbar-track]:bg-gray-100 
+    [&::-webkit-scrollbar-thumb]:rounded-full 
+    [&::-webkit-scrollbar-thumb]:bg-gray-300
+    dark:[&::-webkit-scrollbar-track]:bg-neutral-700 
+    dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500;
+  }
+}
+
+:root {
+  --background-image: url("./assets/images/homepage/bg.svg");
+  --background-text-color: #fff;
+  --primary-color: #6e52ee;
+  --primary-text-color: #333;
+  --description-color: #49265f;
+  --text-color: #000;
+}
+
+[data-theme="dark"] {
+  --background-image: url("./assets/images/homepage/background.png");
+  --background-text-color: #fff;
+  --primary-text-color: #fff;
+  --primary-color: #6e52ee;
+  --description-color: #bf9fd3;
+  --text-color: #fff;
+}
+
+/** Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  /* font-size: 62.5%; */
+}
+
+@font-face {
+  font-family: "Magehand";
+  src: url("./assets/fonts/Magehand/Magehand.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: "Degular";
+  src: url("./assets/fonts/Degular/Degular-Black.otf") format("opentype");
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: "Degular";
+  src: url("./assets/fonts/Degular/Degular-Bold.otf") format("opentype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Degular";
+  src: url("./assets/fonts/Degular/Degular-Semibold.otf") format("opentype");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Degular";
+  src: url("./assets/fonts/Degular/Degular-Medium.otf") format("opentype");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Degular";
+  src: url("./assets/fonts/Degular/Degular-Regular.otf") format("opentype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Degular";
+  src: url("./assets/fonts/Degular/Degular-Light.otf") format("opentype");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Degular";
+  src: url("./assets/fonts/Degular/Degular-Thin.otf") format("opentype");
+  font-weight: 100;
+}

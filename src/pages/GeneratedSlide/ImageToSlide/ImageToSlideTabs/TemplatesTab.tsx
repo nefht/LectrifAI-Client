@@ -1,0 +1,1 @@
+// Dùng chung Templates Tab với GeneratedSlideModal
