@@ -1,6 +1,9 @@
 import InformationTab from "../../PresentationMaker/GeneratedSlideModal/InformationTab";
 
-function SettingTab() {
+interface SettingTabProps {
+  languages: { code: string; name: string }[];
+}
+function SettingTab({ languages }: SettingTabProps) {
   return (
     <>
       <div className="w-full text-sm border-b border-gray-200 pb-4 mb-4">
@@ -41,7 +44,19 @@ function SettingTab() {
 
       <div className="w-full text-sm border-b border-gray-200 pb-4 mb-4">
         <p className="font-semibold mb-2 text-gray-800">Language</p>
-        
+        <select
+          // id={EGeneratedSlideForm.LANGUAGE}
+          // name={EGeneratedSlideForm.LANGUAGE}
+          // value={presentationOptions[EGeneratedSlideForm.LANGUAGE]}
+          className="w-full rounded-lg border-none bg-white px-4 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:ring-2 focus:ring-purple-400"
+          // onChange={(e) => handleGetPresentationOptions(e)}
+        >
+          {languages.map((lang) => (
+            <option key={lang.code} value={lang.name}>
+              {lang.name}
+            </option>
+          ))}
+        </select>
       </div>
     </>
   );

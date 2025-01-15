@@ -5,11 +5,12 @@ import Draggable from "react-draggable";
 import { SparklesIcon } from "@heroicons/react/24/outline";
 import { IoMdClose } from "react-icons/io";
 import { useHeader } from "../../../hooks/useHeader";
-import style from "./ImageToSlide.module.css";
+import styles from "./ImageToSlide.module.css";
 import UploadTab from "./ImageToSlideTabs/UploadTab";
 import SettingTab from "./ImageToSlideTabs/SettingTab";
 import TemplatesTab from "../PresentationMaker/GeneratedSlideModal/TemplatesTab";
 import { EGeneratedSlideForm } from "../constants/generated-slide-form";
+import helperService from "../../../services/helperService";
 
 interface TabProps {
   name: string;
@@ -17,32 +18,34 @@ interface TabProps {
   tabDetail: JSX.Element;
 }
 
-const imageToSlideTabs = [
-  {
-    name: "Upload",
-    icon: <IoCloudUpload className="text-base" />,
-    tabDetail: <UploadTab />,
-  },
-  {
-    name: "Setting",
-    icon: <IoSettingsSharp className="text-base" />,
-    tabDetail: <SettingTab />,
-  },
-  {
-    name: "Templates",
-    icon: <HiTemplate className="text-base" />,
-    tabDetail: (
-      <TemplatesTab
-        presentationOptions={{
-          [EGeneratedSlideForm.TEMPLATE_STYLE]: "minimalist",
-        }}
-        handleGetPresentationOptions={() => {}}
-      />
-    ),
-  },
-];
-
 function ImageToSlide() {
+  const [languages, setLanguages] = useState([
+    { code: "eng", name: "English" },
+  ]);
+  const imageToSlideTabs = [
+    {
+      name: "Upload",
+      icon: <IoCloudUpload className="text-base" />,
+      tabDetail: <UploadTab />,
+    },
+    {
+      name: "Setting",
+      icon: <IoSettingsSharp className="text-base" />,
+      tabDetail: <SettingTab languages={languages} />,
+    },
+    {
+      name: "Templates",
+      icon: <HiTemplate className="text-base" />,
+      tabDetail: (
+        <TemplatesTab
+          presentationOptions={{
+            [EGeneratedSlideForm.TEMPLATE_STYLE]: "minimalist",
+          }}
+          handleGetPresentationOptions={() => {}}
+        />
+      ),
+    },
+  ];
   const { setHeaderClass } = useHeader();
   const [currentTab, setCurrentTab] = useState(imageToSlideTabs[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -64,6 +67,15 @@ function ImageToSlide() {
 
     // Cleanup event listener
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Lấy danh sách ngôn ngữ
+  useEffect(() => {
+    const fetLanguages = async () => {
+      const response = await helperService.getAllLanguages();
+      setLanguages(response);
+    };
+    fetLanguages();
   }, []);
 
   const handleChangeTab = (tab: TabProps) => {
@@ -103,7 +115,7 @@ function ImageToSlide() {
 
         <div className="relative flex flex-col w-full max-h-full-screen px-4 pt-4 bg-white overflow-y-scroll custom-scrollbar">
           <p
-            className={`text-center font-degular font-bold text-lg md:text-2xl ${style["gradient-text"]}`}
+            className={`text-center font-degular font-bold text-lg md:text-2xl ${styles["gradient-text"]}`}
           >
             Image to Slide converter
           </p>

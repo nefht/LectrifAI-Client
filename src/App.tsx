@@ -15,11 +15,19 @@ import ReviewOutline from "./pages/GeneratedSlide/GeneratedSlideProcess/Generate
 import DownloadSlide from "./pages/GeneratedSlide/GeneratedSlideProcess/GenerateSlideSteps/DownloadSlide";
 import ImageToSlide from "./pages/GeneratedSlide/ImageToSlide/ImageToSlide";
 import NotFound from "./pages/NotFound/NotFound";
+import Login from "./pages/Auth/Login/Login";
+import Signup from "./pages/Auth/Signup/Signup";
+import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword/ResetPassword";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/forgot-password/:id" element={<ResetPassword />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/lecture">

@@ -3,7 +3,7 @@ import { MdOutlineUploadFile } from "react-icons/md";
 import { FiFileText } from "react-icons/fi";
 import { Link, useNavigate } from "react-router";
 import { useHeader } from "../../../hooks/useHeader";
-import style from "./DocumentToPptxConverter.module.css";
+import styles from "./DocumentToPptxConverter.module.css";
 
 function DocumentToPptxConverter() {
   const { setHeaderClass } = useHeader();
@@ -25,7 +25,7 @@ function DocumentToPptxConverter() {
     <div className="flex w-full pb-24 bg-gradient-to-b from-header to-background">
       <div className="flex flex-col items-center justify-center w-full h-1/4 px-4 lg:px-60 xl:px-72 2xl:px-96 gap-y-8 mt-8 lg:mt-20">
         <h1
-          className={`text-4xl lg:text-5xl font-semibold font-degular ${style["gradient-text"]}`}
+          className={`text-4xl lg:text-5xl font-semibold font-degular ${styles["gradient-text"]}`}
         >
           Document to PPTX converter
         </h1>
