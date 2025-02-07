@@ -8,7 +8,7 @@ import {
   templateStyles,
 } from "../../constants/template-constants";
 
-interface GenerateSlideProcessContextProps {
+interface GenerateSlideContextProps {
   presentationOptions: GeneratedSlideFormProcess;
   setPresentationOptions: React.Dispatch<
     React.SetStateAction<GeneratedSlideFormProcess>
@@ -18,8 +18,8 @@ interface GenerateSlideProcessContextProps {
   }) => void;
 }
 
-export const GeneratedSlideProcessContext = createContext<
-  GenerateSlideProcessContextProps | undefined
+export const GeneratedSlideContext = createContext<
+  GenerateSlideContextProps | undefined
 >(undefined);
 
 export const GeneratedSlideProcessProvider: React.FC<{
@@ -48,7 +48,7 @@ export const GeneratedSlideProcessProvider: React.FC<{
   };
 
   return (
-    <GeneratedSlideProcessContext.Provider
+    <GeneratedSlideContext.Provider
       value={{
         presentationOptions,
         setPresentationOptions,
@@ -56,6 +56,6 @@ export const GeneratedSlideProcessProvider: React.FC<{
       }}
     >
       {children}
-    </GeneratedSlideProcessContext.Provider>
+    </GeneratedSlideContext.Provider>
   );
 };

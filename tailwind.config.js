@@ -18,19 +18,7 @@ export default {
         primary: "#6E52EE",
         header: "#F2EDFF",
         background: "#E5DBFF",
-        norm: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
-          950: "#172554",
-        },
+        dark: "#080d2b",
       },
       maxWidth: {
         header: "95%",
@@ -40,6 +28,39 @@ export default {
       },
       height: {
         "full-screen": "calc(100vh - 4rem)",
+      },
+      backgroundImage: {
+        universe: "url('/src/assets/images/home/dark-background.jpg')",
+        "blur-gradient":
+          "linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.2) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.7) 75%, white 100%)",
+      },
+      keyframes: {
+        "text-reveal": {
+          "0%": {
+            transform: "translate(0, 100%)",
+          },
+          "100%": {
+            transform: "translate(0, 0)",
+          },
+        },
+        slidein: {
+          from: {
+            opacity: "0",
+            transform: "translateY(-10px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+      },
+      animation: {
+        "text-reveal": "text-reveal 1.5s cubic-bezier(0.77, 0, 0.175, 1) 0.5s",
+        slidein: "slidein 1s ease 300ms",
+        // slidein: "slidein 1s ease var(--slidein-delay, 0) forwards",
+        slidein300: "slidein 1s ease 300ms forwards",
+        slidein500: "slidein 1s ease 500ms forwards",
+        slidein700: "slidein 1s ease 700ms forwards",
       },
     },
   },

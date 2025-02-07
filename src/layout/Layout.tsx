@@ -12,16 +12,29 @@ function Layout() {
     "/slide/generate-process/template",
     "/slide/generate-process/outline",
     "/slide/generate-process/download",
+    // Lecture video generator
+    "/lecture/generate-video",
+    "/lecture/generate-video/input",
   ];
+
+  const noHeaderPaddingRoutes = [
+    // Home page
+    "/",
+    // Lecture video generator
+    "/lecture/generate-video",
+  ]
 
   // Check if the current route is in the noFooterRoutes array
   const hideFooter = noFooterRoutes.includes(location.pathname);
+
+  // Check if the current route is in the noHeaderPaddingRoutes array
+  const hideHeaderPadding = noHeaderPaddingRoutes.includes(location.pathname);
 
   return (
     <>
       <Header />
       <div
-        className={`${location.pathname === "/" ? "" : "mt-16"} ${
+        className={`${hideHeaderPadding ? "" : "mt-16"} ${
           !hideFooter ? "mb-24" : ""
         }`}
       >

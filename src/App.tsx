@@ -5,7 +5,7 @@ import LecturesList from "./pages/Lecture/LecturesList/LecturesList";
 import LectureDetail from "./pages/Lecture/LectureDetail/LectureDetail";
 import SlidesList from "./pages/Slide/SlidesList/SlidesList";
 import SlideDetail from "./pages/Slide/SlideDetail/SlideDetail";
-import GeneratedSlide from "./pages/SlideTools/PresentationMaker/PresentationMaker";
+import PresentationMaker from "./pages/SlideTools/PresentationMaker/PresentationMaker";
 import Layout from "./layout/Layout";
 import DocumentToPptxConverter from "./pages/SlideTools/DocumentToPptxConverter/DocumentToPptxConverter";
 import GenerateSlideProcess from "./pages/SlideTools/GeneratedSlideProcess/GeneratedSlideProcess";
@@ -19,6 +19,8 @@ import Login from "./pages/Auth/Login/Login";
 import Signup from "./pages/Auth/Signup/Signup";
 import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/Auth/ResetPassword/ResetPassword";
+import LectureVideoGenerator from "./pages/LectureTools/LectureVideoGenerator/LectureVideoGenerator";
+import InputConfiguration from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/InputConfiguration";
 
 function App() {
   return (
@@ -37,7 +39,7 @@ function App() {
           <Route path="/slide">
             <Route path="list" element={<SlidesList />} />
             <Route path="detail/:id" element={<SlideDetail />} />
-            <Route path="generate" element={<GeneratedSlide />} />
+            <Route path="generate" element={<PresentationMaker />} />
             <Route
               path="document-to-pptx-convert"
               element={<DocumentToPptxConverter />}
@@ -50,6 +52,15 @@ function App() {
             </Route>
             <Route path="image-to-slide" element={<ImageToSlide />} />
             <Route path="enhance" />
+          </Route>
+          <Route path="/lecture">
+            <Route path="list" element={<LecturesList />} />
+            <Route path="detail/:id" element={<LectureDetail />} />
+            <Route path="generate-video" element={<LectureVideoGenerator />} />
+            <Route
+              path="generate-video/input"
+              element={<InputConfiguration />}
+            />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Route>

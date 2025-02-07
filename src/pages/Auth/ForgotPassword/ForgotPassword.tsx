@@ -3,8 +3,8 @@ import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdEmail } from "react-icons/md";
 import logo from "../../../assets/images/astronaut.svg";
-import decorImg from "../../../assets/images/login-img/decor-bg.svg";
-import planetImg from "../../../assets/images/login-img/planet.svg";
+import decorImg from "../../../assets/images/login/decor-bg.svg";
+import planetImg from "../../../assets/images/login/planet.svg";
 
 const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
 
@@ -16,7 +16,7 @@ function ForgotPassword() {
         alt="Decoration Login"
         className="absolute bottom-0 w-full"
       />
-      <div className="absolute w-5/6 md:w-1/3 bg-white shadow-2xl rounded-3xl overflow-hidden z-10">
+      <div className="absolute w-5/6 md:w-1/3 bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden z-10">
         <img
           src={planetImg}
           alt="Planet Image"
@@ -29,7 +29,7 @@ function ForgotPassword() {
           >
             <span className="sr-only">Logo LectrifAI</span>
             <img alt="" src={logo} className="h-10 w-auto" />
-            <span className="font-degular font-bold text-4xl text-[#533aae] dark:text-purple-300">
+            <span className="font-degular font-bold text-4xl text-[#533aae] dark:text-purple-200">
               LectrifAI
             </span>
           </a>

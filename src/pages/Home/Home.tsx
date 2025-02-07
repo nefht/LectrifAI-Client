@@ -3,12 +3,12 @@ import classNames from "classnames/bind";
 import TrackVisibility from "react-on-screen";
 import "animate.css";
 import styles from "./Home.module.css";
-import backgroundImage from "../../assets/images/homepage/background.png";
-import backgroundLeftDecoration from "../../assets/images/homepage/bg-decor-left.svg";
-import backgroundRightDecoration from "../../assets/images/homepage/bg-decor-right.svg";
-import astronautImg from "../../assets/images/homepage/astronaut-planet.svg";
-import floatingDecor1 from "../../assets/images/homepage/floating-decor-1.svg";
-import floatingDecor2 from "../../assets/images/homepage/floating-decor-2.svg";
+import backgroundImage from "../../assets/images/home/background.png";
+import backgroundLeftDecoration from "../../assets/images/home/bg-decor-left.svg";
+import backgroundRightDecoration from "../../assets/images/home/bg-decor-right.svg";
+import astronautImg from "../../assets/images/home/astronaut-planet.svg";
+import floatingDecor1 from "../../assets/images/home/floating-decor-1.svg";
+import floatingDecor2 from "../../assets/images/home/floating-decor-2.svg";
 import { ThemeContext } from "../../context/ThemeContext";
 import { useHeader } from "../../hooks/useHeader";
 

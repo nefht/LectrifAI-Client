@@ -1,10 +1,21 @@
 import { useDrag } from "react-dnd";
-
+import { IoCloudUpload, IoSettingsSharp } from "react-icons/io5";
+import { HiTemplate } from "react-icons/hi";
+import { TabProps } from "../ImageToSlide";
 interface SidebarButtonProps {
+  imageToSlideTabs: TabProps[];
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
+  handleChangeTab: (tab: TabProps) => void;
 }
 
-export const SidebarButton = ({ toggleSidebar }: SidebarButtonProps) => {
+export const SidebarButton = ({
+  imageToSlideTabs,
+  setIsSidebarOpen,
+  toggleSidebar,
+  handleChangeTab,
+}: SidebarButtonProps) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "button",
     collect: (monitor) => ({
@@ -13,7 +24,10 @@ export const SidebarButton = ({ toggleSidebar }: SidebarButtonProps) => {
   }));
 
   return (
-    <div className="flex group fixed bottom-3 left-3 lg:hidden w-12 h-12">
+    <div
+      ref={drag}
+      className="flex group fixed bottom-3 left-3 lg:hidden w-12 h-12"
+    >
       {/* Sidebar button */}
       <div
         onClick={toggleSidebar}

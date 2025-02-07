@@ -1,17 +1,16 @@
-import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useLocation } from "react-router";
 import { FaFilePdf, FaFileWord } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
 import { AiFillFileMarkdown } from "react-icons/ai";
-import { useGeneratedSlideProcess } from "../hooks/useGeneratedSlideProcess";
+import { useGeneratedSlide } from "../hooks/useGeneratedSlide";
 import { EGeneratedSlideForm } from "../../constants/generated-slide-form";
 
 function InputContent() {
-  const [mode, setMode] = useState("text"); // mode: text, file
   const location = useLocation();
   const file = location.state?.file;
   const { presentationOptions, handleGetPresentationOptions } =
-    useGeneratedSlideProcess();
+    useGeneratedSlide();
 
   const fileAssets = [
     // .pdf
@@ -53,7 +52,6 @@ function InputContent() {
 
   useEffect(() => {
     if (file) {
-      setMode("file");
       handleGetPresentationOptions({
         target: { name: [EGeneratedSlideForm.CONTENT], value: file },
       });
@@ -82,8 +80,7 @@ Post-war consequences were profound. The United Nations was established to promo
       <h1 className="font-degular font-semibold text-4xl">
         Enter your content
       </h1>
-      {mode === "file" &&
-      presentationOptions[EGeneratedSlideForm.CONTENT] instanceof File ? (
+      {presentationOptions[EGeneratedSlideForm.CONTENT] instanceof File ? (
         <>
           <p className="font-degular text-xl">
             This is the file you uploaded, continue or click the file to upload
@@ -132,7 +129,7 @@ Post-war consequences were profound. The United Nations was established to promo
                 Size:{" "}
                 {presentationOptions[EGeneratedSlideForm.CONTENT]
                   ? (
-                      presentationOptions[EGeneratedSlideForm.CONTENT].size /
+                      presentationOptions[EGeneratedSlideForm.CONTENT]?.size /
                       1024
                     ).toFixed(2)
                   : "N/A"}{" "}

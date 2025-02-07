@@ -2,13 +2,18 @@ import React, { createContext, useState, useEffect, ReactNode } from "react";
 
 export const ThemeContext = createContext({
   theme: "light",
-  toggleTheme: () => {},
+  toggleTheme: (theme?: string) => {},
 });
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState("light");
 
-  const toggleTheme = () => {
+  const toggleTheme = (theme?: string) => {
+    if (theme) {
+      document.querySelector("html")?.setAttribute("class", theme);
+      setTheme(theme);
+      return;
+    }
     setTheme((prevTheme) => {
       if (prevTheme === "light") {
         document.querySelector("html")?.setAttribute("class", "dark");

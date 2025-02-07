@@ -11,13 +11,13 @@ const mainTools = [
   {
     name: "Lecture Video Generator",
     description: "Create lecture video from your slides",
-    href: "#",
+    href: "/lecture/generate-video",
     icon: ChartPieIcon,
   },
   {
     name: "Instant Lecture Presenter",
     description: "Automatically present lectures from uploaded files",
-    href: "#",
+    href: "dsadsad",
     icon: FingerPrintIcon,
   },
   {

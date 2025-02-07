@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation } from "react-router";
 import { useHeader } from "../../../hooks/useHeader";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { LuDownload } from "react-icons/lu";
-import { GeneratedSlideProcessProvider } from "./context/GeneratedSlideProcessContext";
+import { GeneratedSlideProcessProvider } from "./context/GeneratedSlideContext";
 
 const path = "/slide/generate-process";
 const processStepsPaths = [

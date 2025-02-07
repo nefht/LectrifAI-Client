@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import styles from "./Header.module.css";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { Button } from "flowbite-react";
-import logo from "../../assets/images/astronaut.svg";
-import CategorySearchBar from "../../components/CategorySearchBar";
+import logo from "../../assets/images/logo/logo1.png";
+import CategorySearchBar from "../../components/CategorySearchBar/CategorySearchBar";
 import HeaderDropdownOption from "../../layout/Header/HeaderDropdownOption/HeaderDropdownOption";
 import { useHeader } from "../../hooks/useHeader";
 import { useTheme } from "../../hooks/useTheme";
@@ -50,7 +50,7 @@ function Header() {
         } ${
           location.pathname === "/"
             ? ""
-            : "border-b border-gray-200 shadow-md dark:bg-[#47126B]"
+            : "border-b border-gray-200 shadow-md dark:bg-dark"
         } ${headerClass}`}
       >
         <nav
@@ -64,7 +64,7 @@ function Header() {
             >
               <span className="sr-only">Logo LectrifAI</span>
               <img alt="" src={logo} className="h-10 w-auto" />
-              <span className="font-degular font-bold text-[24px] xl:text-[30px] text-[#533aae] dark:text-purple-300">
+              <span className="font-degular font-bold text-[24px] xl:text-[30px] text-[#533aae] dark:text-white">
                 LectrifAI
               </span>
             </a>
@@ -100,7 +100,7 @@ function Header() {
                 About Us
               </a>
             </div> */}
-            <button className="bg-green-200" onClick={toggleTheme}>
+            <button className="bg-green-200" onClick={() => toggleTheme()}>
               Theme
             </button>
           </div>
@@ -108,7 +108,11 @@ function Header() {
             <CategorySearchBar />
           </div>
           <div className="hidden lg:flex lg:justify-end ml-4">
-            <Button color="purple" className={styles["login-button"]} onClick={() => navigate("/login")}>
+            <Button
+              color={theme === "dark" ? "indigo" : "purple"}
+              className={styles["login-button"]}
+              onClick={() => navigate("/login")}
+            >
               Log in
             </Button>
             {/* <a href="#" className="text-sm/6 font-semibold text-gray-900">

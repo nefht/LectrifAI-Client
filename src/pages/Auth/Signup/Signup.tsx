@@ -7,8 +7,8 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import styles from "./Signup.module.css";
 import logo from "../../../assets/images/astronaut.svg";
-import decorImg from "../../../assets/images/login-img/decor-bg.svg";
-import googleLogo from "../../../assets/images/login-img/google-logo.webp";
+import decorImg from "../../../assets/images/login/decor-bg.svg";
+import googleLogo from "../../../assets/images/login/google-logo.webp";
 import { Link } from "react-router";
 
 const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
@@ -31,7 +31,7 @@ function Signup() {
         alt="Decoration Login"
         className="absolute bottom-0 w-full z-0"
       />
-      <div className="absolute w-5/6 md:w-2/3 max-h-[90%] bg-white shadow-2xl rounded-3xl z-50 overflow-scroll hide-scrollbar">
+      <div className="absolute w-5/6 md:w-2/3 max-h-[90%] bg-white dark:bg-gray-800 shadow-2xl rounded-3xl z-50 overflow-scroll hide-scrollbar">
         <div className="w-full p-8 space-y-8 md:space-y-4 sm:p-10">
           <a
             href="/"
@@ -39,7 +39,7 @@ function Signup() {
           >
             <span className="sr-only">Logo LectrifAI</span>
             <img alt="" src={logo} className="h-10 w-auto" />
-            <span className="font-degular font-bold text-4xl text-[#533aae] dark:text-purple-300">
+            <span className="font-degular font-bold text-4xl text-[#533aae] dark:text-purple-200">
               LectrifAI
             </span>
           </a>

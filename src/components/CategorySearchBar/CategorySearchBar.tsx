@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { TextInput, Dropdown, Button } from "flowbite-react";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { HiSearch, HiChevronDown } from "react-icons/hi";
+import { Dropdown, Button } from "flowbite-react";
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
@@ -54,14 +52,14 @@ const CategorySearch = () => {
         <input
           type="search"
           id="search-dropdown"
-          className="block p-2.5 w-full pr-11 z-20 text-sm text-gray-900 border-transparent rounded-e-lg bg-gray-50 focus:ring-purple-500 focus:border-purple-200 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-purple-500"
+          className="block p-2.5 w-full pr-11 z-20 text-sm text-gray-900 border-transparent rounded-e-lg bg-gray-50 focus:ring-purple-500 focus:border-purple-200 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-indigo-500"
           placeholder="Search Mockups, Logos, Design Templates..."
           onChange={(e) => setQuery(e.target.value)}
           required
         />
         <button
           type="submit"
-          className="absolute top-0 end-0 w-10 p-2.5 text-sm font-medium h-full text-white bg-purple-600 rounded-e-lg border border-purple-500 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800"
+          className="absolute top-0 end-0 w-10 p-2.5 text-sm font-medium h-full text-white bg-purple-600 rounded-e-lg border border-purple-500 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 dark:border-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
         >
           <MagnifyingGlassIcon className="size-4" />
           <span className="sr-only">Search</span>

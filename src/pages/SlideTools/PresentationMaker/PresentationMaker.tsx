@@ -2,8 +2,8 @@ import { useState } from "react";
 import classNames from "classnames/bind";
 import { RiQuestionLine } from "react-icons/ri";
 import styles from "./PresentationMaker.module.css";
-import slideDecor1 from "../../../assets/images/slide-decor/slide-decor-1.svg";
-import slideDecor2 from "../../../assets/images/slide-decor/ai-generator1.webp";
+import slideDecor1 from "../../../assets/images/presentation-maker/slide-decor-1.svg";
+import slideDecor2 from "../../../assets/images/presentation-maker/ai-generator1.webp";
 import GeneratedSlideModal from "./GeneratedSlideModal/GeneratedSlideModal";
 
 const cx = classNames.bind(styles);

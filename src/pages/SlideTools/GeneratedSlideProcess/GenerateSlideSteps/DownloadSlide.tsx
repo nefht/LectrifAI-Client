@@ -5,6 +5,7 @@ import DocViewer from "react-doc-viewer";
 import example from "../../../../assets/images/templates/example.png";
 import htmlToPptxText from "../../../../utils/HtmlToPptxText";
 import templateSlide from "../../../../assets/templates/template1.pptx";
+import MinimalistTemplate01 from "../../../../shared/templates/Minimalist/MinimalistTemplate01";
 
 function DownloadSlide() {
   const { id } = useParams();
@@ -48,6 +49,7 @@ function DownloadSlide() {
       <p className="font-degular text-xl mb-4">
         Preview your presentation and download it as a PPTX or PDF file
       </p>
+      <MinimalistTemplate01 />
       {/* <button
         className="border bg-green-600 w-[100px] text-white"
         onClick={downloadSlide}

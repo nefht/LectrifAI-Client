@@ -8,12 +8,12 @@ import { HeaderProvider } from "./context/HeaderContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
-      <ToastProvider>
-        <HeaderProvider>
-            <App />
-        </HeaderProvider>
-      </ToastProvider>
-    </ThemeProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <HeaderProvider>
+              <App />
+          </HeaderProvider>
+        </ToastProvider>
+      </ThemeProvider>
   </StrictMode>
 );

@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { GeneratedSlideFormProcess } from "../../constants/generated-slide-form";
 import InformationTab from "../../PresentationMaker/GeneratedSlideModal/InformationTab";
 import TemplatesTab from "../../PresentationMaker/GeneratedSlideModal/TemplatesTab";
-import { useGeneratedSlideProcess } from "../hooks/useGeneratedSlideProcess";
+import { useGeneratedSlide } from "../hooks/useGeneratedSlide";
 import helperService from "../../../../services/helperService";
 
 function SelectStyle() {
   const { presentationOptions, handleGetPresentationOptions } =
-    useGeneratedSlideProcess();
+    useGeneratedSlide();
   const [languages, setLanguages] = useState([
     { code: "eng", name: "English" },
   ]);

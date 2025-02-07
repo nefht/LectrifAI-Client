@@ -11,8 +11,9 @@ import SettingTab from "./ImageToSlideTabs/SettingTab";
 import TemplatesTab from "../PresentationMaker/GeneratedSlideModal/TemplatesTab";
 import { EGeneratedSlideForm } from "../constants/generated-slide-form";
 import helperService from "../../../services/helperService";
+import { SidebarButton } from "./ImageToSlideTabs/SidebarButton";
 
-interface TabProps {
+export interface TabProps {
   name: string;
   icon: JSX.Element;
   tabDetail: JSX.Element;
@@ -95,8 +96,8 @@ function ImageToSlide() {
       >
         <div className="md:flex px-2 py-4">
           <ul className="flex-column space-y space-y-4 text-xs font-medium text-gray-500 dark:text-gray-400 mb-4 md:mb-0">
-            {imageToSlideTabs.map((tab) => (
-              <li onClick={() => handleChangeTab(tab)}>
+            {imageToSlideTabs.map((tab, index) => (
+              <li key={index} onClick={() => handleChangeTab(tab)}>
                 <a
                   href="#"
                   className={`flex flex-col items-center px-2 py-2 rounded-lg ${
@@ -167,7 +168,6 @@ function ImageToSlide() {
               </svg>
             )}
           </div>
-          {/* Upload */}
           <div
             onClick={() => {
               setIsSidebarOpen(true);
@@ -177,7 +177,6 @@ function ImageToSlide() {
           >
             <IoCloudUpload />
           </div>
-          {/* Setting */}
           <div
             onClick={() => {
               setIsSidebarOpen(true);
@@ -187,7 +186,6 @@ function ImageToSlide() {
           >
             <IoSettingsSharp />
           </div>
-          {/* Templates */}
           <div
             onClick={() => {
               setIsSidebarOpen(true);
@@ -199,6 +197,13 @@ function ImageToSlide() {
           </div>
         </div>
       </Draggable>
+      {/* <SidebarButton
+        imageToSlideTabs={imageToSlideTabs}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        handleChangeTab={handleChangeTab}
+      /> */}
 
       {/* Slide preview */}
       <iframe

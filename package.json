@@ -17,6 +17,7 @@
     "axios": "^1.7.9",
     "classnames": "^2.5.1",
     "css": "^3.0.0",
+    "file-saver": "^2.0.5",
     "flowbite-react": "^0.10.2",
     "htmlparser2": "^10.0.0",
     "immutability-helper": "^3.1.1",
@@ -29,12 +30,14 @@
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",
     "react-on-screen": "^2.1.1",
+    "react-pptx": "^2.20.1",
     "react-quill-new": "^3.3.3",
     "react-router": "^7.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "@types/css": "^0.0.38",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^22.10.1",
     "@types/parse-color": "^1.0.3",
     "@types/react": "^18.3.13",

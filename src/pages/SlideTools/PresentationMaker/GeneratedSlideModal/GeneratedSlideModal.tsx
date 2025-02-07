@@ -250,8 +250,9 @@ export default function GeneratedSlideModal({
                     </ul>
 
                     {/* Hiển thị nội dung tab */}
-                    {modalTabs.map((tab) => {
-                      if (tab.title === selectedTab) return tab.tab;
+                    {modalTabs.map((tab, index) => {
+                      if (tab.title === selectedTab)
+                        return <div key={index} className="w-full h-full">{tab.tab}</div>;
                       return null;
                     })}
                   </div>

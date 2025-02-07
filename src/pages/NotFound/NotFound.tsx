@@ -1,4 +1,4 @@
-import notFoundImg from "../../assets/images/404.svg";
+import notFoundImg from "../../assets/images/not-found/404.svg";
 function NotFound() {
   return (
     <section className="bg-white dark:bg-purple-900">

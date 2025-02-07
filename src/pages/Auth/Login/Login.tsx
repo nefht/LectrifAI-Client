@@ -4,10 +4,10 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import styles from "./Login.module.css";
 import logo from "../../../assets/images/astronaut.svg";
-import decorImg from "../../../assets/images/login-img/decor-bg.svg";
-import planetImg from "../../../assets/images/login-img/planet.svg";
+import decorImg from "../../../assets/images/login/decor-bg.svg";
+import planetImg from "../../../assets/images/login/planet.svg";
 import astronautImg from "../../../assets/images/astronaut.svg";
-import googleLogo from "../../../assets/images/login-img/google-logo.webp";
+import googleLogo from "../../../assets/images/login/google-logo.webp";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +23,7 @@ function Login() {
         alt="Decoration Login"
         className="absolute bottom-0 w-full z-0"
       />
-      <div className="absolute w-5/6 md:w-2/3 bg-white shadow-2xl rounded-3xl z-50 overflow-hidden">
+      <div className="absolute w-5/6 md:w-2/3 bg-white dark:bg-gray-800 shadow-2xl rounded-3xl z-50 overflow-hidden">
         <img
           src={planetImg}
           alt="Planet Image"
@@ -41,7 +41,7 @@ function Login() {
           >
             <span className="sr-only">Logo LectrifAI</span>
             <img alt="" src={logo} className="h-10 w-auto" />
-            <span className="font-degular font-bold text-4xl text-[#533aae] dark:text-purple-300">
+            <span className="font-degular font-bold text-4xl text-[#533aae] dark:text-purple-200">
               LectrifAI
             </span>
           </a>
