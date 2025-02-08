@@ -1,18 +1,7 @@
-import { useState } from "react";
-import {
-  Presentation,
-  Slide,
-  Text,
-  Shape,
-  Image,
-  render,
-  Table,
-} from "react-pptx";
-import Preview from "react-pptx/preview";
-import { saveAs } from "file-saver";
+import { Image, Slide, Text, Table, Shape } from "react-pptx";
 
-function MinimalistTemplate01() {
-  const slides = [
+function MinimalistTemplate01(data: any) {
+  return [
     <Slide key={0}>
       <Text
         style={{
@@ -40,7 +29,7 @@ function MinimalistTemplate01() {
 
     <Slide key={1} style={{ backgroundColor: "#DDDDDD" }}>
       <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
-        <Text.Bullet>Adding bullet 1</Text.Bullet>
+        <Text.Bullet type="bullet">Adding bullet 1</Text.Bullet>
         <Text.Bullet>Adding bullet 2</Text.Bullet>
       </Text>
     </Slide>,
@@ -118,7 +107,17 @@ function MinimalistTemplate01() {
       />
     </Slide>,
 
-    <Slide key={6} style={{ backgroundColor: "#DDDDDD" }}>
+    <Slide key={6}>
+      <Shape
+        type="rect"
+        style={{
+          x: 0,
+          y: 0,
+          w: "100%",
+          h: "100%",
+          backgroundColor: "#DDDDDD",
+        }}
+      />
       <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
         <Text.Bullet>Adding bullet 1</Text.Bullet>
         <Text.Bullet>Adding bullet 2</Text.Bullet>
@@ -131,106 +130,35 @@ function MinimalistTemplate01() {
         <Text.Bullet>Adding bullet 2</Text.Bullet>
       </Text>
     </Slide>,
+
+    <Slide key={8} style={{ backgroundColor: "#DDDDDD" }}>
+      <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
+        <Text.Bullet>Adding bullet 1</Text.Bullet>
+        <Text.Bullet>Adding bullet 2</Text.Bullet>
+      </Text>
+    </Slide>,
+
+    <Slide key={9} style={{ backgroundColor: "#DDDDDD" }}>
+      <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
+        <Text.Bullet>Adding bullet 1</Text.Bullet>
+        <Text.Bullet>Adding bullet 2</Text.Bullet>
+      </Text>
+    </Slide>,
+
+    <Slide key={10} style={{ backgroundColor: "#DDDDDD" }}>
+      <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
+        <Text.Bullet>Adding bullet 1</Text.Bullet>
+        <Text.Bullet>Adding bullet 2</Text.Bullet>
+      </Text>
+    </Slide>,
+
+    <Slide key={11} style={{ backgroundColor: "#DDDDDD" }}>
+      <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
+        <Text.Bullet>Adding bullet 1</Text.Bullet>
+        <Text.Bullet>Adding bullet 2</Text.Bullet>
+      </Text>
+    </Slide>,
   ];
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-
-  // 📥 Xuất file PPTX
-  const exportPptx = async () => {
-    try {
-      const pptxBlob = new Blob(
-        [
-          await render(<Presentation>{slides}</Presentation>, {
-            outputType: "arraybuffer",
-          }),
-        ],
-        {
-          type: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        }
-      );
-      saveAs(pptxBlob, "presentation.pptx");
-    } catch (error) {
-      console.error("❌ Error exporting PowerPoint:", error);
-    }
-  };
-
-  return (
-    <div className="w-full">
-      {/* Slide chính */}
-      <div className="w-full max-w-3xl p-4 bg-white rounded-lg shadow-md">
-        <Preview>
-          <Presentation>{slides[currentSlide]}</Presentation>
-        </Preview>
-      </div>
-
-      {/* Điều hướng */}
-      <div className="flex gap-4 my-4">
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          onClick={prevSlide}
-        >
-          ⬅ Previous
-        </button>
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          onClick={nextSlide}
-        >
-          Next ➡
-        </button>
-      </div>
-
-      {/* Thumbnails */}
-      <div className="flex gap-4 p-2 rounded-lg w-full overflow-x-scroll hide-scrollbar">
-        {slides.length > 0 ? (
-          slides.map((slide, index) => (
-            <div
-              className={`w-40 cursor-pointer rounded-md overflow-hidden border-2 ${
-                index === currentSlide ? "border-gray-400" : "border-transparent"
-              }`}
-              onClick={() => goToSlide(index)}
-            >
-              <Preview key={index}>
-                <Presentation>{slide}</Presentation>
-              </Preview>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500">Generating thumbnails...</p>
-        )}
-      </div>
-
-      {/* Xuất PPTX */}
-      <button
-        className="mt-6 px-6 py-3 text-white bg-green-500 rounded-md hover:bg-green-600 transition"
-        onClick={exportPptx}
-      >
-        📥 Export to PowerPoint
-      </button>
-
-      {/* Hidden Slide Render for Thumbnails */}
-      <div className="hidden">
-        {slides.map((slide, index) => (
-          <div key={index}>
-            <Preview>
-              <Presentation>{slide}</Presentation>
-            </Preview>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export default MinimalistTemplate01;

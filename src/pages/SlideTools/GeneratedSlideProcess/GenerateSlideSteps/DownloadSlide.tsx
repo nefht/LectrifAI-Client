@@ -5,7 +5,7 @@ import DocViewer from "react-doc-viewer";
 import example from "../../../../assets/images/templates/example.png";
 import htmlToPptxText from "../../../../utils/HtmlToPptxText";
 import templateSlide from "../../../../assets/templates/template1.pptx";
-import MinimalistTemplate01 from "../../../../shared/templates/Minimalist/MinimalistTemplate01";
+import SlidePresentation from "../../../../shared/templates/SlidePresentation";
 
 function DownloadSlide() {
   const { id } = useParams();
@@ -49,7 +49,7 @@ function DownloadSlide() {
       <p className="font-degular text-xl mb-4">
         Preview your presentation and download it as a PPTX or PDF file
       </p>
-      <MinimalistTemplate01 />
+      <SlidePresentation templateCode="minimalist-01"/>
       {/* <button
         className="border bg-green-600 w-[100px] text-white"
         onClick={downloadSlide}
@@ -57,13 +57,13 @@ function DownloadSlide() {
         TEST PPTX
       </button> */}
       {/* <img className="mt-8 rounded-lg" src={example} alt="" /> */}
-      <iframe
+      {/* <iframe
         src="https://docs.google.com/presentation/d/1VJpqD1qkAJT0E2vcDRYDzMzDlybyFYQY/preview#slide=id.p1"
         width="100%"
         height="600px"
         frameBorder="0"
         title="Google Slides Viewer"
-      ></iframe>
+      ></iframe> */}
     </>
   );
 }

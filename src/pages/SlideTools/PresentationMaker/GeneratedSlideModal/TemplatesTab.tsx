@@ -54,9 +54,7 @@ export default function TemplatesTab({
 
   return (
     <div
-      className={`border-gray-900/10 w-full ${
-        getStyles("wrapperStyle") || ""
-      }`}
+      className={`border-gray-900/10 w-full ${getStyles("wrapperStyle") || ""}`}
     >
       {location.pathname === "/slide/generate" && (
         <>
@@ -139,7 +137,7 @@ export default function TemplatesTab({
                         <button
                           className={`block w-full px-4 py-2 text-sm text-left ${
                             active
-                              ? "bg-gray-100 text-gray-900"
+                              ? "bg-purple-200 text-gray-900"
                               : "text-gray-700"
                           }`}
                           onClick={() =>

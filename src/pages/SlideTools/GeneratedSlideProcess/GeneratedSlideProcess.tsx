@@ -4,6 +4,7 @@ import { useHeader } from "../../../hooks/useHeader";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { LuDownload } from "react-icons/lu";
 import { GeneratedSlideProcessProvider } from "./context/GeneratedSlideContext";
+import { useSlideExport } from "../../../hooks/useSlideExport";
 
 const path = "/slide/generate-process";
 const processStepsPaths = [
@@ -16,6 +17,7 @@ const processStepsPaths = [
 function GenerateSlideProcess() {
   const { setHeaderClass } = useHeader();
   const location = useLocation();
+  const { exportPptx } = useSlideExport();
 
   // Custom header CSS
   useEffect(() => {
@@ -42,16 +44,16 @@ function GenerateSlideProcess() {
 
   return (
     <GeneratedSlideProcessProvider>
-      <div className="flex flex-col gap-2 items-center w-full h-auto min-h-screen bg-header px-20 pt-10 lg:px-40 xl:px-60 2xl:px-96">
+      <div className="flex flex-col gap-2 items-center w-full h-auto min-h-screen bg-header px-8 sm:px-20 pt-10 lg:px-40 xl:px-60 2xl:px-96">
         <Outlet />
         <div className="flex gap-2 items-center justify-end w-full mt-10 mb-20">
           {location.pathname !== processStepsPaths[0] && (
             <Link
               to={navigation("back")}
-              className={`flex gap-2 items-center rounded-md px-4 py-2 text-sm font-semibold text-black shadow-sm hover:text-gray-700 ${
+              className={`flex gap-2 items-center rounded-md px-4 py-2 text-sm font-semibold text-black hover:text-gray-700 ${
                 location.pathname ===
                   processStepsPaths[processStepsPaths.length - 1] &&
-                "text-white bg-black hover:bg-gray-800 hover:text-white"
+                "text-white text-center bg-black hover:bg-gray-800 hover:text-white"
               }`}
             >
               {location.pathname ===
@@ -73,13 +75,13 @@ function GenerateSlideProcess() {
           )}
           {location.pathname ===
             processStepsPaths[processStepsPaths.length - 1] && (
-            <Link
-              to={navigation("next")}
+            <button
               className="flex gap-2 items-center rounded-md px-4 py-2 text-sm font-semibold text-white bg-purple-600 shadow-sm hover:bg-purple-500"
+              onClick={exportPptx}
             >
               Download presentation
               <LuDownload className="text-xl" />
-            </Link>
+            </button>
           )}
         </div>
       </div>
