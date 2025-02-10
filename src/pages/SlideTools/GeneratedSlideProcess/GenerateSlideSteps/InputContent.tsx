@@ -77,7 +77,7 @@ Post-war consequences were profound. The United Nations was established to promo
 
   return (
     <>
-      <h1 className="font-degular font-semibold text-4xl">
+      <h1 className="font-degular font-semibold text-2xl md:text-3xl xl:text-4xl">
         Enter your content
       </h1>
       {presentationOptions[EGeneratedSlideForm.CONTENT] instanceof File ? (

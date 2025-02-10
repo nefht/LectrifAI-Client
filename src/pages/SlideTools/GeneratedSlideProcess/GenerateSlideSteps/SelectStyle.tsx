@@ -23,7 +23,9 @@ function SelectStyle() {
 
   return (
     <>
-      <h1 className="font-degular font-semibold text-4xl">Select a style</h1>
+      <h1 className="font-degular font-semibold text-2xl md:text-3xl xl:text-4xl">
+        Select a style
+      </h1>
       <p className="font-degular text-xl">
         Pick a theme that suits your presentation
       </p>

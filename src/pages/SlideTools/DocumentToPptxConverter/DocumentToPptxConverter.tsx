@@ -25,7 +25,7 @@ function DocumentToPptxConverter() {
     <div className="flex w-full pb-24 bg-gradient-to-b from-header to-background">
       <div className="animate-slidein flex flex-col items-center justify-center w-full h-1/4 px-4 lg:px-60 xl:px-72 2xl:px-96 gap-y-8 mt-8 lg:mt-20">
         <h1
-          className={`text-4xl lg:text-5xl font-semibold font-degular ${styles["gradient-text"]}`}
+          className={`text-center text-4xl lg:text-5xl font-semibold font-degular ${styles["gradient-text"]}`}
         >
           Document to PPTX converter
         </h1>
@@ -34,7 +34,7 @@ function DocumentToPptxConverter() {
           AI-powered converter. Fast, simple, and efficient-get started in just
           a few clicks!
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-2 w-full px-20 lg:px-0 2xl:px-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-2 w-full px-4 md:px-20 lg:px-0 2xl:px-10">
           <label
             htmlFor="file-upload"
             className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 bg-white hover:shadow-lg hover:border-purple-500 hover:cursor-pointer"

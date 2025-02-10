@@ -70,22 +70,21 @@ function Home() {
 
   return (
     <div className={cx("background")}>
-      <div className={cx("test")}></div>
       {theme === "light" && (
         <>
           <img
-            className={cx("background-decor-left")}
+            className="w-1/2 xl:w-auto max-h-full absolute left-0 bottom-0"
             src={backgroundLeftDecoration}
             alt=""
           />
           <img
-            className={cx("background-decor-right")}
+            className="w-3/4 xl:w-auto max-h-full absolute right-0 bottom-0"
             src={backgroundRightDecoration}
             alt=""
           />
         </>
       )}
-      <TrackVisibility className={cx("content")}>
+      <TrackVisibility className="absolute top-24 left-8 pr-8 xl:pr-0 md:top-[10%] lg:top-[15%] xl:top-[20%] md:left-20 lg:w-2/3 xl:w-1/2 z-10">
         {({ isVisible }) => (
           <div className={isVisible ? "animate__animated animate__fadeIn" : ""}>
             <span className={cx("tagline")}>Welcome to LectrifAI</span>

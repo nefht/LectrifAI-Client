@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router";
 import PptxGenJS from "pptxgenjs";
-import DocViewer from "react-doc-viewer";
 import example from "../../../../assets/images/templates/example.png";
 import htmlToPptxText from "../../../../utils/HtmlToPptxText";
 import templateSlide from "../../../../assets/templates/template1.pptx";
@@ -43,13 +42,13 @@ function DownloadSlide() {
   return (
     <>
       {/* <DocViewer documents={docs} /> */}
-      <h1 className="font-degular font-semibold text-4xl">
+      <h1 className="font-degular font-semibold text-2xl md:text-3xl xl:text-4xl">
         Download your presentation
       </h1>
       <p className="font-degular text-xl mb-4">
         Preview your presentation and download it as a PPTX or PDF file
       </p>
-      <SlidePresentation templateCode="minimalist-01"/>
+      <SlidePresentation templateCode="minimalist-01" />
       {/* <button
         className="border bg-green-600 w-[100px] text-white"
         onClick={downloadSlide}

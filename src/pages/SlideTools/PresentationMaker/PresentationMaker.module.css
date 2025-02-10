@@ -1,119 +1,15 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  @apply px-5 py-1 xl:px-32 lg:py-5 animate-slidein
-}
-
-.card-1 {
-  display: flex;
-  flex-direction: row;
-}
-
-.content-1 {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 2rem;
-  font-family: "Degular";
-}
-
-.content-1 span {
-  font-size: 3rem;
-  font-weight: 600;
+.title-1 {
   color: var(--primary-text-color);
 }
 
-.content-1 p {
-  font-size: 1.2rem;
-  color: var(--primary-text-color);
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-}
-
-.buttons {
-  display: flex;
-  width: 100%;
-  gap: 10px;
-}
-
-.buttons button {
-  font-size: 1.2rem;
-}
-
-.button-1 {
-  @apply flex items-center justify-center w-2/5 text-white rounded-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-semibold text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700;
-}
-
-.button-2 {
-  @apply flex items-center justify-center rounded-full w-2/5 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700
-}
-
-.button-2-icon {
-  margin: 0 0.5rem;
-}
-
-.decor-1 {
-  flex: 1;
-}
-
-.card-2 {
-  display: flex;
-  flex-direction: row;
-}
-
-.decor-2 {
-  flex: 1;
-  padding-top: 5rem;
-}
-
-.content-2 {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 5rem;
-  padding-left: 8rem;
-  font-family: "Degular";
-}
-
-.content-2 span {
-  font-size: 2rem;
-  font-weight: 600;
+.description-1 {
   color: var(--primary-text-color);
 }
 
-.content-2 p {
-  font-size: 1.2rem;
+.title-2 {
   color: var(--primary-text-color);
-  margin-top: 1rem;
-  margin-bottom: 2rem;
 }
 
-@media screen and (max-width: 1024px) {
-  .card-1 {
-    flex-direction: column;
-  }
-
-  .content-1 {
-    padding: 1rem;
-  }
-
-  .content-1 span {
-    font-size: 2rem;
-  }
-
-  .content-1 p {
-    font-size: 1rem;
-  }
-
-  .buttons {
-    flex-direction: column;
-  }
-
-  .buttons button {
-    width: 100%;
-  }
-
-  .button-1 {
-    margin-bottom: 1rem;
-  }
+.description-2 {
+  color: var(--primary-text-color);
 }

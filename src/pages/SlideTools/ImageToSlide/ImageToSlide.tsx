@@ -90,7 +90,7 @@ function ImageToSlide() {
   return (
     <div className="flex w-full h-full bg-gradient-to-b from-header to-background overflow-hidden">
       <div
-        className={`lg:flex lg:w-1/3 lg:relative flex fixed bg-white w-screen sm:w-[50vw] h-full-screen transform transition-transform duration-300 ease-in-out ${
+        className={`lg:flex xl:w-1/3 lg:relative flex fixed bg-white w-screen sm:w-[50vw] h-full-screen transform transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -141,11 +141,16 @@ function ImageToSlide() {
       <Draggable>
         <div className="flex group fixed bottom-3 left-3 lg:hidden w-12 h-12">
           <div
-            onClick={toggleSidebar}
+            // onClick={toggleSidebar}
+            // onTouchEnd={toggleSidebar}
             className="text-white shadow-xl flex items-center justify-center p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 z-50 absolute hover:cursor-pointer"
           >
             {isSidebarOpen ? (
-              <IoMdClose className="w-6 h-6 group-hover:rotate-90 transition-all duration-[0.6s]" />
+              <IoMdClose
+                className="w-6 h-6 group-hover:rotate-90 transition-all duration-[0.6s]"
+                onClick={toggleSidebar}
+                onTouchEnd={toggleSidebar}
+              />
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -173,6 +178,10 @@ function ImageToSlide() {
               setIsSidebarOpen(true);
               handleChangeTab(imageToSlideTabs[0]);
             }}
+            onTouchEnd={() => {
+              setIsSidebarOpen(true);
+              handleChangeTab(imageToSlideTabs[0]);
+            }}
             className="absolute rounded-full transition-all duration-[0.2s] ease-out scale-y-0 group-hover:scale-y-100 group-hover:translate-x-16 group-hover:translate-y-2 flex p-2 hover:p-3 bg-green-300 scale-100 hover:bg-green-400 text-white hover:cursor-pointer"
           >
             <IoCloudUpload />
@@ -182,12 +191,20 @@ function ImageToSlide() {
               setIsSidebarOpen(true);
               handleChangeTab(imageToSlideTabs[1]);
             }}
+            onTouchEnd={() => {
+              setIsSidebarOpen(true);
+              handleChangeTab(imageToSlideTabs[1]);
+            }}
             className="absolute rounded-full transition-all duration-[0.2s] ease-out scale-x-0 group-hover:scale-x-100 group-hover:-translate-y-12 flex p-2 hover:p-3 bg-blue-300 hover:bg-blue-400 text-white hover:cursor-pointer"
           >
             <IoSettingsSharp />
           </div>
           <div
             onClick={() => {
+              setIsSidebarOpen(true);
+              handleChangeTab(imageToSlideTabs[2]);
+            }}
+            onTouchEnd={() => {
               setIsSidebarOpen(true);
               handleChangeTab(imageToSlideTabs[2]);
             }}

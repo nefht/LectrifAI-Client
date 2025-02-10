@@ -204,7 +204,7 @@ function ReviewOutline() {
 
   return (
     <>
-      <h1 className="font-degular font-semibold text-4xl">
+      <h1 className="font-degular font-semibold text-2xl md:text-3xl xl:text-4xl">
         Review the outline and slides
       </h1>
       <p className="font-degular text-xl">

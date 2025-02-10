@@ -2,44 +2,7 @@ import { useEffect, useState } from "react";
 import { useHeader } from "../../../../hooks/useHeader";
 import { useTheme } from "../../../../hooks/useTheme";
 import { FaFileImage, FaFilePowerpoint } from "react-icons/fa6";
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-} from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
-
-const academicLevels = [
-  {
-    value: "1",
-    label: "Elementary",
-  },
-  {
-    value: "2",
-    label: "Intermediate",
-  },
-  {
-    value: "3",
-    label: "Advanced",
-  },
-  {
-    value: "4",
-    label: "Expert",
-  },
-  {
-    value: "5",
-    label: "Native",
-  },
-  {
-    value: "6",
-    label: "Custom",
-  },
-  {
-    value: "7",
-    label: "None",
-  },
-];
+import LectureGeneralSettings from "../components/LectureGeneralSettings";
 
 function InputConfiguration() {
   const { setHeaderClass } = useHeader();
@@ -94,8 +57,8 @@ function InputConfiguration() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full bg-dark bg-gradient-to-b from-dark to-indigo-950 px-24 xl:px-40 pt-20 pb-40">
-      <h1 className="font-degular font-semibold text-4xl text-white">
+    <div className="flex flex-col items-center w-full min-h-screen bg-dark bg-gradient-to-b from-dark to-indigo-950 px-10 md:px-24 xl:px-40 pt-12 md:pt-20 pb-40">
+      <h1 className="font-degular font-semibold text-center text-white text-2xl md:text-3xl xl:text-4xl">
         Generate your lecture video
       </h1>
       <p className="text-lg text-gray-400 text-center mt-4 mb-6">
@@ -194,124 +157,7 @@ function InputConfiguration() {
       </div>
 
       {/* General information */}
-      <div className="w-full lg:w-2/3 xl:w-3/5 my-2">
-        <p className="font-semibold text-base text-white my-2">
-          General information
-        </p>
-        <p className="text-base text-gray-400 mb-6">
-          Customize your lecture video with the below options.
-        </p>
-        <div className="grid grid-cols-3 gap-x-6 gap-y-8">
-          <div className="">
-            <label htmlFor="academicLevel" className="text-white font-semibold">
-              Academic level
-            </label>
-            <Listbox
-              value={academicLevels[0].label}
-              // onChange={(selectedTone) =>
-              //   handleGetPresentationOptions({
-              //     target: {
-              //       name: EGeneratedSlideForm.WRITING_TONE,
-              //       value: selectedTone,
-              //     },
-              //   })
-              // }
-            >
-              <div className="relative mt-2">
-                <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                  <span className="col-start-1 row-start-1 flex items-center gap-3 pr-6">
-                    <span className="block truncate">
-                      {/* {presentationOptions[EGeneratedSlideForm.WRITING_TONE] || */}
-                      {academicLevels[0].label}
-                    </span>
-                  </span>
-                  <ChevronUpDownIcon
-                    aria-hidden="true"
-                    className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                  />
-                </ListboxButton>
-
-                <ListboxOptions
-                  transition
-                  className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
-                >
-                  {academicLevels.map((level) => (
-                    <ListboxOption
-                      key={level.value}
-                      value={level.label}
-                      className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white data-[focus]:outline-none"
-                    >
-                      <div className="flex items-center">
-                        <span className="block truncate font-normal group-data-[selected]:font-semibold">
-                          {level.label}
-                        </span>
-                      </div>
-
-                      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-[&:not([data-selected])]:hidden group-data-[focus]:text-white">
-                        <CheckIcon aria-hidden="true" className="size-5" />
-                      </span>
-                    </ListboxOption>
-                  ))}
-                </ListboxOptions>
-              </div>
-            </Listbox>
-          </div>
-          <div className="">
-            <label htmlFor="academicLevel" className="text-white font-semibold">
-              Voice
-            </label>
-            <Listbox
-              value={academicLevels[0].label}
-              // onChange={(selectedTone) =>
-              //   handleGetPresentationOptions({
-              //     target: {
-              //       name: EGeneratedSlideForm.WRITING_TONE,
-              //       value: selectedTone,
-              //     },
-              //   })
-              // }
-            >
-              <div className="relative mt-2">
-                <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                  <span className="col-start-1 row-start-1 flex items-center gap-3 pr-6">
-                    <span className="block truncate">
-                      {/* {presentationOptions[EGeneratedSlideForm.WRITING_TONE] || */}
-                      {academicLevels[0].label}
-                    </span>
-                  </span>
-                  <ChevronUpDownIcon
-                    aria-hidden="true"
-                    className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                  />
-                </ListboxButton>
-
-                <ListboxOptions
-                  transition
-                  className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
-                >
-                  {academicLevels.map((level) => (
-                    <ListboxOption
-                      key={level.value}
-                      value={level.label}
-                      className="group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white data-[focus]:outline-none"
-                    >
-                      <div className="flex items-center">
-                        <span className="block truncate font-normal group-data-[selected]:font-semibold">
-                          {level.label}
-                        </span>
-                      </div>
-
-                      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-[&:not([data-selected])]:hidden group-data-[focus]:text-white">
-                        <CheckIcon aria-hidden="true" className="size-5" />
-                      </span>
-                    </ListboxOption>
-                  ))}
-                </ListboxOptions>
-              </div>
-            </Listbox>
-          </div>
-        </div>
-      </div>
+      <LectureGeneralSettings />
     </div>
   );
 }

@@ -31,9 +31,9 @@ function LectureVideoGenerator() {
 
   return (
     <>
-      <div className="relative flex flex-col items-center py-40 w-full h-[135vh] bg-universe">
-        <div className="flex flex-col items-center px-20 lg:px-56 xl:px-72">
-          <h1 className="overflow-hidden text-4xl lg:text-5xl xl:text-6xl font-semibold font-degular leading-snug text-white">
+      <div className="relative flex flex-col items-center py-40 w-full h-[135vh] bg-universe bg-cover bg-center bg-no-repeat">
+        <div className="flex flex-col items-center px-10 md:px-20 lg:px-56 xl:px-72">
+          <h1 className="text-center overflow-hidden text-4xl lg:text-5xl xl:text-6xl font-semibold font-degular leading-snug text-white">
             {text.match(/./gu)!.map((char, index) => (
               <span
                 className="animate-text-reveal inline-block [animation-fill-mode:backwards]"

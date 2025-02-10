@@ -55,7 +55,7 @@ export default function InformationTab({
   errors,
 }: InformationTabProps) {
   return (
-    <div className=" border-gray-900/10 w-full pt-8 lg:pl-8 lg:pt-0">
+    <div className=" border-gray-900/10 w-full pt-2 md:pt-8 lg:pl-8 lg:pt-0">
       {location.pathname === "/slide/generate" && (
         <>
           <h2 className="text-base/7 font-semibold text-gray-900">

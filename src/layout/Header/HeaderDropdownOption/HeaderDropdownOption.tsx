@@ -13,6 +13,10 @@ import {
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import SlideToolsConstants from "./constants/slide-tools";
 import LectureToolsConstants from "./constants/lecture-tools";
+import { FaWandMagicSparkles } from "react-icons/fa6";
+import { FaChalkboardTeacher } from "react-icons/fa";
+import { HiTemplate } from "react-icons/hi";
+import { TbSettingsFilled } from "react-icons/tb";
 
 interface HeaderDropdownOptionProps {
   displayMode: "header" | "dialog"; // Chế độ hiển thị
@@ -24,14 +28,21 @@ function HeaderDropdownOption({
   optionTitle,
 }: HeaderDropdownOptionProps) {
   let itemConstants = null;
+  let titleIcon = null;
   switch (optionTitle) {
     case "Slide Tools":
       itemConstants = SlideToolsConstants;
+      titleIcon = <FaWandMagicSparkles className="text-lg text-purple-800/60" />;
       break;
     case "Lecture Tools":
       itemConstants = LectureToolsConstants;
+      titleIcon = (
+        <FaChalkboardTeacher className="text-lg text-purple-800/60" />
+      );
       break;
     case "Templates":
+      itemConstants = null;
+      titleIcon = <HiTemplate className="text-lg text-purple-800/60" />;
       break;
     default:
       break;
@@ -66,8 +77,11 @@ function HeaderDropdownOption({
                 }`}
               >
                 <div>
-                  <div className="font-semibold text-gray-900 mb-2 pb-2 mr-4 border-b border-gray-300">
-                    {optionTitle?.toLocaleUpperCase()}
+                  <div className="flex items-center gap-3 mb-2 pb-2 mr-4 border-b border-gray-300">
+                    {titleIcon}
+                    <div className="font-semibold text-gray-900">
+                      {optionTitle?.toLocaleUpperCase()}
+                    </div>
                   </div>
                   {itemConstants?.mainTools.map((item) => (
                     <div
@@ -96,8 +110,11 @@ function HeaderDropdownOption({
                 {itemConstants?.otherTools &&
                   itemConstants?.otherTools?.length > 0 && (
                     <div>
-                      <div className="font-semibold text-gray-900 mb-2 pb-2 ml-4 mr-4 border-b border-gray-300">
-                        OTHER TOOLS
+                      <div className="flex items-center gap-3 mb-2 pb-2 ml-4 mr-4 border-b border-gray-300">
+                        <TbSettingsFilled className="text-lg text-purple-800/60" />
+                        <div className="font-semibold text-gray-900">
+                          OTHER TOOLS
+                        </div>
                       </div>
                       {itemConstants?.otherTools.map((item) => (
                         <div
@@ -150,7 +167,10 @@ function HeaderDropdownOption({
   ) : (
     <Disclosure as="div" className="-mx-3">
       <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
-        {optionTitle}
+        <div className="flex items-center gap-3">
+          {titleIcon}
+          {optionTitle}
+        </div>
         <ChevronDownIcon
           aria-hidden="true"
           className="size-5 flex-none group-data-[open]:rotate-180"

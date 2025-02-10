@@ -1,15 +1,10 @@
 .background {
-  margin: 0;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  position: relative;
   background-image: var(--background-image);
   background-position: top center;
   background-size: cover;
   background-repeat: no-repeat;
+  @apply m-0 w-full h-screen flex relative lg:p-0;
 }
-
 
 .background-decor-left {
   height: 100%;
@@ -37,7 +32,11 @@
   color: var(--background-text-color);
   letter-spacing: 0.8px;
   padding: 8px 10px;
-  background: linear-gradient(90.21deg, rgba(170, 54, 124, 0.5) -5.91%, rgba(74, 47, 189, 0.5) 111.58%);
+  background: linear-gradient(
+    90.21deg,
+    rgba(170, 54, 124, 0.5) -5.91%,
+    rgba(74, 47, 189, 0.5) 111.58%
+  );
   border: 1px solid rgba(255, 255, 255, 0.5);
   font-size: 20px;
   margin-bottom: 16px;
@@ -45,15 +44,14 @@
 }
 
 .title {
-  font-family: "Degular";
-  font-size: 5rem;
   font-weight: 900;
   color: var(--background-text-color);
+  @apply font-degular text-5xl lg:text-[5rem] mt-3 mb-5;
 }
 
 .description {
   color: var(--description-color);
-  font-size: 1.2rem;
+  @apply text-lg xl:text-xl;
 }
 
 @keyframes blink {
@@ -89,28 +87,16 @@
 }
 
 .astronaut {
-  position: absolute;
-  top: 25%;
-  right: 100px;
-  width: 450px;
-  z-index: 1;
   animation: float 3s ease-in-out infinite;
+  @apply absolute bottom-12 right-8 w-1/2 md:top-[45%] lg:top-[25%] xl:top-[20%] lg:right-0 xl:right-[100px] md:w-1/3 lg:w-1/4 xl:w-1/3 2xl:w-[450px] z-0;
 }
 
 .floating-1 {
-  position: absolute;
-  top: 20%;
-  right: 100px;
-  width: 450px;
-  z-index: 1;
   animation: float 3s ease-in-out infinite;
+  @apply absolute bottom-12 right-0 w-1/2 lg:top-[15%] xl:top-[20%] lg:right-0 xl:right-[100px] lg:w-1/3 xl:w-[450px] z-0;
 }
 
 .floating-2 {
-  position: absolute;
-  top: 55%;
-  right: 400px;
-  width: 300px;
-  z-index: 1;
   animation: float 3s ease-in-out infinite;
+  @apply absolute bottom-3 w-2/5 xl:top-[55%] lg:right-0 xl:right-[400px] xl:w-[300px] z-0;
 }
