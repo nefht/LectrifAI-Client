@@ -86,7 +86,7 @@ export default function InformationTab({
                 title="Topic"
                 type="text"
                 //   required={true}
-                className={`block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 ${
+                className={`block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${
                   errors?.[EGeneratedSlideForm.TOPIC]
                     ? "outline-red-600"
                     : "outline-gray-300"
@@ -115,7 +115,7 @@ export default function InformationTab({
               id={EGeneratedSlideForm.WRITING_TONE}
               name={EGeneratedSlideForm.WRITING_TONE}
               value={presentationOptions[EGeneratedSlideForm.WRITING_TONE]}
-              className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
+              className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
               onChange={(e) => handleGetPresentationOptions(e)}
             >
               {writingTones.map((tone) => (
@@ -146,7 +146,7 @@ export default function InformationTab({
             }
           >
             <div className="relative mt-2">
-              <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6">
+              <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-2 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6">
                 <span className="col-start-1 row-start-1 flex items-center gap-3 pr-6">
                   <span className="block truncate">
                     {presentationOptions[EGeneratedSlideForm.WRITING_TONE] ||
@@ -198,7 +198,7 @@ export default function InformationTab({
               id={EGeneratedSlideForm.LANGUAGE}
               name={EGeneratedSlideForm.LANGUAGE}
               value={presentationOptions[EGeneratedSlideForm.LANGUAGE]}
-              className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
+              className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
               onChange={(e) => handleGetPresentationOptions(e)}
             >
               {languages.map((lang) => (
@@ -229,7 +229,7 @@ export default function InformationTab({
             }
           >
             <div className="relative mt-2">
-              <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6">
+              <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-2 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6">
                 <span className="col-start-1 row-start-1 flex items-center gap-3 pr-6">
                   <span className="block truncate">
                     {presentationOptions[EGeneratedSlideForm.LANGUAGE] ||
@@ -283,7 +283,7 @@ export default function InformationTab({
               value={presentationOptions[EGeneratedSlideForm.NUMBER_OF_SLIDES]}
               type="number"
               min={1}
-              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
+              className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
               onChange={(e) => handleGetPresentationOptions(e)}
             />
           </div>
@@ -306,7 +306,7 @@ export default function InformationTab({
                   presentationOptions[EGeneratedSlideForm.SPECIFIC_REQUIREMENTS]
                 }
                 rows={3}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
+                className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
                 onChange={(e) => handleGetPresentationOptions(e)}
               />
             </div>

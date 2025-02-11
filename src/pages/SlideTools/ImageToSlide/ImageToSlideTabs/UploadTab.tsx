@@ -3,10 +3,15 @@ import { Dialog, DialogPanel, Transition } from "@headlessui/react";
 import { TiDelete } from "react-icons/ti";
 import { IoClose } from "react-icons/io5";
 import { IoMdCloseCircle } from "react-icons/io";
+import { useImageToSlide } from "../hooks/useImageToSlide";
+import { EGeneratedSlideForm } from "../../constants/generated-slide-form";
 
 function UploadTab() {
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]); // Lưu danh sách URL ảnh
+  const [uploadedFilesUrls, setUploadedFilesUrls] = useState<string[]>([]); // Lưu danh sách URL ảnh
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]); // Lưu danh sách file ảnh
   const [viewedFile, setViewedFile] = useState<string>("");
+  const { presentationOptions, handleGetPresentationOptions } =
+    useImageToSlide();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -14,7 +19,11 @@ function UploadTab() {
       const fileUrls = Array.from(files).map((file) =>
         URL.createObjectURL(file)
       );
-      setUploadedFiles((prev) => [...prev, ...fileUrls]); // Cập nhật danh sách ảnh
+      setUploadedFilesUrls((prev) => [...prev, ...fileUrls]); // Cập nhật danh sách ảnh
+      setUploadedFiles((prev) => [...prev, ...files]); // Cập nhật danh sách file ảnh
+      handleGetPresentationOptions({
+        target: { name: EGeneratedSlideForm.CONTENT, value: uploadedFiles },
+      });
     }
   };
 
@@ -24,7 +33,7 @@ function UploadTab() {
 
   const handleRemoveUploadedFile = (url: string) => {
     // Xóa preview ảnh
-    setUploadedFiles((prev) => prev.filter((file) => file !== url));
+    setUploadedFilesUrls((prev) => prev.filter((file) => file !== url));
   };
 
   return (
@@ -33,7 +42,7 @@ function UploadTab() {
       <label
         htmlFor="dropzone-file"
         className={`flex flex-col items-center justify-center w-full mb-4 h-64 p-4 xl:p-0 border-2 border-purple-300 border-dashed rounded-lg cursor-pointer bg-purple-50 dark:bg-gray-700 hover:bg-purple-100 dark:border-purple-600 dark:hover:border-purple-500 dark:hover:bg-purple-600 ${
-          uploadedFiles.length > 0 ? "h-20" : ""
+          uploadedFilesUrls.length > 0 ? "h-20" : ""
         }`}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -61,6 +70,7 @@ function UploadTab() {
           </p>
         </div>
         <input
+          name={EGeneratedSlideForm.CONTENT}
           id="dropzone-file"
           type="file"
           accept="image/*"
@@ -71,9 +81,9 @@ function UploadTab() {
       </label>
 
       {/* Preview Images */}
-      {uploadedFiles.length > 0 && (
+      {uploadedFilesUrls.length > 0 && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4">
-          {uploadedFiles.map((file, index) => (
+          {uploadedFilesUrls.map((file, index) => (
             <div key={index} className="relative">
               <img
                 src={file}

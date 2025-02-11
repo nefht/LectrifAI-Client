@@ -7,6 +7,7 @@ import {
   templateSamples,
   templateStyles,
 } from "../../constants/template-constants";
+import DropdownInput from "../../../../components/DropdownInput/DropdownInput";
 
 interface TemplatesTabProps {
   presentationOptions: any;
@@ -35,7 +36,8 @@ const locations = [
     wrapperStyle: "p-0",
     containerStyle: "gap-y-4",
     stylesStyle: "",
-    templatesStyle: "flex grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-3",
+    templatesStyle:
+      "flex grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-3",
   },
 ];
 
@@ -114,49 +116,64 @@ export default function TemplatesTab({
               ))}
             </ul>
           ) : (
-            <Menu as="div" className="relative inline-block text-left w-full">
-              <div>
-                <MenuButton className="inline-flex w-full justify-between items-center rounded-lg bg-white px-4 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:ring-2 focus:ring-purple-400">
-                  {templateStyles.find(
-                    (style) =>
-                      style.value ===
-                      presentationOptions?.[EGeneratedSlideForm.TEMPLATE_STYLE]
-                  )?.label || "Select Template Style"}
-                  <ChevronDownIcon
-                    aria-hidden="true"
-                    className="-mr-1 h-6 w-5 text-gray-400"
-                  />
-                </MenuButton>
-              </div>
+            <DropdownInput
+              label=""
+              options={templateStyles}
+              selectedValue={
+                presentationOptions?.[EGeneratedSlideForm.TEMPLATE_STYLE]
+              }
+              onChange={(selectedStyle) =>
+                handleGetPresentationOptions({
+                  target: {
+                    name: EGeneratedSlideForm.TEMPLATE_STYLE,
+                    value: selectedStyle,
+                  },
+                })
+              }
+            />
+            // <Menu as="div" className="relative inline-block text-left w-full">
+            //   <div>
+            //     <MenuButton className="inline-flex w-full justify-between items-center rounded-lg bg-white px-4 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:ring-2 focus:ring-purple-400">
+            //       {templateStyles.find(
+            //         (style) =>
+            //           style.value ===
+            //           presentationOptions?.[EGeneratedSlideForm.TEMPLATE_STYLE]
+            //       )?.label || "Select Template Style"}
+            //       <ChevronDownIcon
+            //         aria-hidden="true"
+            //         className="-mr-1 h-6 w-5 text-gray-400"
+            //       />
+            //     </MenuButton>
+            //   </div>
 
-              <MenuItems className="absolute left-0 z-10 mt-2 w-full origin-top-left rounded-lg bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-                <div className="py-1">
-                  {templateStyles.map((style) => (
-                    <MenuItem key={style.value}>
-                      {({ active }) => (
-                        <button
-                          className={`block w-full px-4 py-2 text-sm text-left ${
-                            active
-                              ? "bg-purple-200 text-gray-900"
-                              : "text-gray-700"
-                          }`}
-                          onClick={() =>
-                            handleGetPresentationOptions({
-                              target: {
-                                name: EGeneratedSlideForm.TEMPLATE_STYLE,
-                                value: style.value,
-                              },
-                            })
-                          }
-                        >
-                          {style.label}
-                        </button>
-                      )}
-                    </MenuItem>
-                  ))}
-                </div>
-              </MenuItems>
-            </Menu>
+            //   <MenuItems className="absolute left-0 z-10 mt-2 w-full origin-top-left rounded-lg bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+            //     <div className="py-1">
+            //       {templateStyles.map((style) => (
+            //         <MenuItem key={style.value}>
+            //           {({ active }) => (
+            //             <button
+            //               className={`block w-full px-4 py-2 text-sm text-left ${
+            //                 active
+            //                   ? "bg-purple-200 text-gray-900"
+            //                   : "text-gray-700"
+            //               }`}
+            //               onClick={() =>
+            //                 handleGetPresentationOptions({
+            //                   target: {
+            //                     name: EGeneratedSlideForm.TEMPLATE_STYLE,
+            //                     value: style.value,
+            //                   },
+            //                 })
+            //               }
+            //             >
+            //               {style.label}
+            //             </button>
+            //           )}
+            //         </MenuItem>
+            //       ))}
+            //     </div>
+            //   </MenuItems>
+            // </Menu>
           )}
         </div>
 

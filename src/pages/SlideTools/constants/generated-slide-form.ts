@@ -7,6 +7,7 @@ export enum EGeneratedSlideForm {
   TEMPLATE_STYLE = "templateStyle",
   TEMPLATE_CODE = "templateCode",
   SPECIFIC_REQUIREMENTS = "specificRequirements",
+  SLIDE_LAYOUT = "slideLayout", // ImageToSlide: Extract text only/Include images
 }
 
 export interface GeneratedSlideFormModal {
@@ -24,6 +25,14 @@ export interface GeneratedSlideFormProcess {
   [EGeneratedSlideForm.WRITING_TONE]: string;
   [EGeneratedSlideForm.LANGUAGE]: string;
   [EGeneratedSlideForm.NUMBER_OF_SLIDES]: number;
+  [EGeneratedSlideForm.TEMPLATE_STYLE]: string;
+  [EGeneratedSlideForm.TEMPLATE_CODE]: string;
+}
+
+export interface GeneratedSlideFromImage {
+  [EGeneratedSlideForm.CONTENT]: string | File[];
+  [EGeneratedSlideForm.SLIDE_LAYOUT]: string; // "0" or "1"
+  [EGeneratedSlideForm.LANGUAGE]: string;
   [EGeneratedSlideForm.TEMPLATE_STYLE]: string;
   [EGeneratedSlideForm.TEMPLATE_CODE]: string;
 }

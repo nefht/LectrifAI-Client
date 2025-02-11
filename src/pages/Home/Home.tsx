@@ -99,10 +99,12 @@ function Home() {
               </span>
             </div>
             <p className={cx("description")}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+              Streamline your content creation with our AI-driven platform.
+              Generate slides from topics, documents, or images, and
+              effortlessly convert them into engaging lecture videos with AI
+              voice narration. Personalize content, enhance visuals, and create
+              interactive learning experiences—all in one smart, efficient, and
+              user-friendly tool!
             </p>
           </div>
         )}

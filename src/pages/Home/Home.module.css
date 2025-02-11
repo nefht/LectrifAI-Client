@@ -51,7 +51,7 @@
 
 .description {
   color: var(--description-color);
-  @apply text-lg xl:text-xl;
+  @apply text-lg xl:text-xl/relaxed;
 }
 
 @keyframes blink {
