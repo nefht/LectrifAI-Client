@@ -33,6 +33,7 @@ export default {
         universe: "url('/src/assets/images/home/dark-background.jpg')",
         "blur-gradient":
           "linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.2) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.7) 75%, white 100%)",
+        "lecture-universe": "url('/src/assets/images/lecture-video-generator/universe-lecture.jpg')",
       },
       keyframes: {
         "text-reveal": {

@@ -14,13 +14,17 @@
   }
 
   .custom-scrollbar {
-    @apply [&::-webkit-scrollbar]:w-2 
-    [&::-webkit-scrollbar-track]:rounded-full 
+    @apply [&::-webkit-scrollbar]:w-2
+    [&::-webkit-scrollbar]:h-2
+    [&::-webkit-scrollbar-track]:rounded-md
     [&::-webkit-scrollbar-track]:bg-gray-100 
-    [&::-webkit-scrollbar-thumb]:rounded-full 
-    [&::-webkit-scrollbar-thumb]:bg-gray-300
-    dark:[&::-webkit-scrollbar-track]:bg-neutral-700 
+    [&::-webkit-scrollbar-thumb]:rounded-md
+    [&::-webkit-scrollbar-thumb]:bg-black/30
+    dark:[&::-webkit-scrollbar-track]:bg-neutral-800 
     dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500;
+    /* Khi hover vào scrollbar thì thumb đậm hơn */
+    @apply [&::-webkit-scrollbar-thumb:hover]:bg-black/40
+    dark:[&::-webkit-scrollbar-thumb:hover]:bg-neutral-300;
   }
 }
 

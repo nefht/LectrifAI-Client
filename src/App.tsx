@@ -21,6 +21,9 @@ import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/Auth/ResetPassword/ResetPassword";
 import LectureVideoGenerator from "./pages/LectureTools/LectureVideoGenerator/LectureVideoGenerator";
 import InputConfiguration from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/InputConfiguration";
+import LectureVideoGeneratedProcess from "./pages/LectureTools/LectureVideoGenerator/LectureVideoGeneratedProcess";
+import ReviewLectureScript from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/ReviewLectureScript";
+import DownloadLectureVideo from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/DownloadLectureVideo";
 
 function App() {
   return (
@@ -58,9 +61,13 @@ function App() {
             <Route path="detail/:id" element={<LectureDetail />} />
             <Route path="generate-video" element={<LectureVideoGenerator />} />
             <Route
-              path="generate-video/input"
-              element={<InputConfiguration />}
-            />
+              path="generate-video-process"
+              element={<LectureVideoGeneratedProcess />}
+            >
+              <Route path="input" element={<InputConfiguration />} />
+              <Route path="review" element={<ReviewLectureScript />} />
+              <Route path="download" element={<DownloadLectureVideo />} />
+            </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
         </Route>

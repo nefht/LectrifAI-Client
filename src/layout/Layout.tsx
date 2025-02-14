@@ -12,9 +12,14 @@ function Layout() {
     "/slide/generate-process/template",
     "/slide/generate-process/outline",
     "/slide/generate-process/download",
+    // Image to slide
+    "/slide/image-to-slide",
     // Lecture video generator
     "/lecture/generate-video",
-    "/lecture/generate-video/input",
+    "/lecture/generate-video-process",
+    "/lecture/generate-video-process/input",
+    "/lecture/generate-video-process/review",
+    "/lecture/generate-video-process/download",
   ];
 
   const noHeaderPaddingRoutes = [

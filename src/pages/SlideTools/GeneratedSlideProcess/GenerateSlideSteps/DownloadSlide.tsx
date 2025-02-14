@@ -48,7 +48,7 @@ function DownloadSlide() {
       <p className="font-degular text-xl mb-4">
         Preview your presentation and download it as a PPTX or PDF file
       </p>
-      <SlidePresentation templateCode="minimalist-01" />
+      <SlidePresentation templateCode="minimalist-01" data={{} as any} />
       {/* <button
         className="border bg-green-600 w-[100px] text-white"
         onClick={downloadSlide}

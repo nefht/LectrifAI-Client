@@ -32,17 +32,21 @@ function HeaderDropdownOption({
   switch (optionTitle) {
     case "Slide Tools":
       itemConstants = SlideToolsConstants;
-      titleIcon = <FaWandMagicSparkles className="text-lg text-purple-800/60" />;
+      titleIcon = (
+        <FaWandMagicSparkles className="text-lg text-purple-800/60 dark:text-indigo-800/90" />
+      );
       break;
     case "Lecture Tools":
       itemConstants = LectureToolsConstants;
       titleIcon = (
-        <FaChalkboardTeacher className="text-lg text-purple-800/60" />
+        <FaChalkboardTeacher className="text-lg text-purple-800/60 dark:text-indigo-800/90" />
       );
       break;
     case "Templates":
       itemConstants = null;
-      titleIcon = <HiTemplate className="text-lg text-purple-800/60" />;
+      titleIcon = (
+        <HiTemplate className="text-lg text-purple-800/60 dark:text-indigo-800/90" />
+      );
       break;
     default:
       break;
@@ -55,7 +59,7 @@ function HeaderDropdownOption({
             <PopoverButton
               className={`flex items-center gap-x-1 xl:text-sm/6 text-ssm/6 font-semibold ${
                 open
-                  ? "text-purple-900 dark:text-purple-300"
+                  ? "text-purple-900 dark:text-indigo-300"
                   : "text-gray-900 dark:text-white"
               }`}
             >
@@ -91,7 +95,7 @@ function HeaderDropdownOption({
                       <div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
                         <item.icon
                           aria-hidden="true"
-                          className="size-6 text-gray-600 group-hover:text-purple-600"
+                          className="size-6 text-gray-600 group-hover:text-purple-600 dark:group-hover:text-indigo-600"
                         />
                       </div>
                       <div className="flex-auto">
@@ -111,7 +115,7 @@ function HeaderDropdownOption({
                   itemConstants?.otherTools?.length > 0 && (
                     <div>
                       <div className="flex items-center gap-3 mb-2 pb-2 ml-4 mr-4 border-b border-gray-300">
-                        <TbSettingsFilled className="text-lg text-purple-800/60" />
+                        <TbSettingsFilled className="text-lg text-purple-800/60 dark:text-indigo-800/90" />
                         <div className="font-semibold text-gray-900">
                           OTHER TOOLS
                         </div>
@@ -124,7 +128,7 @@ function HeaderDropdownOption({
                           <div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
                             <item.icon
                               aria-hidden="true"
-                              className="size-6 text-gray-600 group-hover:text-purple-600"
+                              className="size-6 text-gray-600 group-hover:text-purple-600 dark:group-hover:text-indigo-600"
                             />
                           </div>
                           <div className="flex-auto">

@@ -53,7 +53,7 @@ function LectureVideoGenerator() {
           <button
             type="button"
             className="flex gap-2 items-center justify-center mt-10 text-white text-xl bg-gradient-to-br from-purple-700 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-purple-700 font-medium rounded-lg px-5 py-2.5 text-center me-2 mb-2"
-            onClick={() => navigate("/lecture/generate-video/input")}
+            onClick={() => navigate("/lecture/generate-video-process/input")}
           >
             Get started
             <FaArrowRight />

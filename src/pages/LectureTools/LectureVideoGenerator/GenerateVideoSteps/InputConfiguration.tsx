@@ -3,10 +3,11 @@ import { useHeader } from "../../../../hooks/useHeader";
 import { useTheme } from "../../../../hooks/useTheme";
 import { FaFileImage, FaFilePowerpoint } from "react-icons/fa6";
 import LectureGeneralSettings from "../components/LectureGeneralSettings";
+import LectureContentSettings from "../components/LectureContentSettings";
 
 function InputConfiguration() {
-  const { setHeaderClass } = useHeader();
-  const { toggleTheme } = useTheme();
+  // const { setHeaderClass } = useHeader();
+  // const { toggleTheme } = useTheme();
   const [uploadedFile, setUploadedFile] = useState<File>(); // Lưu danh sách URL ảnh
   const fileAssets = [
     // .pptx
@@ -43,13 +44,13 @@ function InputConfiguration() {
     },
   ];
 
-  useEffect(() => {
-    setHeaderClass("bg-transparent border-none shadow-none");
-    toggleTheme("dark");
-    return () => {
-      toggleTheme("light");
-    };
-  });
+  // useEffect(() => {
+  //   setHeaderClass("bg-transparent border-none shadow-none");
+  //   toggleTheme("dark");
+  //   return () => {
+  //     toggleTheme("light");
+  //   };
+  // });
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     setUploadedFile(files?.[0]);
@@ -57,7 +58,7 @@ function InputConfiguration() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen bg-dark bg-gradient-to-b from-dark to-indigo-950 px-10 md:px-24 xl:px-40 pt-12 md:pt-20 pb-40">
+    <div className="flex flex-col items-center w-full min-h-screen bg-dark bg-gradient-to-b from-dark to-indigo-950 px-10 md:px-24 xl:px-40 pt-12 md:pt-20 pb-4">
       <h1 className="font-degular font-semibold text-center text-white text-2xl md:text-3xl xl:text-4xl">
         Generate your lecture video
       </h1>
@@ -158,6 +159,7 @@ function InputConfiguration() {
 
       {/* General information */}
       <LectureGeneralSettings />
+      <LectureContentSettings />
     </div>
   );
 }

@@ -5,7 +5,7 @@ interface TemplateMap {
 }
 
 const templates: TemplateMap = {
-  "minimalist-01": MinimalistTemplate01,
+  "minimalist-01":  MinimalistTemplate01,
 };
 
 export default templates;
