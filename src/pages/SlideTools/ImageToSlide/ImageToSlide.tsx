@@ -12,6 +12,7 @@ import helperService from "../../../services/helperService";
 import { SidebarButton } from "./ImageToSlideTabs/SidebarButton";
 import ImageTemplatesTab from "./ImageToSlideTabs/ImageTemplatesTab";
 import { ImageToSlideProvider } from "./context/ImageToSlideContext";
+import SlidePresentation from "../../../shared/templates/SlidePresentation";
 
 export interface TabProps {
   name: string;
@@ -82,9 +83,9 @@ function ImageToSlide() {
 
   return (
     <ImageToSlideProvider>
-      <div className="flex w-full h-full bg-gradient-to-b from-header to-background overflow-hidden">
+      <div className="flex w-full h-full-screen bg-gradient-to-b from-header to-background overflow-hidden">
         <div
-          className={`lg:flex xl:w-1/3 lg:relative flex fixed bg-white w-screen sm:w-[50vw] h-full-screen transform transition-transform duration-300 ease-in-out ${
+          className={`lg:flex xl:w-1/3 lg:relative flex fixed bg-white w-screen sm:w-[50vw] h-full-screen transform transition-transform duration-300 ease-in-out z-40 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -133,7 +134,7 @@ function ImageToSlide() {
 
         {/* Sidebar button */}
         <Draggable>
-          <div className="flex group fixed bottom-3 left-3 lg:hidden w-12 h-12">
+          <div className="flex group fixed bottom-3 left-3 lg:hidden w-12 h-12 z-50">
             <div className="text-white shadow-xl flex items-center justify-center p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 z-50 absolute hover:cursor-pointer">
               {isSidebarOpen ? (
                 <IoMdClose
@@ -213,14 +214,17 @@ function ImageToSlide() {
         /> */}
 
         {/* Slide preview */}
-        <iframe
+        {/* <iframe
           src="https://docs.google.com/presentation/d/1VJpqD1qkAJT0E2vcDRYDzMzDlybyFYQY/preview#slide=id.p1"
           width="100%"
           height="100%"
           frameBorder="0"
           title="Google Slides Viewer"
           className="w-full h-full-screen"
-        ></iframe>
+        ></iframe> */}
+        <div className="w-full lg:w-3/4 h-full-screen px-4 md:px-10 lg:px-10 xl:px-20 2xl:px-36 pt-8 lg:pt-10 2xl:pt-6">
+          <SlidePresentation templateCode="" data={{}} />
+        </div>
       </div>
     </ImageToSlideProvider>
   );

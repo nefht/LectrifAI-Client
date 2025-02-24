@@ -24,6 +24,7 @@ import InputConfiguration from "./pages/LectureTools/LectureVideoGenerator/Gener
 import LectureVideoGeneratedProcess from "./pages/LectureTools/LectureVideoGenerator/LectureVideoGeneratedProcess";
 import ReviewLectureScript from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/ReviewLectureScript";
 import DownloadLectureVideo from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/DownloadLectureVideo";
+import InstantLecturePresenter from "./pages/LectureTools/InstantLecturePresenter/InstantLecturePresenter";
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
               <Route path="review" element={<ReviewLectureScript />} />
               <Route path="download" element={<DownloadLectureVideo />} />
             </Route>
+            <Route path="instant-presenter" element={<InstantLecturePresenter />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Route>

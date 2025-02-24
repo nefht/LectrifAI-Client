@@ -27,7 +27,8 @@ export const ImageToSlideProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [presentationOptions, setPresentationOptions] =
     useState<GeneratedSlideFromImage>({
-      [EGeneratedSlideForm.CONTENT]: "",
+      [EGeneratedSlideForm.CONTENT]: [],
+      [EGeneratedSlideForm.FILE_URLS]: [],
       [EGeneratedSlideForm.SLIDE_LAYOUT]: "0",
       [EGeneratedSlideForm.LANGUAGE]: "",
       [EGeneratedSlideForm.TEMPLATE_STYLE]: templateStyles[0].value || "",

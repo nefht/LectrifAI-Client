@@ -17,7 +17,7 @@ const mainTools = [
   {
     name: "Instant Lecture Presenter",
     description: "Automatically present lectures from uploaded files",
-    href: "dsadsad",
+    href: "/lecture/instant-presenter",
     icon: FingerPrintIcon,
   },
   {

@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router";
 import { FaFilePdf, FaFileWord } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
@@ -58,7 +58,7 @@ function InputContent() {
     }
   }, [file]);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       handleGetPresentationOptions({

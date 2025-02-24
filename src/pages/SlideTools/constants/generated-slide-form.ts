@@ -1,6 +1,7 @@
 export enum EGeneratedSlideForm {
   TOPIC = "topic",
   CONTENT = "content",
+  FILE_URLS = "fileUrls",
   WRITING_TONE = "writingTone",
   LANGUAGE = "language",
   NUMBER_OF_SLIDES = "numberOfSlides",
@@ -30,7 +31,8 @@ export interface GeneratedSlideFormProcess {
 }
 
 export interface GeneratedSlideFromImage {
-  [EGeneratedSlideForm.CONTENT]: string | File[];
+  [EGeneratedSlideForm.CONTENT]: File[];
+  [EGeneratedSlideForm.FILE_URLS]: string[];
   [EGeneratedSlideForm.SLIDE_LAYOUT]: string; // "0" or "1"
   [EGeneratedSlideForm.LANGUAGE]: string;
   [EGeneratedSlideForm.TEMPLATE_STYLE]: string;

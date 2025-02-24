@@ -26,6 +26,26 @@
     @apply [&::-webkit-scrollbar-thumb:hover]:bg-black/40
     dark:[&::-webkit-scrollbar-thumb:hover]:bg-neutral-300;
   }
+
+  @keyframes gradient-wave {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .gradient-text {
+    background-image: linear-gradient(90deg, #a440b8, #863cae, #372fd1);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-wave 3s infinite ease-in-out;
+  }
 }
 
 :root {

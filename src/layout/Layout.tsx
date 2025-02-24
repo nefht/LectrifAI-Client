@@ -20,6 +20,8 @@ function Layout() {
     "/lecture/generate-video-process/input",
     "/lecture/generate-video-process/review",
     "/lecture/generate-video-process/download",
+    // Instant lecture presenter
+    "/lecture/instant-presenter",
   ];
 
   const noHeaderPaddingRoutes = [

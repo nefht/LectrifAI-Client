@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { MdOutlineUploadFile } from "react-icons/md";
 import { FiFileText } from "react-icons/fi";
 import { Link, useNavigate } from "react-router";
@@ -9,7 +9,7 @@ function DocumentToPptxConverter() {
   const { setHeaderClass } = useHeader();
   const navigate = useNavigate();
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       console.log(files[0]);
