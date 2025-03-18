@@ -119,14 +119,19 @@ export default function GeneratedSlideModal({
 
         if (response) {
           setSlideData(response);
-          const slideId = response[0].id;
-          navigate(`/slide/generate-process/outline/${slideId}`);
+          const slideId = response._id;
+          navigate(`/slide/generate-process/outline/${slideId}`, {
+            state: "modal",
+          });
         } else {
           showToast("error", "Failed to generate presentation.");
         }
       } catch (error) {
         console.error("Error generating presentation:", error);
-        showToast("error", (error as Error)?.message || "An unknown error occurred.");
+        showToast(
+          "error",
+          (error as Error)?.message || "An unknown error occurred."
+        );
       }
     } else {
       showToast("error", "Form is invalid.");

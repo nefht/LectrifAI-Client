@@ -9,14 +9,22 @@ import { useSlideExport } from "../../../hooks/useSlideExport";
 function GenerateSlideProcess() {
   const path = "/slide/generate-process";
   const { id } = useParams();
-  const processStepsPaths = [
-    { pathName: `${path}/input`, stepName: "Input data" },
-    { pathName: `${path}/template`, stepName: "Select template" },
-    { pathName: `${path}/outline/${id}`, stepName: "Review outline" },
-    { pathName: `${path}/download/${id}`, stepName: "Download slide" },
-  ];
-  const { setHeaderClass } = useHeader();
   const location = useLocation();
+  const mode = location.state;
+  const processStepsPaths =
+    mode == "modal"
+      ? [
+          { pathName: `${path}/outline/${id}`, stepName: "Review outline" },
+          { pathName: `${path}/download/${id}`, stepName: "Download slide" },
+        ]
+      : [
+          { pathName: `${path}/input`, stepName: "Input data" },
+          { pathName: `${path}/template`, stepName: "Select template" },
+          { pathName: `${path}/outline/${id}`, stepName: "Review outline" },
+          { pathName: `${path}/download/${id}`, stepName: "Download slide" },
+        ];
+  const reviewOutlinePath = `${path}/outline/${id}`;
+  const { setHeaderClass } = useHeader();
   const { exportPptx } = useSlideExport();
 
   // Custom header CSS
@@ -45,7 +53,7 @@ function GenerateSlideProcess() {
   return (
     <GeneratedSlideProcessProvider>
       {/* Step navigation */}
-      <div className="flex justify-center items-center md:space-x-4 pt-2 md:pt-10 bg-header ">
+      <div className="flex justify-center items-center md:space-x-4 pt-2 md:pt-10 bg-header overflow-x-hidden">
         {processStepsPaths.map((step, index) => (
           <div
             key={index}
@@ -72,7 +80,13 @@ function GenerateSlideProcess() {
         ))}
       </div>
 
-      <div className="flex flex-col gap-2 items-center w-full h-auto min-h-screen bg-header px-8 sm:px-20 pt-8 md:pt-10 lg:px-40 xl:px-60 2xl:px-96">
+      <div
+        className={`flex flex-col gap-2 items-center w-full h-auto min-h-screen bg-header px-8 pt-8 md:pt-10 ${
+          location.pathname === reviewOutlinePath
+            ? "sm:px-20"
+            : "sm:px-20 lg:px-40 xl:px-60 2xl:px-96"
+        }`}
+      >
         <Outlet />
         <div className="flex gap-2 items-center justify-end w-full mt-10 mb-20">
           {location.pathname !== processStepsPaths[0].pathName && (

@@ -18,10 +18,21 @@ export const DragAndDropContainer: FC<DragAndDropContainerProps> = ({
 }) => {
   const [cards, setCards] = useState(cardList.slides);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const titleRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     setCards(cardList.slides);
   }, [cardList]);
+
+  // Handle textarea auto-expand
+  useEffect(() => {
+    const textarea = titleRef.current;
+    if (textarea) {
+      // Adjust height based on content
+      textarea.style.height = "auto"; // Reset the height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scrollHeight
+    }
+  }, [cardList.title]);
 
   const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
     setCards((prevCards) =>
@@ -119,7 +130,7 @@ export const DragAndDropContainer: FC<DragAndDropContainerProps> = ({
     });
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newTitle = e.target.value;
     setCardList((prevState) => {
       return {
@@ -131,7 +142,7 @@ export const DragAndDropContainer: FC<DragAndDropContainerProps> = ({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex 2xl:w-max gap-10">
+      <div className="flex 2xl:w-full gap-10">
         <div className="hidden 2xl:block 2xl:w-[20%] 2xl:max-h-[70vh] sticky top-24 left-5 mt-2 ml-4 self-start rounded-lg bg-white shadow-lg overflow-scroll overflow-x-hidden custom-scrollbar">
           <div className="flex items-center justify-center w-full p-3 sticky top-0 bg-white font-semibold text-xl">
             Presentation outline
@@ -152,15 +163,16 @@ export const DragAndDropContainer: FC<DragAndDropContainerProps> = ({
             </ul>
           </div>
         </div>
-        <div className="w-full 2xl:w-[60%]">
+        <div className="w-[70vw] 2xl:w-[60%]">
           <div className="w-full flex items-stretch justify-center bg-white border border-gray-300 rounded-md my-2 overflow-hidden shadow-lg">
             <div className="flex items-center justify-center w-12 bg-purple-300 border-r border-gray-300 font-bold text-gray-700">
               Title
             </div>
-            <input
-              type="text"
+            <textarea
+              ref={titleRef}
+              rows={1}
               value={cardList.title}
-              className="w-full border-none px-6 py-4 font-semibold text-lg focus:outline-none focus:ring-0"
+              className="w-full border-none resize-none px-6 py-4 font-semibold text-lg focus:outline-none focus:ring-0"
               onChange={handleTitleChange}
             />
           </div>

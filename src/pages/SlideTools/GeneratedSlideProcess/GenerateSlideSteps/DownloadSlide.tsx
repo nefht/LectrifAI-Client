@@ -6,8 +6,6 @@ import { useSlideData } from "../../hooks/useSlideData";
 import { useGeneratedSlide } from "../hooks/useGeneratedSlide";
 import { EGeneratedSlideForm } from "../../constants/generated-slide-form";
 import generatedSlideService from "../../service/generatedSlideService";
-import DocViewer from "react-doc-viewer";
-
 
 function DownloadSlide() {
   const { id } = useParams();

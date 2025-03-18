@@ -3,5 +3,5 @@
 }
 
 .quill {
-  @apply max-w-[65vw];
+  @apply w-full max-w-[65vw];
 }
