@@ -1,0 +1,7 @@
+.ql-editor ol > li {
+  /* @apply xl:text-xs; */
+}
+
+.quill {
+  @apply max-w-[65vw];
+}

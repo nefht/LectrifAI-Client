@@ -20,6 +20,7 @@ import {
 } from "../../constants/template-constants";
 import { useNavigate } from "react-router";
 import generatedSlideService from "../../service/generatedSlideService";
+import { useSlideData } from "../../hooks/useSlideData";
 
 interface GeneratedSlideModalProps {
   open: boolean;
@@ -36,6 +37,7 @@ export default function GeneratedSlideModal({
   const [languages, setLanguages] = useState([
     { code: "eng", name: "English" },
   ]);
+  const { setSlideData } = useSlideData();
 
   // Form options
   const [presentationOptions, setPresentationOptions] =
@@ -110,41 +112,21 @@ export default function GeneratedSlideModal({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (validateForm()) {
-      showToast("success", "Form is valid, submitting...");
       try {
         const response = await generatedSlideService.generateSlideContent(
           presentationOptions
         );
 
         if (response) {
-          const blob = new Blob([response], {
-            type: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-          });
-
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute(
-            "download",
-            `${
-              presentationOptions[EGeneratedSlideForm.TOPIC]
-            }_Presentation.pptx`
-          );
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-
-          showToast("success", "Presentation downloaded successfully.");
+          setSlideData(response);
+          const slideId = response[0].id;
+          navigate(`/slide/generate-process/outline/${slideId}`);
         } else {
           showToast("error", "Failed to generate presentation.");
         }
       } catch (error) {
         console.error("Error generating presentation:", error);
-        showToast(
-          "error",
-          "An error occurred while generating the presentation."
-        );
+        showToast("error", (error as Error)?.message || "An unknown error occurred.");
       }
     } else {
       showToast("error", "Form is invalid.");
@@ -193,14 +175,14 @@ export default function GeneratedSlideModal({
         />
       ),
     },
-    {
-      title: "Custom",
-      icon: <MdDashboardCustomize />,
-    },
-    {
-      title: "Setting",
-      icon: <IoMdSettings />,
-    },
+    // {
+    //   title: "Custom",
+    //   icon: <MdDashboardCustomize />,
+    // },
+    // {
+    //   title: "Setting",
+    //   icon: <IoMdSettings />,
+    // },
   ];
 
   return (
@@ -252,7 +234,11 @@ export default function GeneratedSlideModal({
                     {/* Hiển thị nội dung tab */}
                     {modalTabs.map((tab, index) => {
                       if (tab.title === selectedTab)
-                        return <div key={index} className="w-full h-full">{tab.tab}</div>;
+                        return (
+                          <div key={index} className="w-full h-full">
+                            {tab.tab}
+                          </div>
+                        );
                       return null;
                     })}
                   </div>

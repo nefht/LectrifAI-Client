@@ -6,17 +6,26 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { ToastProvider } from "./context/ToastContext";
 import { HeaderProvider } from "./context/HeaderContext";
 import { SlideExportProvider } from "./context/SlideExportContext";
+import { SlideDataProvider } from "./pages/SlideTools/context/SlideDataContext";
+import { AuthProvider } from "./context/AuthContext";
+import { BrowserRouter } from "react-router";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
-      <ToastProvider>
-        <HeaderProvider>
-          <SlideExportProvider>
-            <App />
-          </SlideExportProvider>
-        </HeaderProvider>
-      </ToastProvider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <HeaderProvider>
+              <SlideDataProvider>
+                <SlideExportProvider>
+                  <App />
+                </SlideExportProvider>
+              </SlideDataProvider>
+            </HeaderProvider>
+          </ToastProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </StrictMode>
 );

@@ -1,13 +1,21 @@
 import type { Identifier, XYCoord } from "dnd-core";
 import type { FC } from "react";
-import { useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { useDrag, useDrop } from "react-dnd";
 import { FaCirclePlus, FaRegTrashCan } from "react-icons/fa6";
 import "animate.css";
-import { convertSlideDataToHtml } from "../../utils/ConvertSlideDataToHtml";
+import {
+  convertHtmlToBulletPoints,
+  convertSlideDataToHtml,
+} from "../../utils/ConvertSlideData";
 import DeleteModal from "../NotificationModal/DeleteModal";
+import "./Card.css";
+import { SlideData } from "./constants/slide-data";
+import { TiDelete } from "react-icons/ti";
+import { Dialog, Transition } from "@headlessui/react";
+import { IoClose } from "react-icons/io5";
 
 export const ItemTypes = {
   CARD: "card",
@@ -17,10 +25,11 @@ export interface CardProps {
   index: number;
   heading: string;
   bulletPoints: (string | string[])[];
-  images: string[];
+  imageUrls: { title: string; imageUrl: string }[];
   moveCard: (dragIndex: number, hoverIndex: number) => void;
   addCard: (index: number) => void;
   deleteCard: (index: number) => void;
+  setCardList: React.Dispatch<React.SetStateAction<SlideData>>;
 }
 
 interface DragItem {
@@ -33,29 +42,39 @@ export const Card: FC<CardProps> = ({
   index,
   heading,
   bulletPoints,
-  images,
+  imageUrls,
   moveCard,
   addCard,
   deleteCard,
+  setCardList,
 }) => {
   const dragRef = useRef<HTMLDivElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
   const [isClicked, setIsClicked] = useState(false);
   const [deleteCardModalOpen, setDeleteCardModalOpen] = useState(false);
 
+  const [currentHeading, setCurrentHeading] = useState(heading);
+  const [currentBulletPoints, setCurrentBulletPoints] =
+    useState<(string | string[])[]>(bulletPoints);
+  const [currentImages, setCurrentImages] = useState(imageUrls);
+  const [viewedFile, setViewedFile] = useState<string>("");
+
+  // Ref for the heading textarea to dynamically adjust its height
+  const headingRef = useRef<HTMLTextAreaElement | null>(null);
+
   // Quill editor modules and formats
   const modules = {
     toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
+      // [{ header: [1, 2, false] }],
+      // ["bold", "italic", "underline", "strike", "blockquote"],
       [
         { list: "ordered" },
         { list: "bullet" },
         { indent: "-1" },
         { indent: "+1" },
       ],
-      ["link", "image"],
-      ["clean"],
+      // ["link", "image"],
+      // ["clean"],
     ],
   };
 
@@ -161,8 +180,151 @@ export const Card: FC<CardProps> = ({
     setDeleteCardModalOpen(false);
   };
 
+  useEffect(() => {
+    setCurrentHeading(heading);
+  }, [heading]);
+
+  // Handle textarea auto-expand
+  useEffect(() => {
+    const textarea = headingRef.current;
+    if (textarea) {
+      // Adjust height based on content
+      textarea.style.height = "auto"; // Reset the height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scrollHeight
+    }
+  }, [currentHeading]); // Re-run when heading changes
+
+  const handleHeadingChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newHeading = e.target.value;
+    setCurrentHeading(newHeading);
+
+    // Update the parent cardList
+    setCardList((prevState) => {
+      const updatedSlides = [...prevState.slides];
+      updatedSlides[index].heading = newHeading; // Update the heading for this card
+      return {
+        ...prevState,
+        slides: updatedSlides,
+      };
+    });
+  };
+
+  const handleBulletPointsChange = (newBulletPoints: (string | string[])[]) => {
+    setCurrentBulletPoints(newBulletPoints);
+
+    // Update the parent cardList
+    setCardList((prevState) => {
+      const updatedSlides = [...prevState.slides];
+      updatedSlides[index].bulletPoints = newBulletPoints; // Update the bullet points for this card
+      return {
+        ...prevState,
+        slides: updatedSlides,
+      };
+    });
+  };
+
+  // Handle ReactQuill changes - fix sau
+  const handleQuillChange = (newContent: string) => {
+    const bulletPoints = convertHtmlToBulletPoints(newContent);
+    // handleBulletPointsChange(bulletPoints);
+  };
+
+  // Xóa ảnh khi không tải được
+  const handleImageError = (url: string) => {
+    const updatedImages = currentImages.filter(
+      (image) => image.imageUrl !== url
+    );
+    setCurrentImages(updatedImages);
+
+    // Cập nhật lại state của cardList
+    setCardList((prevState) => {
+      const updatedSlides = [...prevState.slides];
+      updatedSlides[index].imageUrls = updatedImages;
+      return {
+        ...prevState,
+        slides: updatedSlides,
+      };
+    });
+  };
+
+  // Thêm ảnh vào danh sách
+  const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const fileUrls = Array.from(files).map((file) => ({
+        title: file.name,
+        imageUrl: URL.createObjectURL(file),
+      }));
+      setCurrentImages((prevImages) => [...prevImages, ...fileUrls]);
+
+      setCardList((prevState) => {
+        const updatedSlides = [...prevState.slides];
+        updatedSlides[index].imageUrls = [...currentImages, ...fileUrls];
+        return {
+          ...prevState,
+          slides: updatedSlides,
+        };
+      });
+    }
+  };
+
+  // Xóa ảnh khỏi danh sách
+  const handleRemoveImage = (url: string) => {
+    const updatedImages = currentImages.filter(
+      (image) => image.imageUrl !== url
+    );
+    setCurrentImages(updatedImages);
+
+    setCardList((prevState) => {
+      const updatedSlides = [...prevState.slides];
+      updatedSlides[index].imageUrls = updatedImages;
+      return {
+        ...prevState,
+        slides: updatedSlides,
+      };
+    });
+  };
+
+  const handleViewFile = (url: string) => {
+    setViewedFile(url);
+  };
+
   return (
     <>
+      {viewedFile && (
+        <Transition show={viewedFile.length > 0} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-50"
+            onClose={() => setViewedFile("")}
+          >
+            <div className="fixed inset-0 flex items-center justify-center p-4">
+              <div
+                className="absolute inset-0 bg-gray-500/50"
+                onClick={() => setViewedFile("")}
+              />
+              <IoClose
+                onClick={() => setViewedFile("")}
+                className="absolute top-2 right-2 text-gray-700 rounded-full w-10 h-10 hover:cursor-pointer hover:text-gray-900"
+              />
+              <Transition.Child
+                as={Fragment}
+                enter="transform transition ease-out duration-500"
+                enterFrom="translate-y-4 opacity-0"
+                enterTo="translate-y-0 opacity-100"
+                leave="transform transition ease-in duration-500"
+                leaveFrom="translate-y-0 opacity-100"
+                leaveTo="translate-y-4 opacity-0"
+              >
+                <Dialog.Panel className="pointer-events-auto relative bg-white rounded-lg shadow-xl max-w-6xl max-h-[90vh] lg:max-h-full overflow-auto hide-scrollbar">
+                  <img src={viewedFile} alt="Viewed file" className="w-full" />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </Dialog>
+        </Transition>
+      )}
+
       {deleteCardModalOpen && (
         <DeleteModal
           open={deleteCardModalOpen}
@@ -185,7 +347,7 @@ export const Card: FC<CardProps> = ({
           style={{ opacity }}
         >
           <FaRegTrashCan
-            className={`absolute top-5 right-5 hover:text-purple-700 hover:cursor-pointer transform hover:scale-125 transition-transform duration-200 ease-in-out hover:shadow-lg`}
+            className={`absolute top-6 right-5 hover:text-purple-700 hover:cursor-pointer transform hover:scale-125 transition-transform duration-200 ease-in-out hover:shadow-lg`}
             onClick={() => setDeleteCardModalOpen(true)}
           />
           <div
@@ -195,21 +357,39 @@ export const Card: FC<CardProps> = ({
             {/* {isDragging ? <FiMove /> : index + 1} */}
             {index + 1}
           </div>
-          <div className="w-full p-4 overflow-auto">
+          <div className="w-full p-4 pr-6 overflow-auto">
             <textarea
+              ref={headingRef}
               className="border-none w-full text-lg font-semibold resize-none focus:outline-none focus:ring-0"
               rows={1}
               value={heading}
-              onChange={(e) => console.log(e.target.value)}
+              onChange={handleHeadingChange}
             />
             <ReactQuill
+              className=""
               modules={modules}
               formats={formats}
-              value={convertSlideDataToHtml([
-                { heading, bulletPoints, images },
-              ])}
-              onChange={(e) => console.log(e)}
+              value={convertSlideDataToHtml([{ bulletPoints, imageUrls }])}
+              onChange={handleQuillChange}
             ></ReactQuill>
+            <div className="mt-2 flex gap-4">
+              {currentImages.map((image, i) => (
+                <div key={i} className="relative">
+                  <img
+                    key={i}
+                    src={image?.imageUrl}
+                    alt="Slide image"
+                    className="max-w-32 h-auto my-2 cursor-pointer"
+                    onClick={() => handleViewFile(image?.imageUrl)}
+                    onError={() => handleImageError(image?.imageUrl)}
+                  />
+                  <TiDelete
+                    onClick={() => handleRemoveImage(image?.imageUrl)}
+                    className="absolute top-2 right-0 text-red-500 rounded-full w-7 h-7 hover:cursor-pointer hover:bg-red-700"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div

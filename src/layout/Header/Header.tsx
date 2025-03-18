@@ -9,6 +9,8 @@ import CategorySearchBar from "../../components/CategorySearchBar/CategorySearch
 import HeaderDropdownOption from "../../layout/Header/HeaderDropdownOption/HeaderDropdownOption";
 import { useHeader } from "../../hooks/useHeader";
 import { useTheme } from "../../hooks/useTheme";
+import LoginAvatar from "../../components/LoginAvatar/LoginAvatar";
+import { useAuth } from "../../hooks/useAuth";
 
 function Header() {
   const navigate = useNavigate();
@@ -20,6 +22,7 @@ function Header() {
   const { headerClass } = useHeader();
   // theme context
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (headerRef.current) {
@@ -108,16 +111,17 @@ function Header() {
             <CategorySearchBar />
           </div>
           <div className="hidden lg:flex lg:justify-end ml-4">
-            <Button
-              color={theme === "dark" ? "indigo" : "purple"}
-              className={styles["login-button"]}
-              onClick={() => navigate("/login")}
-            >
-              Log in
-            </Button>
-            {/* <a href="#" className="text-sm/6 font-semibold text-gray-900">
-              Log in <span aria-hidden="true">&rarr;</span>
-            </a> */}
+            {!isAuthenticated ? (
+              <Button
+                color={theme === "dark" ? "indigo" : "purple"}
+                className={styles["login-button"]}
+                onClick={() => navigate("/login")}
+              >
+                Log in
+              </Button>
+            ) : (
+              <LoginAvatar />
+            )}
           </div>
         </nav>
         <Dialog

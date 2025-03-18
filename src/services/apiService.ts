@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useToast } from "../hooks/useToast";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,10 +10,10 @@ const api = axios.create({
   },
 });
 
-// Thêm interceptor (nếu cần) để quản lý token hoặc xử lý lỗi
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const authData = JSON.parse(localStorage.getItem("authData") || "null");
+    const token = authData?.token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -13,7 +13,7 @@ function LectureGeneralSettings() {
       <p className="font-semibold text-base text-white my-2">
         General information
       </p>
-      <p className="text-base text-gray-400 mb-6">
+      <p className="text-sm/6 text-gray-400 mb-6">
         Customize your lecture video with the below options.
       </p>
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8">

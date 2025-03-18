@@ -16,23 +16,23 @@ export const templateSamples = [
     style: "minimalist",
     samples: [
       {
-        code: "minimalist-1",
+        code: "minimalist-01",
         image: minimalist1,
       },
       {
-        code: "minimalist-2",
+        code: "minimalist-02",
         image: minimalist2,
       },
       {
-        code: "minimalist-3",
+        code: "minimalist-03",
         image: minimalist3,
       },
       {
-        code: "minimalist-4",
+        code: "minimalist-04",
         image: minimalist4,
       },
       {
-        code: "minimalist-5",
+        code: "minimalist-05",
         image: minimalist5,
       },
     ],

@@ -1,5 +1,5 @@
 export enum EGeneratedSlideForm {
-  TOPIC = "topic",
+  TOPIC = "topicText",
   CONTENT = "content",
   FILE_URLS = "fileUrls",
   WRITING_TONE = "writingTone",

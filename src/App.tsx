@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router";
+import { Routes, Route, useNavigate } from "react-router";
 import "./index.css";
 import Home from "./pages/Home/Home";
 import LecturesList from "./pages/Lecture/LecturesList/LecturesList";
@@ -25,56 +25,81 @@ import LectureVideoGeneratedProcess from "./pages/LectureTools/LectureVideoGener
 import ReviewLectureScript from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/ReviewLectureScript";
 import DownloadLectureVideo from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/DownloadLectureVideo";
 import InstantLecturePresenter from "./pages/LectureTools/InstantLecturePresenter/InstantLecturePresenter";
+import { useToast } from "./hooks/useToast";
+import { useEffect } from "react";
+import api from "./services/apiService";
 
 function App() {
+  const { showToast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    api.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          if (location.pathname === "/login") {
+            return Promise.reject(error);
+          }
+          showToast("error", "Please login to continue");
+          navigate("/login");
+        }
+        return Promise.reject(error);
+      }
+    );
+  }, []);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/forgot-password/:id" element={<ResetPassword />} />
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="/lecture">
-            <Route path="list" element={<LecturesList />} />
-            <Route path="detail/:id" element={<LectureDetail />} />
-          </Route>
-          <Route path="/slide">
-            <Route path="list" element={<SlidesList />} />
-            <Route path="detail/:id" element={<SlideDetail />} />
-            <Route path="generate" element={<PresentationMaker />} />
-            <Route
-              path="document-to-pptx-convert"
-              element={<DocumentToPptxConverter />}
-            />
-            <Route path="generate-process" element={<GenerateSlideProcess />}>
-              <Route path="input" element={<InputContent />} />
-              <Route path="template" element={<SelectStyle />} />
-              <Route path="outline" element={<ReviewOutline />} />
-              <Route path="download" element={<DownloadSlide />} />
-            </Route>
-            <Route path="image-to-slide" element={<ImageToSlide />} />
-            <Route path="enhance" />
-          </Route>
-          <Route path="/lecture">
-            <Route path="list" element={<LecturesList />} />
-            <Route path="detail/:id" element={<LectureDetail />} />
-            <Route path="generate-video" element={<LectureVideoGenerator />} />
-            <Route
-              path="generate-video-process"
-              element={<LectureVideoGeneratedProcess />}
-            >
-              <Route path="input" element={<InputConfiguration />} />
-              <Route path="review" element={<ReviewLectureScript />} />
-              <Route path="download" element={<DownloadLectureVideo />} />
-            </Route>
-            <Route path="instant-presenter" element={<InstantLecturePresenter />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/forgot-password/:id" element={<ResetPassword />} />
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="/lecture">
+          <Route path="list" element={<LecturesList />} />
+          <Route path="detail/:id" element={<LectureDetail />} />
         </Route>
-      </Routes>
-    </BrowserRouter>
+        <Route path="/slide">
+          <Route path="list" element={<SlidesList />} />
+          <Route path="detail/:id" element={<SlideDetail />} />
+          <Route path="generate" element={<PresentationMaker />} />
+          <Route
+            path="document-to-pptx-convert"
+            element={<DocumentToPptxConverter />}
+          />
+          <Route path="generate-process" element={<GenerateSlideProcess />}>
+            <Route path="input" element={<InputContent />} />
+            <Route path="template" element={<SelectStyle />} />
+            <Route path="outline/:id" element={<ReviewOutline />} />
+            <Route path="download/:id" element={<DownloadSlide />} />
+          </Route>
+          <Route path="image-to-slide" element={<ImageToSlide />} />
+          <Route path="enhance" />
+        </Route>
+        <Route path="/lecture">
+          <Route path="list" element={<LecturesList />} />
+          <Route path="detail/:id" element={<LectureDetail />} />
+          <Route path="generate-video" element={<LectureVideoGenerator />} />
+          <Route
+            path="generate-video-process"
+            element={<LectureVideoGeneratedProcess />}
+          >
+            <Route path="input" element={<InputConfiguration />} />
+            <Route path="review" element={<ReviewLectureScript />} />
+            <Route path="download" element={<DownloadLectureVideo />} />
+          </Route>
+          <Route
+            path="instant-presenter"
+            element={<InstantLecturePresenter />}
+          />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }
 

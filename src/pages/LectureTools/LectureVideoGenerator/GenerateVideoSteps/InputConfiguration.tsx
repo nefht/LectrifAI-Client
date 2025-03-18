@@ -160,6 +160,25 @@ function InputConfiguration() {
       {/* General information */}
       <LectureGeneralSettings />
       <LectureContentSettings />
+      <div className="col-span-full w-full lg:w-2/3 xl:w-3/5 my-2 mt-6">
+        <label
+          htmlFor="specificRequirements"
+          className="block text-base font-medium text-white"
+        >
+          Specific requirements
+        </label>
+        <p className="mt-2 text-sm/6 text-gray-400">
+          Write your own requirements of the presentation you want to create.
+        </p>
+        <div className="mt-4">
+          <textarea
+            id="specificRequirements"
+            name="specificRequirements"
+            rows={3}
+            className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 sm:text-sm/6 border-none"
+          />
+        </div>
+      </div>
     </div>
   );
 }

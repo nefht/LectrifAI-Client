@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import styles from "./Login.module.css";
@@ -8,12 +8,46 @@ import decorImg from "../../../assets/images/login/decor-bg.svg";
 import planetImg from "../../../assets/images/login/planet.svg";
 import astronautImg from "../../../assets/images/astronaut.svg";
 import googleLogo from "../../../assets/images/login/google-logo.webp";
+import authService from "../services/authService";
+import { useAuth } from "../../../hooks/useAuth";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loginForm, setLoginForm] = useState({
+    account: "",
+    password: "",
+  });
+  const [rememberMe, setRememberMe] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const handleChangeLoginForm = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      console.log("Logging in...", loginForm);
+      const response = await authService.login(
+        loginForm.account,
+        loginForm.password,
+        rememberMe
+      );
+
+      login(response.token, response.user, rememberMe);
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to login:", error);
+    }
   };
 
   return (
@@ -48,7 +82,12 @@ function Login() {
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-800 md:text-2xl dark:text-white">
             Sign in to your account
           </h1>
-          <form className="space-y-4 md:space-y-6" method="POST" action="#">
+          <form
+            className="space-y-4 md:space-y-6"
+            method="POST"
+            action="#"
+            onSubmit={handleLogin}
+          >
             <div>
               <label
                 htmlFor="account"
@@ -62,6 +101,8 @@ function Login() {
                 id="account"
                 className="bg-gray-50 border border-gray-300 text-gray-800 rounded-lg focus:ring-purple-600 focus:border-purple-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                 placeholder="Your account here!"
+                value={loginForm.account}
+                onChange={handleChangeLoginForm}
               />
             </div>
             <div>
@@ -78,6 +119,8 @@ function Login() {
                   id="password"
                   placeholder="••••••••"
                   className="relative bg-gray-50 border border-gray-300 text-gray-800 rounded-lg focus:ring-purple-600 focus:border-purple-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                  value={loginForm.password}
+                  onChange={handleChangeLoginForm}
                 />
                 <button
                   type="button"
@@ -112,6 +155,8 @@ function Login() {
                     aria-describedby="remember"
                     type="checkbox"
                     className="w-4 h-4 border border-gray-300 rounded bg-gray-50 checked:border-purple-600 checked:bg-purple-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 focus:ring-3 focus:ring-purple-400 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-purple-600 dark:ring-offset-gray-800"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe((prev) => !prev)}
                   />
                 </div>
                 <div className="ml-3 text-sm">
