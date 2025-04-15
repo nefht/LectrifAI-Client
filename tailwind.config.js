@@ -13,6 +13,7 @@ export default {
       fontSize: {
         ssm: "14px",
         sm: "15px",
+        md: "17px",
       },
       colors: {
         primary: "#6E52EE",
@@ -28,6 +29,7 @@ export default {
       },
       height: {
         "full-screen": "calc(100vh - 4rem)",
+        "header": "4rem",
       },
       backgroundImage: {
         universe: "url('/src/assets/images/home/dark-background.jpg')",

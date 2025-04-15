@@ -8,19 +8,14 @@ import api from "../../../services/apiService";
  * @param password Password
  * @returns User information
  */
-export const register = async (
-  fullName: string,
-  email: string,
-  account: string,
-  password: string
-) => {
+export const register = async (body: {
+  fullName: string;
+  email: string;
+  account: string;
+  password: string;
+}) => {
   try {
-    const response = await api.post("/auth/register", {
-      fullName,
-      email,
-      account,
-      password,
-    });
+    const response = await api.post("/auth/register", body);
     return response.data;
   } catch (error: any) {
     console.error("Failed to register:", error);
@@ -35,9 +30,17 @@ export const register = async (
  * @param rememberMe Remember me
  * @returns User information
  */
-export const login = async (account: string, password: string, rememberMe: boolean) => {
+export const login = async (
+  account: string,
+  password: string,
+  rememberMe: boolean
+) => {
   try {
-    const response = await api.post("/auth/login", { account, password, rememberMe });
+    const response = await api.post("/auth/login", {
+      account,
+      password,
+      rememberMe,
+    });
     return response.data;
   } catch (error: any) {
     console.error("Failed to login:", error);

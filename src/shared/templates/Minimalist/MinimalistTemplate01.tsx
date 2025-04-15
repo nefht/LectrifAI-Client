@@ -1,9 +1,12 @@
 import { Image, Slide, Text, Table, Shape, Line } from "react-pptx";
 import titleSlideImg from "../../../assets/templates/minimalist-01/title-slide.png";
+import tocImg from "../../../assets/templates/minimalist-01/toc.png";
 import contentSlideImg from "../../../assets/templates/minimalist-01/content-slide.png";
 import contentSlide2Img from "../../../assets/templates/minimalist-01/content-slide-2.png";
+import { ExportSlideData } from "../constants/export-slide-data";
 
 function MinimalistTemplate01(data: any) {
+  let mainTitleIndex = 1;
   console.log(data);
   // Title slide
   const titleSlide = [
@@ -43,12 +46,113 @@ function MinimalistTemplate01(data: any) {
     </Slide>,
   ];
 
-  const contentSlideV1 = (slideData: {
-    heading: string;
-    bulletPoints: (string | string)[];
-    imageSuggestions: string[];
-    imageUrls: { title: string; imageUrl: string }[];
-  }) => {
+  // Table of Contents slide
+  const tableOfContent = (slideData: ExportSlideData) => {
+    const totalTitles = slideData.bulletPoints.length;
+    const textHeight = totalTitles > 6 ? totalTitles * 0.25 : totalTitles * 1;
+    if (totalTitles > 6) {
+      return [
+        <Slide
+          key="toc"
+          style={{ backgroundImage: { kind: "path", path: tocImg } }}
+        >
+          <Text
+            style={{
+              x: 0.5,
+              y: 0.5,
+              w: "90%",
+              h: 0.5,
+              fontSize: 20,
+              bold: true,
+            }}
+          >
+            {slideData.heading.toUpperCase()}
+          </Text>
+
+          <Text style={{ x: 1, y: 1, w: "80%", h: textHeight, fontSize: 15 }}>
+            {slideData.bulletPoints.map((bulletPoint, index) => {
+              return (
+                <Text.Bullet
+                  key={index}
+                  style={{
+                    fontSize: 15,
+                    bold: true,
+                  }}
+                >
+                  {index + 1 + ". " + bulletPoint}
+                </Text.Bullet>
+              );
+            })}
+          </Text>
+        </Slide>,
+      ];
+    } else {
+      return [
+        <Slide
+          key="toc"
+          style={{ backgroundImage: { kind: "path", path: tocImg } }}
+        >
+          <Text
+            style={{
+              x: 0.5,
+              y: 0.5,
+              w: "90%",
+              h: 0.5,
+              fontSize: 24,
+              bold: true,
+            }}
+          >
+            {slideData.heading.toUpperCase()}
+          </Text>
+
+          <Text
+            style={{
+              x: 1,
+              y: 1.5,
+              w: "80%",
+              h: textHeight,
+              fontSize: 20,
+            }}
+          >
+            {slideData.bulletPoints.map((bulletPoint, index) => (
+              <Text.Bullet key={index} style={{ fontSize: 20, bold: true }}>
+                {index + 1 + ". " + bulletPoint}
+              </Text.Bullet>
+            ))}
+          </Text>
+        </Slide>,
+      ];
+    }
+  };
+
+  // Main section title slide
+  const mainSectionTitleSlide = (slideData: ExportSlideData) => {
+    return [
+      <Slide
+        key={slideData.heading}
+        style={{ backgroundImage: { kind: "path", path: tocImg } }}
+      >
+        <Text
+          style={{
+            x: 1,
+            y: 1.7,
+            w: 8,
+            h: 1.5,
+            fontSize: 36,
+            bold: true,
+            align: "center",
+          }}
+        >
+          <Text.Bullet style={{ fontSize: 42 }}>
+            {mainTitleIndex++ + "."}
+          </Text.Bullet>
+          <Text.Bullet>{slideData.heading.toUpperCase()}</Text.Bullet>
+        </Text>
+      </Slide>,
+    ];
+  };
+
+  const contentSlideV1 = (slideData: ExportSlideData) => {
     const totalBulletPoints = slideData.bulletPoints.reduce(
       (acc, bulletPoint) => {
         // Kiểm tra nếu bulletPoint là mảng (sub-bullet points)
@@ -66,6 +170,8 @@ function MinimalistTemplate01(data: any) {
 
     const textHeight =
       totalBulletPoints > 6 ? totalBulletPoints * 0.25 : totalBulletPoints * 1;
+
+    const imagesNum = (slideData.imageUrls ?? []).length;
 
     return [
       <Slide
@@ -77,7 +183,7 @@ function MinimalistTemplate01(data: any) {
           style={{
             x: 0.5,
             y: 0.5,
-            w: "100%",
+            w: "90%",
             h: 0.5,
             fontSize: 20,
             bold: true,
@@ -99,11 +205,10 @@ function MinimalistTemplate01(data: any) {
                     // w: 8,
                     // h: 1,
                     fontSize: subBulletPointFontSize,
-                    indentLevel: 2,
                   }}
                 >
                   {/* ◦ {subBullet} */}
-                  {subBullet}
+                  {`◦   ` + subBullet}
                 </Text.Bullet>
               ));
             } else {
@@ -117,35 +222,44 @@ function MinimalistTemplate01(data: any) {
                     // h: 1,
                     // breakLine: true,
                     fontSize: bulletPointFontSize,
-                    indentLevel: 1,
                   }}
                 >
                   {/* • {bulletPoint} */}
-                  {bulletPoint}
+                  {`•   ` + bulletPoint}
                 </Text.Bullet>
               );
             }
           })}
         </Text>
         {/* Images */}
-        {/* {slideData.imageUrls &&
-          slideData.imageUrls.map((image, index) => (
-            <Image
-              key={index}
-              src={{ kind: "path", path: image.imageUrl }}
-              style={{ x: 1 + index, y: "60%", h: "30%" }}
-            />
-          ))} */}
+        {slideData.imageUrls &&
+          slideData.imageUrls.map((image, index) => {
+            const wRatio = image.width / (image.width + image.height);
+            const hRatio = image.height / (image.width + image.height);
+            return (
+              <Image
+                key={index}
+                src={{ kind: "path", path: image.imageUrl }}
+                style={{
+                  x: 1 + (imagesNum > 2 ? 3 : 4) * index,
+                  y: "65%",
+                  w: wRatio * 4,
+                  h: hRatio * 4,
+                  sizing: {
+                    fit: "contain",
+                    ...(wRatio > hRatio
+                      ? { imageWidth: 3, imageHeight: 2 }
+                      : { imageWidth: 2, imageHeight: 2 }),
+                  },
+                }}
+              />
+            );
+          })}
       </Slide>,
     ];
   };
 
-  const contentSlideV2 = (slideData: {
-    heading: string;
-    bulletPoints: (string | string)[];
-    imageSuggestions: string[];
-    imageUrls: { title: string; imageUrl: string }[];
-  }) => {
+  const contentSlideV2 = (slideData: ExportSlideData) => {
     const totalBulletPoints = slideData.bulletPoints.reduce(
       (acc, bulletPoint) => {
         // Kiểm tra nếu bulletPoint là mảng (sub-bullet points)
@@ -158,11 +272,13 @@ function MinimalistTemplate01(data: any) {
       0
     );
 
-    const bulletPointFontSize = totalBulletPoints > 4 ? 15 : 17;
-    const subBulletPointFontSize = totalBulletPoints > 4 ? 13 : 15;
+    const bulletPointFontSize = totalBulletPoints > 4 ? 14 : 17;
+    const subBulletPointFontSize = totalBulletPoints > 4 ? 12 : 15;
 
     const textHeight =
       totalBulletPoints > 6 ? totalBulletPoints * 0.25 : totalBulletPoints * 1;
+
+    const imagesNum = (slideData.imageUrls ?? []).length;
 
     return [
       <Slide
@@ -174,7 +290,7 @@ function MinimalistTemplate01(data: any) {
           style={{
             x: 0.5,
             y: 0.5,
-            w: "100%",
+            w: "90%",
             h: 0.5,
             fontSize: 20,
             bold: true,
@@ -196,11 +312,10 @@ function MinimalistTemplate01(data: any) {
                     // w: 8,
                     // h: 1,
                     fontSize: subBulletPointFontSize,
-                    indentLevel: 2,
                   }}
                 >
                   {/* ◦ {subBullet} */}
-                  {subBullet}
+                  {`◦   ` + subBullet}
                 </Text.Bullet>
               ));
             } else {
@@ -214,25 +329,39 @@ function MinimalistTemplate01(data: any) {
                     // h: 1,
                     // breakLine: true,
                     fontSize: bulletPointFontSize,
-                    indentLevel: 1,
                   }}
                 >
                   {/* • {bulletPoint} */}
-                  {bulletPoint}
+                  {`•   ` + bulletPoint}
                 </Text.Bullet>
               );
             }
           })}
         </Text>
         {/* Images */}
-        {/* {slideData.imageUrls &&
-          slideData.imageUrls.map((image, index) => (
-            <Image
-              key={index}
-              src={{ kind: "path", path: image.imageUrl }}
-              style={{ x: 1 + index, y: "60%", h: "30%" }}
-            />
-          ))} */}
+        {slideData.imageUrls &&
+          slideData.imageUrls.map((image, index) => {
+            const wRatio = image.width / (image.width + image.height);
+            const hRatio = image.height / (image.width + image.height);
+            return (
+              <Image
+                key={index}
+                src={{ kind: "path", path: image.imageUrl }}
+                style={{
+                  x: 1 + (imagesNum > 2 ? 3 : 4) * index,
+                  y: "65%",
+                  w: wRatio * 4,
+                  h: hRatio * 4,
+                  sizing: {
+                    fit: "contain",
+                    ...(wRatio > hRatio
+                      ? { imageWidth: 3, imageHeight: 2 }
+                      : { imageWidth: 2, imageHeight: 2 }),
+                  },
+                }}
+              />
+            );
+          })}
       </Slide>,
     ];
   };
@@ -240,157 +369,21 @@ function MinimalistTemplate01(data: any) {
   return [
     ...titleSlide,
     ...(data.slides
-      ? data.slides.map(
-          (
-            slideData: {
-              heading: string;
-              bulletPoints: (string | string)[];
-              imageSuggestions: string[];
-              imageUrls: { title: string; imageUrl: string }[];
-            },
-            index: any
-          ) =>
-            index % 2 === 0
-              ? contentSlideV1(slideData)
-              : contentSlideV2(slideData)
-        )
+      ? data.slides.map((slideData: ExportSlideData, index: any) => {
+          if (slideData.bulletPoints.length === 0) {
+            return mainSectionTitleSlide(slideData); // Main section title slide
+          } else if (index === 0) {
+            return tableOfContent(slideData); // First slide: Table of Content
+          } else if (index % 2 === 0) {
+            return contentSlideV1(slideData); // Even index slides: Content Slide V1
+          } else if (index % 2 !== 0) {
+            return contentSlideV2(slideData); // Odd index slides: Content Slide V2
+          } else if (index === data.slides.length - 1) {
+            return contentSlideV1(slideData); // Last slide: Thank you
+          }
+          return null;
+        })
       : []),
-
-    // <Slide key={1} style={{ backgroundColor: "#DDDDDD" }}>
-    //   <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
-    //     <Text.Bullet>Adding bullet 1</Text.Bullet>
-    //     <Text.Bullet>Adding bullet 2</Text.Bullet>
-    //   </Text>
-    //   <Text style={{ x: 3, y: 3.5, w: 3, h: 0.5, fontSize: 32 }}>
-    //     <Text.Bullet type="number">Adding bullet</Text.Bullet>
-    //     <Text.Bullet type="number">Adding bullet</Text.Bullet>
-    //   </Text>
-    // </Slide>,
-
-    // <Slide key={2}>
-    //   <Image
-    //     src={{
-    //       kind: "path",
-    //       path: "https://hocmai.vn/kho-tai-lieu/documents/1548673568/page-1.png",
-    //     }}
-    //     style={{ x: "10%", y: "10%", w: "80%", h: "80%" }}
-    //   />
-    // </Slide>,
-
-    // <Slide key={3}>
-    //   <Image
-    //     src={{
-    //       kind: "path",
-    //       path: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTxPwqyV35kl4DIBeyxo_szC6c3VTH8IHvqCvArkFX5AzDxnaQTuA44JRBhVg0Kv17Kyb5RL2tWbRpSrhAxlnvu6Q",
-    //     }}
-    //     style={{ x: "10%", y: "10%", w: "80%", h: "80%" }}
-    //   />
-    // </Slide>,
-
-    // <Slide key={4}>
-    //   <Image
-    //     src={{
-    //       kind: "path",
-    //       path: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTxPwqyV35kl4DIBeyxo_szC6c3VTH8IHvqCvArkFX5AzDxnaQTuA44JRBhVg0Kv17Kyb5RL2tWbRpSrhAxlnvu6Q",
-    //     }}
-    //     style={{ x: "10%", y: "10%", w: "80%", h: "80%" }}
-    //   />
-    // </Slide>,
-
-    // <Slide key={5}>
-    //   <Table
-    //     rows={[
-    //       [
-    //         <Table.Cell
-    //           colSpan={2}
-    //           style={{
-    //             align: "center",
-    //             backgroundColor: "#115599",
-    //             color: "white",
-    //           }}
-    //         >
-    //           Title
-    //         </Table.Cell>,
-    //       ],
-    //       [
-    //         "foo",
-    //         <Table.Cell style={{ align: "right", backgroundColor: "#404040" }}>
-    //           bar
-    //         </Table.Cell>,
-    //       ],
-    //       [
-    //         <Table.Cell style={{ verticalAlign: "bottom" }}>
-    //           what about a{" "}
-    //           <Text.Link url="https://www.youtube.com/watch?v=6IqKEeRS90A">
-    //             link
-    //           </Text.Link>
-    //         </Table.Cell>,
-    //         "xyz",
-    //       ],
-    //     ]}
-    //     style={{
-    //       x: "10%",
-    //       y: "10%",
-    //       w: "80%",
-    //       h: "80%",
-    //       borderWidth: 4,
-    //       borderColor: "#ff0000",
-    //       margin: 20,
-    //     }}
-    //   />
-    // </Slide>,
-
-    // <Slide key={6}>
-    //   <Shape
-    //     type="rect"
-    //     style={{
-    //       x: 0,
-    //       y: 0,
-    //       w: "100%",
-    //       h: "100%",
-    //       backgroundColor: "#DDDDDD",
-    //     }}
-    //   />
-    //   <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
-    //     <Text.Bullet>Adding bullet 1</Text.Bullet>
-    //     <Text.Bullet>Adding bullet 2</Text.Bullet>
-    //   </Text>
-    // </Slide>,
-
-    // <Slide key={7} style={{ backgroundColor: "#DDDDDD" }}>
-    //   <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
-    //     <Text.Bullet>Adding bullet 1</Text.Bullet>
-    //     <Text.Bullet>Adding bullet 2</Text.Bullet>
-    //   </Text>
-    // </Slide>,
-
-    // <Slide key={8} style={{ backgroundColor: "#DDDDDD" }}>
-    //   <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
-    //     <Text.Bullet>Adding bullet 1</Text.Bullet>
-    //     <Text.Bullet>Adding bullet 2</Text.Bullet>
-    //   </Text>
-    // </Slide>,
-
-    // <Slide key={9} style={{ backgroundColor: "#DDDDDD" }}>
-    //   <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
-    //     <Text.Bullet>Adding bullet 1</Text.Bullet>
-    //     <Text.Bullet>Adding bullet 2</Text.Bullet>
-    //   </Text>
-    // </Slide>,
-
-    // <Slide key={10} style={{ backgroundColor: "#DDDDDD" }}>
-    //   <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
-    //     <Text.Bullet>Adding bullet 1</Text.Bullet>
-    //     <Text.Bullet>Adding bullet 2</Text.Bullet>
-    //   </Text>
-    // </Slide>,
-
-    // <Slide key={11} style={{ backgroundColor: "#DDDDDD" }}>
-    //   <Text style={{ x: 3, y: 1, w: 3, h: 0.5, fontSize: 32 }}>
-    //     <Text.Bullet>Adding bullet 1</Text.Bullet>
-    //     <Text.Bullet>Adding bullet 2</Text.Bullet>
-    //   </Text>
-    // </Slide>,
   ];
 }
 

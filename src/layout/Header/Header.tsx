@@ -91,10 +91,10 @@ function Header() {
               displayMode="header"
               optionTitle="Lecture Tools"
             />
-            <HeaderDropdownOption
+            {/* <HeaderDropdownOption
               displayMode="header"
               optionTitle="Templates"
-            />
+            /> */}
             {/* <div className="hidden lg:flex lg:gap-x-12">
               <a
                 href="/about-us"
@@ -103,9 +103,9 @@ function Header() {
                 About Us
               </a>
             </div> */}
-            <button className="bg-green-200" onClick={() => toggleTheme()}>
+            {/* <button className="bg-green-200" onClick={() => toggleTheme()}>
               Theme
-            </button>
+            </button> */}
           </div>
           <div className="hidden lg:flex lg:flex-1 justify-center">
             <CategorySearchBar />
@@ -120,7 +120,7 @@ function Header() {
                 Log in
               </Button>
             ) : (
-              <LoginAvatar />
+              <LoginAvatar displayMode="header" />
             )}
           </div>
         </nav>
@@ -132,7 +132,7 @@ function Header() {
           <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
+                <span className="sr-only">LectrifAI</span>
                 <img alt="" src={logo} className="h-8 w-auto" />
               </a>
               <button
@@ -155,31 +155,37 @@ function Header() {
                     displayMode="dialog"
                     optionTitle="Lecture Tools"
                   />
-                  <HeaderDropdownOption
+                  {/* <HeaderDropdownOption
                     displayMode="dialog"
                     optionTitle="Templates"
-                  />
-                  <a
+                  /> */}
+                  {/* <a
                     href="#"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                   >
                     About Us
-                  </a>
+                  </a> */}
                 </div>
-                <div className="py-6">
-                  <a
-                    href="/login"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    Log in
-                  </a>
-                  <a
-                    href="/signup"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    Sign up
-                  </a>
-                </div>
+                {!isAuthenticated ? (
+                  <div className="py-6">
+                    <a
+                      href="/login"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                    >
+                      Log in
+                    </a>
+                    <a
+                      href="/signup"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                    >
+                      Sign up
+                    </a>
+                  </div>
+                ) : (
+                  <div className="py-6">
+                    <LoginAvatar displayMode="dialog" />
+                  </div>
+                )}
               </div>
             </div>
           </DialogPanel>

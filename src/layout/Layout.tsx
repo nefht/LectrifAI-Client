@@ -19,10 +19,18 @@ function Layout() {
     "/lecture/generate-video",
     "/lecture/generate-video-process",
     "/lecture/generate-video-process/input",
-    "/lecture/generate-video-process/review",
-    "/lecture/generate-video-process/download",
+    `/lecture/generate-video-process/review/${id}`,
+    `/lecture/generate-video-process/download/${id}`,
     // Instant lecture presenter
     "/lecture/instant-presenter",
+    `/lecture/instant-presenter/${id}`,
+    // Lecture detail
+    `/lecture/detail/${id}`,
+    // Storage
+    "/storage",
+    // Quiz maker
+    "/quiz-maker",
+    `/quiz/${id}`,
   ];
 
   const noHeaderPaddingRoutes = [

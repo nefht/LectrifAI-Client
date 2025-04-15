@@ -29,8 +29,6 @@ function Home() {
   ];
   const period = 2000;
 
-  useEffect(() => {});
-
   useEffect(() => {
     let ticker = setInterval(() => {
       tick();

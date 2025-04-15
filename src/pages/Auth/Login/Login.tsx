@@ -43,7 +43,7 @@ function Login() {
         rememberMe
       );
 
-      login(response.token, response.user, rememberMe);
+      login(response.token, response.user);
       navigate("/");
     } catch (error) {
       console.error("Failed to login:", error);

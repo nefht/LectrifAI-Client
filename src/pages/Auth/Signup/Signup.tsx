@@ -1,27 +1,51 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { HiMiniIdentification } from "react-icons/hi2";
 import { MdAccountCircle } from "react-icons/md";
 import { MdEmail } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-import styles from "./Signup.module.css";
 import logo from "../../../assets/images/astronaut.svg";
 import decorImg from "../../../assets/images/login/decor-bg.svg";
 import googleLogo from "../../../assets/images/login/google-logo.webp";
-import { Link } from "react-router";
+import authService from "../services/authService";
+import { useToast } from "../../../hooks/useToast";
 
 const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
 
 function Signup() {
+  const navigate = useNavigate();
+  const { showToast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    account: "",
+    password: "",
+  });
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword((prev) => !prev);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await authService.register(formData);
+      showToast("success", "Register successfully!");
+      navigate("/login");
+    } catch (error) {
+      console.error("Failed to register:", error);
+    }
   };
 
   return (
@@ -46,7 +70,12 @@ function Signup() {
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-800 md:text-2xl dark:text-white">
             Create an account
           </h1>
-          <form className="space-y-4 md:space-y-6" method="POST" action="#">
+          <form
+            className="space-y-4 md:space-y-6"
+            method="POST"
+            action="#"
+            onSubmit={handleSubmit}
+          >
             <div className="grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
               <div>
                 <label
@@ -66,6 +95,7 @@ function Signup() {
                     id="fullName"
                     className="bg-gray-50 border border-gray-300 text-gray-800 rounded-lg focus:ring-purple-600 focus:border-purple-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                     placeholder="Full name"
+                    onChange={handleChange}
                   />
                 </div>
               </div>
@@ -87,6 +117,7 @@ function Signup() {
                     id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-800 rounded-lg focus:ring-purple-600 focus:border-purple-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                     placeholder="abcde@google.com"
+                    onChange={handleChange}
                   />
                 </div>
               </div>
@@ -108,6 +139,7 @@ function Signup() {
                     id="account"
                     className="bg-gray-50 border border-gray-300 text-gray-800 rounded-lg focus:ring-purple-600 focus:border-purple-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                     placeholder="Your account here!"
+                    onChange={handleChange}
                   />
                 </div>
               </div>
@@ -126,6 +158,7 @@ function Signup() {
                     id="password"
                     placeholder="••••••••"
                     className="relative bg-gray-50 border border-gray-300 text-gray-800 rounded-lg focus:ring-purple-600 focus:border-purple-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                    onChange={handleChange}
                   />
                   <button
                     type="button"

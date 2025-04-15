@@ -13,6 +13,7 @@ interface DeleteModalProps {
     title: string;
     content: string;
   };
+  disabledButton?: boolean;
   handleDelete: () => void;
 }
 
@@ -20,10 +21,11 @@ export default function DeleteModal({
   open,
   setOpen,
   modalInformation,
+  disabledButton = false,
   handleDelete,
 }: DeleteModalProps) {
   return (
-    <Dialog open={open} onClose={setOpen} className="relative z-10">
+    <Dialog open={open} onClose={setOpen} className="relative z-50">
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -60,6 +62,7 @@ export default function DeleteModal({
             </div>
             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
               <button
+                disabled={disabledButton}
                 type="button"
                 onClick={handleDelete}
                 className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
@@ -67,6 +70,7 @@ export default function DeleteModal({
                 Delete
               </button>
               <button
+                disabled={disabledButton}
                 type="button"
                 data-autofocus
                 onClick={() => setOpen(false)}

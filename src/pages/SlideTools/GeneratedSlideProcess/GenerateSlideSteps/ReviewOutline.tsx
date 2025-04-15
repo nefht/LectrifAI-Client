@@ -3,6 +3,7 @@ import { DragAndDropContainer } from "../../../../components/DragAndDrop/DragAnd
 import { useEffect, useState } from "react";
 import { useSlideData } from "../../hooks/useSlideData";
 import generatedSlideService from "../../service/generatedSlideService";
+import ContentCard from "./components/ContentCardList";
 
 function ReviewOutline() {
   const { id } = useParams();
@@ -15,11 +16,10 @@ function ReviewOutline() {
           const response = await generatedSlideService.getSlideContent(id);
           if (response?.slideData) {
             console.log(response?.slideData);
-            
+
             setSlideData(response?.slideData);
           }
           console.log(slideData);
-          
         }
       } catch (error) {
         console.error("Failed to get slide content:", error);
@@ -33,10 +33,11 @@ function ReviewOutline() {
       <h1 className="font-degular font-semibold text-2xl md:text-3xl xl:text-4xl">
         Review the outline and slides
       </h1>
-      <p className="font-degular text-xl">
+      <p className="font-degular text-xl text-center">
         Go over the outline and table of contents to finalize your presentation
       </p>
-      <DragAndDropContainer cardList={slideData} setCardList={setSlideData} />
+      <ContentCard />
+      {/* <DragAndDropContainer cardList={slideData} setCardList={setSlideData} /> */}
     </>
   );
 }

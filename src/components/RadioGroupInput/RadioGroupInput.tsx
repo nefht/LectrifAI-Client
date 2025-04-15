@@ -2,29 +2,33 @@ import { RadioGroup } from "@headlessui/react";
 
 interface RadioGroupProps {
   label: string;
-  options: { label: string; value: string }[];
-  selectedValue: string | number;
+  required?: boolean;
+  options: { label: string; value: string | boolean }[];
+  selectedValue: string | number | boolean;
   onChange: (value: string | number) => void;
 }
 
 export default function RadioGroupInput({
   label,
+  required = false,
   options,
   selectedValue,
   onChange,
 }: RadioGroupProps) {
   return (
     <div className="w-full">
-      <p className="text-white font-semibold mb-2">{label}</p>
+      <p className="text-white font-semibold mb-2">
+        {label} {required && <span className="text-red-500">*</span>}
+      </p>
       <RadioGroup value={selectedValue} onChange={onChange}>
         <div
           className={`grid gap-2 ${
             options.length < 3 ? "grid-cols-2" : "grid-cols-1"
           }`}
         >
-          {options.map((option) => (
+          {options.map((option, index) => (
             <RadioGroup.Option
-              key={option.value}
+              key={index}
               value={option.value}
               className={({ checked }) =>
                 `flex items-center p-2 w-full bg-white border ${
@@ -47,9 +51,7 @@ export default function RadioGroupInput({
                       <div className="w-2.5 h-2.5 bg-white rounded-full" />
                     )}
                   </div>
-                  <span className="ml-3 text-gray-900">
-                    {option.label}
-                  </span>
+                  <span className="ml-3 text-gray-900">{option.label}</span>
                 </>
               )}
             </RadioGroup.Option>

@@ -1,5 +1,8 @@
 import { Routes, Route, useNavigate } from "react-router";
+import { useEffect } from "react";
 import "./index.css";
+import { useToast } from "./hooks/useToast";
+import api from "./services/apiService";
 import Home from "./pages/Home/Home";
 import LecturesList from "./pages/Lecture/LecturesList/LecturesList";
 import LectureDetail from "./pages/Lecture/LectureDetail/LectureDetail";
@@ -25,9 +28,9 @@ import LectureVideoGeneratedProcess from "./pages/LectureTools/LectureVideoGener
 import ReviewLectureScript from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/ReviewLectureScript";
 import DownloadLectureVideo from "./pages/LectureTools/LectureVideoGenerator/GenerateVideoSteps/DownloadLectureVideo";
 import InstantLecturePresenter from "./pages/LectureTools/InstantLecturePresenter/InstantLecturePresenter";
-import { useToast } from "./hooks/useToast";
-import { useEffect } from "react";
-import api from "./services/apiService";
+import Storage from "./pages/Storage/Storage";
+import QuizMaker from "./pages/QuizMaker/QuizMaker";
+import QuizSet from "./pages/Quiz/QuizSet/QuizSet";
 
 function App() {
   const { showToast } = useToast();
@@ -59,12 +62,8 @@ function App() {
       <Route path="/forgot-password/:id" element={<ResetPassword />} />
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="/lecture">
-          <Route path="list" element={<LecturesList />} />
-          <Route path="detail/:id" element={<LectureDetail />} />
-        </Route>
         <Route path="/slide">
-          <Route path="list" element={<SlidesList />} />
+          <Route path="list" element={<SlidesList searchTerm={""} />} />
           <Route path="detail/:id" element={<SlideDetail />} />
           <Route path="generate" element={<PresentationMaker />} />
           <Route
@@ -81,7 +80,7 @@ function App() {
           <Route path="enhance" />
         </Route>
         <Route path="/lecture">
-          <Route path="list" element={<LecturesList />} />
+          <Route path="list" element={<LecturesList searchTerm={""} />} />
           <Route path="detail/:id" element={<LectureDetail />} />
           <Route path="generate-video" element={<LectureVideoGenerator />} />
           <Route
@@ -89,14 +88,21 @@ function App() {
             element={<LectureVideoGeneratedProcess />}
           >
             <Route path="input" element={<InputConfiguration />} />
-            <Route path="review" element={<ReviewLectureScript />} />
-            <Route path="download" element={<DownloadLectureVideo />} />
+            <Route path="review/:id" element={<ReviewLectureScript />} />
+            <Route path="download/:id" element={<DownloadLectureVideo />} />
           </Route>
           <Route
             path="instant-presenter"
             element={<InstantLecturePresenter />}
           />
+          <Route
+            path="instant-presenter/:id"
+            element={<InstantLecturePresenter />}
+          />
         </Route>
+        <Route path="/quiz-maker" element={<QuizMaker />} />
+        <Route path="/quiz/:id" element={<QuizSet />} />
+        <Route path="/storage" element={<Storage />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

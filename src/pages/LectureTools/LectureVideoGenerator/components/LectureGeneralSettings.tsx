@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   academicLevels,
   voiceTypes,
@@ -6,8 +7,33 @@ import {
 } from "../constants/lecture-settings";
 import DropdownInput from "../../../../components/DropdownInput/DropdownInput";
 import SearchDropdownInput from "../../../../components/DropdownInput/SearchDropdownInput";
+import { useLectureVideo } from "../hooks/useLectureVideo";
+import { EGeneratedLectureForm } from "../constants/generate-lecture-form";
+import { TTSLanguagesList } from "../../constants/languages-list";
 
 function LectureGeneralSettings() {
+  const { lectureOptions, handleGetLectureOptions } = useLectureVideo();
+  const [availableVoiceTypes, setAvailableVoiceTypes] = useState([
+    {
+      value: "FEMALE",
+      label: "Female",
+    },
+  ]);
+
+  useEffect(() => {
+    if (lectureOptions[EGeneratedLectureForm.LANGUAGE]) {
+      const supportedGenders = TTSLanguagesList.find(
+        (language) =>
+          language.value === lectureOptions[EGeneratedLectureForm.LANGUAGE]
+      )?.genders;
+      setAvailableVoiceTypes(
+        voiceTypes.filter((voiceType) =>
+          supportedGenders?.includes(voiceType?.label)
+        )
+      );
+    }
+  }, [lectureOptions[EGeneratedLectureForm.LANGUAGE]]);
+
   return (
     <div className="w-full lg:w-2/3 xl:w-3/5 my-2">
       <p className="font-semibold text-base text-white my-2">
@@ -19,41 +45,82 @@ function LectureGeneralSettings() {
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8">
         <DropdownInput
           label="Academic Level"
+          required
           options={academicLevels}
-          selectedValue=""
-          onChange={() => {}}
+          selectedValue={lectureOptions?.[EGeneratedLectureForm.ACADEMIC_LEVEL]}
+          onChange={(selectedValue) =>
+            handleGetLectureOptions({
+              target: {
+                name: EGeneratedLectureForm.ACADEMIC_LEVEL,
+                value: selectedValue,
+              },
+            })
+          }
+        />
+        <DropdownInput
+          label="Language"
+          required
+          options={TTSLanguagesList}
+          selectedValue={lectureOptions?.[EGeneratedLectureForm.LANGUAGE]}
+          onChange={(selectedValue) =>
+            handleGetLectureOptions({
+              target: {
+                name: EGeneratedLectureForm.LANGUAGE,
+                value: selectedValue,
+              },
+            })
+          }
         />
         <DropdownInput
           label="Voice Type"
-          options={voiceTypes}
-          selectedValue=""
-          onChange={() => {}}
-        />
-        <DropdownInput
-          label="Voice Style"
-          options={voiceStyles}
-          selectedValue=""
-          onChange={() => {}}
+          required
+          options={availableVoiceTypes}
+          selectedValue={lectureOptions?.[EGeneratedLectureForm.VOICE_TYPE]}
+          onChange={(selectedValue) =>
+            handleGetLectureOptions({
+              target: {
+                name: EGeneratedLectureForm.VOICE_TYPE,
+                value: selectedValue,
+              },
+            })
+          }
         />
       </div>
       <div className="pt-8 flex gap-x-6">
-       <div className="grow">
+        <div className="grow">
           <SearchDropdownInput
             label="Background Music"
             options={backgroundMusics}
-            selectedValue=""
-            onChange={() => {}}
+            selectedValue={
+              lectureOptions?.[EGeneratedLectureForm.BACKGROUND_MUSIC]
+            }
+            onChange={(selectedValue) =>
+              handleGetLectureOptions({
+                target: {
+                  name: EGeneratedLectureForm.BACKGROUND_MUSIC,
+                  value: selectedValue,
+                },
+              })
+            }
           />
-       </div>
+        </div>
         <div className="w-1/3">
           <DropdownInput
-            label="Language"
-            options={[{ label: "English", value: "en" }]}
-            selectedValue=""
-            onChange={() => {}}
+            label="Teaching Style"
+            required
+            options={voiceStyles}
+            selectedValue={lectureOptions?.[EGeneratedLectureForm.VOICE_STYLE]}
+            onChange={(selectedValue) =>
+              handleGetLectureOptions({
+                target: {
+                  name: EGeneratedLectureForm.VOICE_STYLE,
+                  value: selectedValue,
+                },
+              })
+            }
           />
         </div>
-        </div>
+      </div>
     </div>
   );
 }

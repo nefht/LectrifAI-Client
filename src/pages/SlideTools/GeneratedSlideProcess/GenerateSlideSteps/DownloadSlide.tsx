@@ -1,11 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { LuDownload } from "react-icons/lu";
 import templateSlide from "../../../../assets/templates/template1.pptx";
 import SlidePresentation from "../../../../shared/templates/SlidePresentation";
 import { useSlideData } from "../../hooks/useSlideData";
 import { useGeneratedSlide } from "../hooks/useGeneratedSlide";
-import { EGeneratedSlideForm } from "../../constants/generated-slide-form";
 import generatedSlideService from "../../service/generatedSlideService";
+import { useSlideExport } from "../../../../hooks/useSlideExport";
 
 function DownloadSlide() {
   const { id } = useParams();
@@ -14,6 +15,38 @@ function DownloadSlide() {
   ];
   const { slideData, setSlideData } = useSlideData();
   const { presentationOptions } = useGeneratedSlide();
+  const { downloadPptxHelper } = useSlideExport();
+  const [templateCode, setTemplateCode] = useState<string>("");
+
+  const convertImageToBase64 = (
+    imageUrl: string
+  ): Promise<{ base64Image: string; width: number; height: number }> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous"; // CORS
+      img.src = imageUrl;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          const base64Image = canvas.toDataURL("image/png");
+          resolve({
+            base64Image: base64Image,
+            width: img.width,
+            height: img.height,
+          });
+        } else {
+          reject(new Error("Failed to create canvas context."));
+        }
+      };
+      img.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,11 +54,37 @@ function DownloadSlide() {
         if (id) {
           const response = await generatedSlideService.getSlideContent(id);
           if (response?.slideData) {
-            console.log(response?.slideData);
+            // Convert image URLs to base64
+            const updatedSlideData = { ...response.slideData };
+            const imagePromises = updatedSlideData.slides.map(
+              async (slide: any) => {
+                const updatedSlide = { ...slide };
+                if (updatedSlide.imageUrls) {
+                  const imagePromises = updatedSlide.imageUrls.map(
+                    async (image: { title: string; imageUrl: string }) => {
+                      const { base64Image, width, height } =
+                        await convertImageToBase64(image.imageUrl);
+                      return {
+                        title: image.title,
+                        imageUrl: base64Image,
+                        width: width,
+                        height: height,
+                      };
+                    }
+                  );
+                  updatedSlide.imageUrls = await Promise.all(imagePromises);
+                }
+                return updatedSlide;
+              }
+            );
 
-            setSlideData(response?.slideData);
+            // setSlideData(response?.slideData);
+            const updatedSlides = await Promise.all(imagePromises);
+            updatedSlideData.slides = updatedSlides;
+            setSlideData(updatedSlideData);
+            console.log("Updated Slide Data:", updatedSlideData);
           }
-          console.log(slideData);
+          setTemplateCode(response?.templateCode);
         }
       } catch (error) {
         console.error("Failed to get slide content:", error);
@@ -43,24 +102,22 @@ function DownloadSlide() {
       <p className="font-degular text-xl mb-4">
         Preview your presentation and download it as a PPTX or PDF file
       </p>
-      <SlidePresentation
-        templateCode={presentationOptions[EGeneratedSlideForm.TEMPLATE_CODE]}
-        data={slideData}
-      />
-      {/* <button
-        className="border bg-green-600 w-[100px] text-white"
-        onClick={downloadSlide}
-      >
-        TEST PPTX
-      </button> */}
-      {/* <img className="mt-8 rounded-lg" src={example} alt="" /> */}
-      {/* <iframe
-        src="https://docs.google.com/presentation/d/1VJpqD1qkAJT0E2vcDRYDzMzDlybyFYQY/preview#slide=id.p1"
-        width="100%"
-        height="600px"
-        frameBorder="0"
-        title="Google Slides Viewer"
-      ></iframe> */}
+      <SlidePresentation templateCode={templateCode} data={slideData} />
+      <div className="w-full mt-16">
+        <button
+          className=" ml-auto flex gap-2 items-center rounded-md px-4 py-2 text-sm font-semibold text-white bg-purple-600 shadow-sm hover:bg-purple-500"
+          onClick={() => {
+            downloadPptxHelper(
+              templateCode,
+              slideData,
+              slideData.title
+            );
+          }}
+        >
+          Download presentation
+          <LuDownload className="text-xl" />
+        </button>
+      </div>
     </>
   );
 }

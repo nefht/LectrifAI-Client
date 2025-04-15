@@ -1,43 +1,136 @@
 import { useEffect, useState } from "react";
-import SlidePresentation from "../../../../shared/templates/SlidePresentation";
-import { useTheme } from "../../../../hooks/useTheme";
-import { useHeader } from "../../../../hooks/useHeader";
+import PdfPresentation from "../../../../shared/templates/PdfPresentation";
+import { useLocation, useParams } from "react-router";
+import lectureVideoService from "../../services/lectureVideoService";
+import QuizQuestion from "../components/QuizQuestions";
+import { useLectureVideo } from "../hooks/useLectureVideo";
+import { EGeneratedLectureForm } from "../constants/generate-lecture-form";
+import { useMutation } from "@tanstack/react-query";
+import { useToast } from "../../../../hooks/useToast";
+import { FaSpinner } from "react-icons/fa";
 
 function ReviewLectureScript() {
-  // const { toggleTheme } = useTheme();
-  // const { setHeaderClass } = useHeader();
-  // useEffect(() => {
-  //   toggleTheme("dark");
-  //   setHeaderClass("border-none");
-  //   return () => {
-  //     toggleTheme("light");
-  //   };
-  // });
-  const [slides, setSlides] = useState<JSX.Element[]>([]);
+  const { id } = useParams();
+  const { showToast } = useToast();
+  const location = useLocation();
+  const state = location.state;
+  const { lectureVideoSettings, setLectureVideoSettings } = useLectureVideo();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [lectureScript, setLectureScript] = useState<string[]>([
-    "Welcome everyone! Today, we’ll explore the topic of [Insert Topic]. We’ll cover key concepts, examples, and practical applications. Let’s get started!",
-    "Here’s an overview of what we’ll discuss today. We’ll begin with an introduction, move through key points, and wrap up with a summary and Q&A.",
-    "Let’s start with the basics. [Insert key concept] is essential because [explain why it matters]. A simple example of this is [give example].",
-    "Here’s a deeper dive into [subtopic]. It involves [explain concept]. A common misconception is [address a common mistake].",
-    "Now, let’s look at some real-world applications. [Concept] is used in [industry/application], for example, [give real-world use case].",
-    "Time for a quick review! Can anyone summarize [key point]? Let’s discuss how this connects to [previous topic].",
-    "Moving forward, we introduce [next key topic]. This differs from [previous topic] because [highlight differences].",
-    "Here’s a visual representation of [concept]. Notice how [explain key observation]. This helps us understand [implication].",
-    "Let’s take a look at a case study. In [example case], [concept] was applied successfully to [describe outcome].",
-    "Time for an interactive moment! Think about [question related to topic]. How would you approach this problem?",
-    "Wrapping up, here’s a quick summary of what we’ve covered. The key takeaways are [list 2-3 main points].",
-    "Thank you for your attention! Now, let’s open the floor for questions. Feel free to ask about anything we discussed today.",
-  ]);
+  const [lectureScript, setLectureScript] = useState<
+    {
+      script: string;
+      quiz: {
+        question: string;
+        options: string[];
+        answer: string;
+      } | null;
+    }[]
+  >([]);
+  const [lectureName, setLectureName] = useState<string>("");
+  const [pdfUrl, setPdfUrl] = useState<string>("");
 
-  // Hàm callback để nhận slides và currentSlide từ SlidePresentation
-  const handleSlidesUpdate = (
-    newSlides: JSX.Element[],
-    newCurrentSlide: number
-  ) => {
-    setSlides(newSlides);
-    setCurrentSlide(newCurrentSlide);
+  useEffect(() => {
+    if (state?.message) {
+      showToast("success", state.message);
+    }
+  }, []);
+
+  // Get lecture script
+  useEffect(() => {
+    const fetchLectureScript = async () => {
+      try {
+        if (id) {
+          const response = await lectureVideoService.getLectureScript(id);
+          const fileId = response.fileId;
+          const slide = await lectureVideoService.getUploadedSlide(fileId);
+          const videoSettings = {
+            [EGeneratedLectureForm.FILE_ID]: fileId,
+            [EGeneratedLectureForm.LECTURE_SCRIPT_ID]: id,
+            [EGeneratedLectureForm.LANGUAGE_CODE]: response.language,
+            [EGeneratedLectureForm.VOICE_TYPE]: response.voiceType,
+            [EGeneratedLectureForm.LECTURE_SPEED]: response.lectureSpeed,
+          };
+          console.log(response);
+
+          console.log(videoSettings);
+
+          setLectureVideoSettings(videoSettings);
+          setPdfUrl(slide.fileUrl);
+          setLectureScript(response.lectureScript.slides);
+          setLectureName(response.lectureScript.lectureName);
+        } else {
+          console.error("Lecture ID is undefined");
+        }
+      } catch (error: any) {
+        console.error("Failed to get lecture script:", error);
+      }
+    };
+
+    fetchLectureScript();
+  }, [id]);
+
+  // // Hàm callback để nhận slides và currentSlide từ SlidePresentation
+  // const handleSlidesUpdate = (
+  //   newSlides: JSX.Element[],
+  //   newCurrentSlide: number
+  // ) => {
+  //   setSlides(newSlides);
+  //   setCurrentSlide(newCurrentSlide);
+  // };
+
+  const handlePageChange = (pageIndex: number) => {
+    setCurrentSlide(pageIndex);
   };
+
+  const handleQuizChange = (updatedQuiz: {
+    question: string;
+    options: string[];
+    answer: string;
+  }) => {
+    const newLectureScript = [...lectureScript];
+    newLectureScript[currentSlide].quiz = updatedQuiz;
+    setLectureScript(newLectureScript);
+  };
+
+  const handleAddQuiz = () => {
+    const newLectureScript = [...lectureScript];
+    newLectureScript[currentSlide].quiz = {
+      question: "",
+      options: ["", "", "", ""],
+      answer: "",
+    };
+    setLectureScript(newLectureScript);
+  };
+
+  const handleDeleteQuiz = () => {
+    const newLectureScript = [...lectureScript];
+    newLectureScript[currentSlide].quiz = null;
+    setLectureScript(newLectureScript);
+  };
+
+  const handleUpdateLectureScript = useMutation({
+    mutationFn: async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        if (id) {
+          const updatedLectureScript = {
+            lectureName: lectureName,
+            slides: [...lectureScript],
+          };
+          const response = await lectureVideoService.updateLectureScript(id, {
+            lectureScript: updatedLectureScript,
+          });
+        } else {
+          console.error("Lecture ID is undefined");
+        }
+      } catch (error: any) {
+        console.error("Failed to update lecture script:", error);
+      }
+    },
+    onSuccess: () => {
+      showToast("success", "Lecture script updated successfully!");
+    },
+  });
 
   return (
     <div className="w-full h-full dark:bg-dark dark:bg-gradient-to-b from-dark to-indigo-950">
@@ -51,13 +144,17 @@ function ReviewLectureScript() {
       </div>
       <div className="w-full h-auto flex flex-col lg:flex-row gap-x-4 px-8 py-10 lg:px-20 lg:py-20">
         <div className="w-full lg:w-2/3 min-h-32">
-          <SlidePresentation
-            templateCode=""
+          {/* <SlidePresentation
+            templateCode="minimalist-02"
             data={{} as any}
             onSlidesUpdate={handleSlidesUpdate}
-          ></SlidePresentation>
+          ></SlidePresentation> */}
+          <PdfPresentation onPageChange={handlePageChange} pdfUrl={pdfUrl} />
         </div>
-        <div className="flex flex-col w-full mt-8 lg:mt-0 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+        <form
+          className="lg:w-1/3 flex flex-col w-full mt-8 lg:mt-0 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
+          onSubmit={(e) => handleUpdateLectureScript.mutate(e)}
+        >
           <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-600">
             <div className="flex flex-wrap items-center divide-gray-200 divide-x rtl:divide-x-reverse dark:divide-gray-600">
               <div className="flex items-center space-x-1 rtl:space-x-reverse pe-4">
@@ -72,10 +169,16 @@ function ReviewLectureScript() {
               </div>
             </div>
             <button
+              disabled={handleUpdateLectureScript.isPending}
               type="submit"
               className="inline-flex items-center py-1.5 px-3 text-sm font-medium text-center text-white bg-purple-700 dark:bg-indigo-700 rounded-lg focus:ring-4 focus:ring-purple-200 dark:focus:ring-indigo-900 hover:bg-purple-800 dark:hover:bg-indigo-800"
+              // onClick={() => handleUpdateLectureScript.mutate()}
             >
-              Save
+              {handleUpdateLectureScript.isPending ? (
+                <FaSpinner className="text-xl text-gray-200 animate-spin" />
+              ) : (
+                "Save"
+              )}
             </button>
             <div
               id="tooltip-fullscreen"
@@ -89,18 +192,35 @@ function ReviewLectureScript() {
           <div className="flex flex-grow pl-4 pr-2 py-2 bg-white rounded-b-lg dark:bg-gray-800">
             <textarea
               id="editor"
-              className="flex-grow block w-full min-h-40 pl-0 pr-2 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400 custom-scrollbar"
+              className="flex-1 block w-full min-h-40 pl-0 pr-2 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400 custom-scrollbar"
               placeholder="Write an article..."
               required
-              value={lectureScript[currentSlide]}
+              value={lectureScript[currentSlide]?.script}
               onChange={(e) => {
                 const newLectureScript = [...lectureScript];
-                newLectureScript[currentSlide] = e.target.value;
+                newLectureScript[currentSlide].script = e.target.value;
                 setLectureScript(newLectureScript);
               }}
             ></textarea>
           </div>
-        </div>
+          {lectureScript[currentSlide]?.quiz ? (
+            <QuizQuestion
+              quiz={lectureScript[currentSlide].quiz}
+              onQuizChange={handleQuizChange}
+              onAddQuiz={handleAddQuiz}
+              onDeleteQuiz={handleDeleteQuiz}
+            />
+          ) : (
+            <div className="flex justify-center m-1">
+              <button
+                onClick={handleAddQuiz}
+                className="w-full py-3 text-white font-semibold rounded-md border-2 border-dashed border-indigo-500 bg-transparent hover:bg-white/5 transition"
+              >
+                Add Quiz
+              </button>
+            </div>
+          )}
+        </form>
       </div>
     </div>
   );

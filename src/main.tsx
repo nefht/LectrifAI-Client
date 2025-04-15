@@ -9,23 +9,38 @@ import { SlideExportProvider } from "./context/SlideExportContext";
 import { SlideDataProvider } from "./pages/SlideTools/context/SlideDataContext";
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter } from "react-router";
+import { LectureDataProvider } from "./pages/LectureTools/context/LectureDataContext";
+import { LectureVideoProvider } from "./pages/LectureTools/LectureVideoGenerator/context/LectureVideoContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QuizOptionsContextProvider } from "./pages/QuizMaker/context/QuizOptionsContext";
+import { GeneratedSlideProcessProvider } from "./pages/SlideTools/GeneratedSlideProcess/context/GeneratedSlideContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <ThemeProvider>
-          <ToastProvider>
-            <HeaderProvider>
-              <SlideDataProvider>
-                <SlideExportProvider>
-                  <App />
-                </SlideExportProvider>
-              </SlideDataProvider>
-            </HeaderProvider>
-          </ToastProvider>
-        </ThemeProvider>
-      </AuthProvider>
+      <QueryClientProvider client={new QueryClient()}>
+        <AuthProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              <HeaderProvider>
+                  <QuizOptionsContextProvider>
+                    <LectureDataProvider>
+                      <LectureVideoProvider>
+                        <GeneratedSlideProcessProvider>
+                          <SlideDataProvider>
+                            <SlideExportProvider>
+                              <App />
+                            </SlideExportProvider>
+                          </SlideDataProvider>
+                        </GeneratedSlideProcessProvider>
+                      </LectureVideoProvider>
+                    </LectureDataProvider>
+                  </QuizOptionsContextProvider>
+              </HeaderProvider>
+            </ToastProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>
 );

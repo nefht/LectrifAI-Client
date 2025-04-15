@@ -71,11 +71,17 @@ function HeaderDropdownOption({
             </PopoverButton>
             <PopoverPanel
               transition
-              className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-3xl overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
+              className={`absolute -left-8 top-full z-10 mt-3 w-screen ${
+                itemConstants?.otherTools &&
+                itemConstants?.otherTools?.length > 0
+                  ? "max-w-3xl"
+                  : "max-w-md"
+              } overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in`}
             >
               <div
                 className={`p-4 ${
-                  itemConstants?.otherTools
+                  itemConstants?.otherTools &&
+                  itemConstants?.otherTools?.length > 0
                     ? "grid grid-cols-2 divide-x divide-gray-900/5"
                     : "grid grid-cols-1"
                 }`}
@@ -148,7 +154,14 @@ function HeaderDropdownOption({
                     </div>
                   )}
               </div>
-              <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+              <div
+                className={`grid ${
+                  itemConstants?.callsToAction &&
+                  itemConstants?.callsToAction?.length > 1
+                    ? "grid-cols-2"
+                    : "grid-cols-1"
+                } divide-x divide-gray-900/5 bg-gray-50`}
+              >
                 {itemConstants?.callsToAction.map((item) => (
                   <a
                     key={item.name}

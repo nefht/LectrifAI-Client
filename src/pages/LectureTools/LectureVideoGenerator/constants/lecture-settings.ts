@@ -1,119 +1,131 @@
 // General information
 export const academicLevels = [
   {
-    value: "1",
+    value: "Elementary",
     label: "Elementary",
   },
   {
-    value: "2",
-    label: "Intermediate",
+    value: "Middle School",
+    label: "Middle School",
   },
   {
-    value: "3",
-    label: "Advanced",
+    value: "High school",
+    label: "High School",
   },
   {
-    value: "4",
-    label: "Expert",
+    value: "Undergraduate",
+    label: "Undergraduate",
   },
   {
-    value: "5",
-    label: "Native",
+    value: "Postgraduate",
+    label: "Postgraduate",
   },
   {
-    value: "6",
-    label: "Custom",
+    value: "Doctorate",
+    label: "Doctorate",
   },
   {
-    value: "7",
+    value: "none",
     label: "None",
   },
 ];
 
 export const voiceTypes = [
-    {
-        value: "1",
-        label: "Male",
-    },
-    {
-        value: "2",
-        label: "Female",
-    },
-    {
-        value: "3",
-        label: "Neutral",
-    },
-]
+  {
+    value: "MALE",
+    label: "Male",
+  },
+  {
+    value: "FEMALE",
+    label: "Female",
+  },
+];
 
 export const voiceStyles = [
-    {
-        value: "1",
-        label: "Conversation",
-    },
-    {
-        value: "2",
-        label: "Formal",
-    },
-    {
-        value: "3",
-        label: "Enthusiastic",
-    },
-    {
-        value: "4",
-        label: "Calm",
-    },
-]
+  {
+    value: "normal",
+    label: "Normal",
+  },
+  {
+    value: "professional",
+    label: "Professional",
+  },
+  {
+    value: "formal",
+    label: "Formal",
+  },
+  {
+    value: "persuasive",
+    label: "Persuasive",
+  },
+  {
+    value: "friendly",
+    label: "Friendly",
+  },
+  {
+    value: "creative",
+    label: "Creative",
+  },
+  {
+    value: "enthusiastic",
+    label: "Enthusiastic",
+  },
+  {
+    value: "funny",
+    label: "Funny",
+  },
+];
 
 export const backgroundMusics = [
-    {
-        value: "1",
-        label: "None",
-    },
-    {
-        value: "2",
-        label: "Soft",
-    },
-    {
-        value: "3",
-        label: "Upbeat",
-    },
-    {
-        value: "4",
-        label: "Energetic",
-    },
-    {
-        value: "5",
-        label: "Inspirational",
-    },
-]
+  {
+    value: "none",
+    label: "None",
+  },
+  {
+    value: "soft",
+    label: "Soft",
+  },
+  {
+    value: "upbeat",
+    label: "Upbeat",
+  },
+  {
+    value: "energetic",
+    label: "Energetic",
+  },
+  {
+    value: "inspirational",
+    label: "Inspirational",
+  },
+];
 
 // Lecture information
-export const lectureSpeeds = [ 
-    {
-        value: "1",
-        label: "Slow",
-    },
-    {
-        value: "2",
-        label: "Normal",
-    },
-    {
-        value: "3",
-        label: "Fast",
-    },
-]
+export const lectureSpeeds = [
+  {
+    value: "slow",
+    label: "Slow",
+  },
+  {
+    value: "normal",
+    label: "Normal",
+  },
+  {
+    value: "fast",
+    label: "Fast",
+  },
+];
 
 export const lectureLengths = [
-    {
-        value: "1",
-        label: "Short",
-    },
-    {
-        value: "2",
-        label: "Medium",
-    },
-    {
-        value: "3",
-        label: "Long",
-    },
-]
+  {
+    value: "short",
+    label: "Short",
+  },
+  {
+    value: "medium",
+    label: "Medium",
+  },
+  {
+    value: "long",
+    label: "Long",
+  },
+];

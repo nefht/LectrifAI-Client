@@ -7,6 +7,7 @@ import {
   templateSamples,
   templateStyles,
 } from "../../constants/template-constants";
+import { writingTones } from "../../PresentationMaker/GeneratedSlideModal/InformationTab";
 
 interface GenerateSlideContextProps {
   presentationOptions: GeneratedSlideFormProcess;
@@ -28,9 +29,11 @@ export const GeneratedSlideProcessProvider: React.FC<{
   const [presentationOptions, setPresentationOptions] =
     useState<GeneratedSlideFormProcess>({
       [EGeneratedSlideForm.CONTENT]: "",
-      [EGeneratedSlideForm.WRITING_TONE]: "",
-      [EGeneratedSlideForm.LANGUAGE]: "",
-      [EGeneratedSlideForm.NUMBER_OF_SLIDES]: 0,
+      [EGeneratedSlideForm.TOPIC_FILE]: null,
+      [EGeneratedSlideForm.TOPIC_FILE_ID]: "",
+      [EGeneratedSlideForm.WRITING_TONE]: writingTones[0].value || "",
+      [EGeneratedSlideForm.LANGUAGE]: "English",
+      [EGeneratedSlideForm.NUMBER_OF_SLIDES]: 10,
       [EGeneratedSlideForm.TEMPLATE_STYLE]: templateStyles[0].value || "",
       [EGeneratedSlideForm.TEMPLATE_CODE]:
         templateSamples?.find(

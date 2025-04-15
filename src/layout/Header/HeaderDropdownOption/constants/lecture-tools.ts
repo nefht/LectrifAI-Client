@@ -20,18 +20,18 @@ const mainTools = [
     href: "/lecture/instant-presenter",
     icon: FingerPrintIcon,
   },
-  {
-    name: "Lesson Plan Organizer",
-    description: "Plan your lessons faster with AI",
-    href: "#",
-    icon: CursorArrowRaysIcon,
-  },
+  // {
+  //   name: "Lesson Plan Organizer",
+  //   description: "Plan your lessons faster with AI",
+  //   href: "#",
+  //   icon: CursorArrowRaysIcon,
+  // },
 ];
 const otherTools = [
   {
     name: "Quizzes Maker",
     description: "Create quizzes for your students",
-    href: "#",
+    href: "/quiz-maker",
     icon: ChartPieIcon,
   },
   {

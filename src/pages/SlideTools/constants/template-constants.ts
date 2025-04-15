@@ -17,7 +17,7 @@ export const templateSamples = [
     samples: [
       {
         code: "minimalist-01",
-        image: minimalist1,
+        image: minimalist3,
       },
       {
         code: "minimalist-02",
@@ -25,7 +25,7 @@ export const templateSamples = [
       },
       {
         code: "minimalist-03",
-        image: minimalist3,
+        image: minimalist1,
       },
       {
         code: "minimalist-04",

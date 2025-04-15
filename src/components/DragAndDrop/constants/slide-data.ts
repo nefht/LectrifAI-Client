@@ -4,6 +4,11 @@ export interface SlideData {
     heading: string;
     bulletPoints: (string | string[])[];
     imageSuggestions?: string[];
-    imageUrls?: { title: string; imageUrl: string }[];
+    imageUrls?: {
+      height: number;
+      width: number;
+      title: string;
+      imageUrl: string;
+    }[];
   }[];
 }

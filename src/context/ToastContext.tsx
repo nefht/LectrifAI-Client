@@ -6,6 +6,7 @@ interface ToastMessage {
   id: number;
   status: "success" | "error" | "warning";
   message: string;
+  timeout?: number;
 }
 
 interface ToastContextType {
@@ -31,7 +32,8 @@ export const useToastProvider = () => {
 
   const showToast = (
     status: "success" | "error" | "warning",
-    message: string
+    message: string,
+    timeout?: number
   ) => {
     const newToast = { id: Date.now(), status, message };
     setToasts((prevToasts) => [...prevToasts, newToast]);
@@ -41,7 +43,7 @@ export const useToastProvider = () => {
       setToasts((prevToasts) =>
         prevToasts.filter((toast) => toast.id !== newToast.id)
       );
-    }, 5000);
+    }, timeout ?? 5000);
   };
 
   const getIcon = (status: "success" | "error" | "warning") => {
@@ -73,7 +75,7 @@ export const useToastProvider = () => {
             {getIcon(toast.status)}
           </div>
           <div
-            className={`ml-3 text-sm font-semibold ${
+            className={`ml-3 mr-2 text-sm font-semibold ${
               toast.status === "success"
                 ? "text-green-500"
                 : toast.status === "error"

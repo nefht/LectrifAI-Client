@@ -7,10 +7,9 @@ import {
 
 const categories = [
   "All categories",
-  "Mockups",
-  "Templates",
   "Slides",
   "Lectures",
+  "Quizzes",
   "Users",
 ];
 
@@ -53,7 +52,7 @@ const CategorySearch = () => {
           type="search"
           id="search-dropdown"
           className="block p-2.5 w-full pr-11 z-20 text-sm text-gray-900 border-transparent rounded-e-lg bg-gray-50 focus:ring-purple-500 focus:border-purple-200 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-indigo-500"
-          placeholder="Search Mockups, Logos, Design Templates..."
+          placeholder="Search Slides, Lectures, Quizzes..."
           onChange={(e) => setQuery(e.target.value)}
           required
         />

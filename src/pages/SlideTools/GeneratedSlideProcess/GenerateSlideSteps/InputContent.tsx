@@ -53,7 +53,7 @@ function InputContent() {
   useEffect(() => {
     if (file) {
       handleGetPresentationOptions({
-        target: { name: [EGeneratedSlideForm.CONTENT], value: file },
+        target: { name: [EGeneratedSlideForm.TOPIC_FILE], value: file },
       });
     }
   }, [file]);
@@ -62,7 +62,7 @@ function InputContent() {
     const files = e.target.files;
     if (files) {
       handleGetPresentationOptions({
-        target: { name: [EGeneratedSlideForm.CONTENT], value: files[0] },
+        target: { name: [EGeneratedSlideForm.TOPIC_FILE], value: files[0] },
       });
     }
   };
@@ -80,7 +80,7 @@ Post-war consequences were profound. The United Nations was established to promo
       <h1 className="font-degular font-semibold text-2xl md:text-3xl xl:text-4xl">
         Enter your content
       </h1>
-      {presentationOptions[EGeneratedSlideForm.CONTENT] instanceof File ? (
+      {presentationOptions[EGeneratedSlideForm.TOPIC_FILE] ? (
         <>
           <p className="font-degular text-xl">
             This is the file you uploaded, continue or click the file to upload
@@ -99,20 +99,20 @@ Post-war consequences were profound. The United Nations was established to promo
             />
             <div className="flex items-center mr-8">
               {fileAssets.map((asset, index) =>
-                presentationOptions[EGeneratedSlideForm.CONTENT] instanceof
-                File ? (
+                presentationOptions[EGeneratedSlideForm.TOPIC_FILE] ? (
                   <div
                     key={index}
                     className={`text-5xl text-gray-700 text-${asset.color}`}
                   >
                     {asset.type ===
-                      presentationOptions[EGeneratedSlideForm.CONTENT]?.type ||
+                      presentationOptions[EGeneratedSlideForm.TOPIC_FILE]
+                        ?.type ||
                     asset.fileExtension ===
                       presentationOptions[
-                        EGeneratedSlideForm.CONTENT
+                        EGeneratedSlideForm.TOPIC_FILE
                       ]?.name.substring(
                         presentationOptions[
-                          EGeneratedSlideForm.CONTENT
+                          EGeneratedSlideForm.TOPIC_FILE
                         ]?.name.lastIndexOf(".")
                       )
                       ? asset.icon
@@ -123,14 +123,14 @@ Post-war consequences were profound. The United Nations was established to promo
             </div>
             <div>
               <p className="text-lg">
-                {presentationOptions[EGeneratedSlideForm.CONTENT]?.name}
+                {presentationOptions[EGeneratedSlideForm.TOPIC_FILE]?.name}
               </p>
               <p className="mt-2 text-gray-700">
                 Size:{" "}
-                {presentationOptions[EGeneratedSlideForm.CONTENT]
+                {presentationOptions[EGeneratedSlideForm.TOPIC_FILE]
                   ? (
-                      presentationOptions[EGeneratedSlideForm.CONTENT]?.size /
-                      1024
+                      presentationOptions[EGeneratedSlideForm.TOPIC_FILE]
+                        ?.size / 1024
                     ).toFixed(2)
                   : "N/A"}{" "}
                 KB

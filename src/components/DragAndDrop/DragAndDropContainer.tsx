@@ -43,12 +43,12 @@ export const DragAndDropContainer: FC<DragAndDropContainerProps> = ({
         ],
       })
     );
-    setCardList((prevState) => {
-      return {
-        ...prevState,
-        slides: cards,
-      };
-    });
+    // setCardList((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     slides: cards,
+    //   };
+    // });
   }, []);
 
   const addCard = useCallback(
@@ -63,12 +63,12 @@ export const DragAndDropContainer: FC<DragAndDropContainerProps> = ({
           $splice: [[index + 1, 0, newCard]],
         })
       );
-      setCardList((prevState) => {
-        return {
-          ...prevState,
-          slides: cards,
-        };
-      });
+      // setCardList((prevState) => {
+      //   return {
+      //     ...prevState,
+      //     slides: cards,
+      //   };
+      // });
     },
     [cards]
   );
@@ -80,12 +80,12 @@ export const DragAndDropContainer: FC<DragAndDropContainerProps> = ({
           $splice: [[index, 1]],
         })
       );
-      setCardList((prevState) => {
-        return {
-          ...prevState,
-          slides: cards,
-        };
-      });
+      // setCardList((prevState) => {
+      //   return {
+      //     ...prevState,
+      //     slides: cards,
+      //   };
+      // });
     },
     [cards]
   );
@@ -132,12 +132,12 @@ export const DragAndDropContainer: FC<DragAndDropContainerProps> = ({
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newTitle = e.target.value;
-    setCardList((prevState) => {
-      return {
-        ...prevState,
-        title: newTitle,
-      };
-    });
+    // setCardList((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     title: newTitle,
+    //   };
+    // });
   };
 
   return (

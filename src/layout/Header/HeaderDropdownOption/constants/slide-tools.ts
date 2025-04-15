@@ -28,13 +28,13 @@ const mainTools = [
     href: "/slide/image-to-slide",
     icon: SquaresPlusIcon,
   },
-  // Cải thiện giao diện slide với hỗ trợ AI
-  {
-    name: "Slide Enhancer",
-    description: "Improve slide interface with AI support",
-    href: "/slide/enhance",
-    icon: FingerPrintIcon,
-  },
+  // // Cải thiện giao diện slide với hỗ trợ AI
+  // {
+  //   name: "Slide Enhancer",
+  //   description: "Improve slide interface with AI support",
+  //   href: "/slide/enhance",
+  //   icon: FingerPrintIcon,
+  // },
   // // Gộp nhiều slide thành một với cùng style
   // {
   //   name: "Slide Merger",
@@ -43,23 +43,23 @@ const mainTools = [
   //   icon: FingerPrintIcon,
   // },
 ];
-const otherTools = [
-  {
-    name: "Create Slideshows",
-    description: "Create presentations manually",
-    href: "#",
-    icon: ChartPieIcon,
-  },
-  {
-    name: "Addon for Google Slides",
-    description: "Create presentations in Google Slides",
-    href: "#",
-    icon: CursorArrowRaysIcon,
-  },
+const otherTools: any[] = [
+  // {
+  //   name: "Create Slideshows",
+  //   description: "Create presentations manually",
+  //   href: "#",
+  //   icon: ChartPieIcon,
+  // },
+  // {
+  //   name: "Addon for Google Slides",
+  //   description: "Create presentations in Google Slides",
+  //   href: "#",
+  //   icon: CursorArrowRaysIcon,
+  // },
 ];
 const callsToAction = [
   { name: "Instruction", href: "#", icon: PlayCircleIcon },
-  { name: "Templates", href: "#", icon: PhoneIcon },
+  // { name: "Templates", href: "#", icon: PhoneIcon },
 ];
 
 const SlideToolsConstants = {

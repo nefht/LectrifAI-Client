@@ -93,6 +93,7 @@ export default function TemplatesTab({
                 >
                   <div className="flex items-center ps-3">
                     <input
+                      required
                       id={`style-${style.value}`}
                       type="radio"
                       value={style.value}
@@ -118,6 +119,8 @@ export default function TemplatesTab({
           ) : (
             <DropdownInput
               label=""
+              required={true}
+              defaultValue={templateStyles[0].value}
               options={templateStyles}
               selectedValue={
                 presentationOptions?.[EGeneratedSlideForm.TEMPLATE_STYLE]
@@ -131,55 +134,12 @@ export default function TemplatesTab({
                 })
               }
             />
-            // <Menu as="div" className="relative inline-block text-left w-full">
-            //   <div>
-            //     <MenuButton className="inline-flex w-full justify-between items-center rounded-lg bg-white px-4 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:ring-2 focus:ring-purple-400">
-            //       {templateStyles.find(
-            //         (style) =>
-            //           style.value ===
-            //           presentationOptions?.[EGeneratedSlideForm.TEMPLATE_STYLE]
-            //       )?.label || "Select Template Style"}
-            //       <ChevronDownIcon
-            //         aria-hidden="true"
-            //         className="-mr-1 h-6 w-5 text-gray-400"
-            //       />
-            //     </MenuButton>
-            //   </div>
-
-            //   <MenuItems className="absolute left-0 z-10 mt-2 w-full origin-top-left rounded-lg bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-            //     <div className="py-1">
-            //       {templateStyles.map((style) => (
-            //         <MenuItem key={style.value}>
-            //           {({ active }) => (
-            //             <button
-            //               className={`block w-full px-4 py-2 text-sm text-left ${
-            //                 active
-            //                   ? "bg-purple-200 text-gray-900"
-            //                   : "text-gray-700"
-            //               }`}
-            //               onClick={() =>
-            //                 handleGetPresentationOptions({
-            //                   target: {
-            //                     name: EGeneratedSlideForm.TEMPLATE_STYLE,
-            //                     value: style.value,
-            //                   },
-            //                 })
-            //               }
-            //             >
-            //               {style.label}
-            //             </button>
-            //           )}
-            //         </MenuItem>
-            //       ))}
-            //     </div>
-            //   </MenuItems>
-            // </Menu>
           )}
         </div>
 
         <div className="col-span-full">
           <label
-            htmlFor="cover-photo"
+            htmlFor="templateCode"
             className="block text-sm/6 font-medium text-gray-900 mb-4"
           >
             Choosing template

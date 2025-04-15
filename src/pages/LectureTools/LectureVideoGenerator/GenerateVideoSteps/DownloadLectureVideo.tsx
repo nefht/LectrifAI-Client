@@ -1,10 +1,41 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../../../../hooks/useTheme";
 import { useHeader } from "../../../../hooks/useHeader";
+import { useLocation, useParams } from "react-router";
+import lectureVideoService from "../../services/lectureVideoService";
+import { useToast } from "../../../../hooks/useToast";
 
 function DownloadLectureVideo() {
+  const { id } = useParams();
+  const location = useLocation();
+  const state = location.state;
+  const { showToast } = useToast();
+  const [lectureVideo, setLectureVideo] = useState<any>({});
   // const { setHeaderClass } = useHeader();
   // const { toggleTheme } = useTheme();
+
+  useEffect(() => {
+    if (state?.message) {
+      showToast("success", state.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchLectureVideo = async () => {
+      try {
+        if (id) {
+          const response = await lectureVideoService.getLectureVideo(id);
+          setLectureVideo(response);
+          console.log(response);
+        }
+      } catch (error: any) {
+        console.error("Failed to get lecture video:", error);
+      }
+    };
+
+    fetchLectureVideo();
+  }, [id]);
+
   // useEffect(() => {
   //   setHeaderClass("bg-transparent border-none shadow-none");
   //   toggleTheme("dark");
@@ -21,7 +52,7 @@ function DownloadLectureVideo() {
         Your lecture video has been generated successfully. You can download it here.
       </p>
       <video
-        src="https://lectrifai-storage.s3.ap-southeast-2.amazonaws.com/lecture-videos/fad76ce1-d266-46c9-aa6a-1443b1e6e34e.mp4"
+        src={lectureVideo.videoUrl}
         className="w-3/4 mt-6"
         controls
       ></video>

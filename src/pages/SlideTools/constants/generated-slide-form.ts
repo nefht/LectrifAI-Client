@@ -1,6 +1,8 @@
 export enum EGeneratedSlideForm {
   TOPIC = "topicText",
   CONTENT = "content",
+  TOPIC_FILE= "topicFile",
+  TOPIC_FILE_ID = "topicFileId",
   FILE_URLS = "fileUrls",
   WRITING_TONE = "writingTone",
   LANGUAGE = "language",
@@ -22,7 +24,9 @@ export interface GeneratedSlideFormModal {
 }
 
 export interface GeneratedSlideFormProcess {
-  [EGeneratedSlideForm.CONTENT]: string | File;
+  [EGeneratedSlideForm.CONTENT]: string;
+  [EGeneratedSlideForm.TOPIC_FILE]: File | null;
+  [EGeneratedSlideForm.TOPIC_FILE_ID]: string;
   [EGeneratedSlideForm.WRITING_TONE]: string;
   [EGeneratedSlideForm.LANGUAGE]: string;
   [EGeneratedSlideForm.NUMBER_OF_SLIDES]: number;
