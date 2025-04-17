@@ -17,8 +17,8 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false, // Bỏ warning biến không được đọc
+    "noUnusedParameters": false, // Bỏ warning tham số không được đọc
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
