@@ -30,7 +30,12 @@ import LearningQuiz from "../LearningQuiz/LearningQuiz";
 import quizService from "../services/quizService";
 import { useToast } from "../../../hooks/useToast";
 import DeleteModal from "../../../components/NotificationModal/DeleteModal";
-import EditInfoModal from "./components/editInfoModal";
+import { useAuth } from "../../../hooks/useAuth";
+import {
+  editablePermissionTypes,
+  ownerPermissionTypes,
+} from "./constants/permission-type";
+import EditInfoModal from "./components/EditModal";
 
 function capitalizeFirstLetter(str: string) {
   if (typeof str !== "string" || str.length === 0) return str;
@@ -39,13 +44,17 @@ function capitalizeFirstLetter(str: string) {
 }
 
 function QuizSet() {
+  const { user } = useAuth();
   const { id } = useParams();
   const location = useLocation();
   const state = location.state;
   const navigate = useNavigate();
   const { showToast } = useToast();
+
   const [quizData, setQuizData] = useState<QuizQuestion[]>([]);
   const [quizSetInfo, setQuizSetInfo] = useState<any>({});
+  const [userPermission, setUserPermission] = useState("");
+  const [ownerPermission, setOwnerPermission] = useState(false);
   const [isEditQuestion, setIsEditQuestion] = useState<number | null>(null);
   const [showAllAnswers, setShowAllAnswers] = useState(false);
   const [startLearning, setStartLearning] = useState(false);
@@ -64,7 +73,15 @@ function QuizSet() {
         if (response.userId) {
           const ownerInfo = await quizService.getUserById(response.userId);
           setQuizSetInfo({ ...response, owner: ownerInfo });
+          if (user) {
+            setOwnerPermission(response.userId === user.id);
+          }
         }
+      };
+
+      const getUserPermission = async () => {
+        const response = await quizService.getCurrentUserPermissionWithQuiz(id);
+        setUserPermission(response.permissionType);
       };
 
       if (state?.message) {
@@ -72,6 +89,7 @@ function QuizSet() {
       }
 
       fetchQuizData();
+      getUserPermission();
     }
   }, [id]);
 
@@ -123,7 +141,11 @@ function QuizSet() {
 
   const handleDeleteQuizSet = useMutation({
     mutationFn: async () => {
-      if (id) {
+      if (
+        id &&
+        (editablePermissionTypes.includes(userPermission) ||
+          user?.id === quizSetInfo.userId)
+      ) {
         await quizService.deleteQuiz(id);
       }
     },
@@ -150,6 +172,7 @@ function QuizSet() {
         setOpen={setIsEditModalOpen}
         quizSetInfo={quizSetInfo}
         setQuizSetInfo={setQuizSetInfo}
+        userPermission={userPermission}
       />
       <DeleteModal
         open={isDeleteModalOpen}
@@ -199,7 +222,7 @@ function QuizSet() {
                 </span>
               </div>
             </div>
-            <div className="w-full md:w-1/3 flex items-center mb-3 md:justify-end md:justify-start gap-2">
+            <div className="w-full md:w-1/3 flex items-center mb-3 md:justify-start gap-2">
               <Avatar rounded />
               <div className="flex flex-col text-gray-800">
                 <p className="font-semibold">{quizSetInfo?.owner?.fullName}</p>
@@ -210,15 +233,21 @@ function QuizSet() {
 
           {/* Function Buttons */}
           <div className="flex justify-end flex-wrap gap-x-3 my-3">
-            <button
-              className="flex items-center justify-center gap-2 bg-purple-600 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-purple-700 transition duration-200 active:ring-4 active:ring-purple-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-purple-200 focus:ring-offset-0"
-              onClick={() => setIsEditModalOpen(true)}
-            >
-              <LuClipboardEdit /> Edit
-            </button>
-            <button className="flex items-center justify-center gap-2 bg-green-600 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-green-700 transition duration-200 active:ring-4 active:ring-green-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-green-200 focus:ring-offset-0">
-              <IoShareSocialOutline className="text-md" /> Share
-            </button>
+            {(editablePermissionTypes.includes(userPermission) ||
+              user?.id === quizSetInfo.userId) && (
+              <button
+                className="flex items-center justify-center gap-2 bg-purple-600 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-purple-700 transition duration-200 active:ring-4 active:ring-purple-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-purple-200 focus:ring-offset-0"
+                onClick={() => setIsEditModalOpen(true)}
+              >
+                <LuClipboardEdit /> Edit
+              </button>
+            )}
+            {(ownerPermissionTypes.includes(userPermission) ||
+              user?.id === quizSetInfo.userId) && (
+              <button className="flex items-center justify-center gap-2 bg-green-600 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-green-700 transition duration-200 active:ring-4 active:ring-green-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-green-200 focus:ring-offset-0">
+                <IoShareSocialOutline className="text-md" /> Share
+              </button>
+            )}
             <Menu as="div">
               <Menu.Button className="flex items-center justify-center gap-2 bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md mt-4 hover:bg-gray-400 transition duration-200 active:ring-4 active:ring-gray-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-gray-200 focus:ring-offset-0">
                 <MdOutlineFileDownload className="text-xl" />
@@ -299,12 +328,15 @@ function QuizSet() {
                 )}
               </Menu.Items>
             </Menu>
-            <button
-              className="flex items-center justify-center gap-2 bg-red-600/90 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-red-700 transition duration-200 active:ring-4 active:ring-red-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-red-200 focus:ring-offset-0"
-              onClick={() => setIsDeleteModalOpen(true)}
-            >
-              <MdDeleteOutline className="text-xl" /> Delete
-            </button>
+            {(editablePermissionTypes.includes(userPermission) ||
+              user?.id === quizSetInfo.userId) && (
+              <button
+                className="flex items-center justify-center gap-2 bg-red-600/90 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-red-700 transition duration-200 active:ring-4 active:ring-red-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-red-200 focus:ring-offset-0"
+                onClick={() => setIsDeleteModalOpen(true)}
+              >
+                <MdDeleteOutline className="text-xl" /> Delete
+              </button>
+            )}
           </div>
         </div>
 
@@ -370,6 +402,8 @@ function QuizSet() {
                   setQuizData={setQuizData}
                   autoResize={autoResize}
                   showAllAnswers={showAllAnswers}
+                  userPermission={userPermission}
+                  ownerPermission={ownerPermission}
                 />
               );
             case "short answer":
@@ -384,32 +418,37 @@ function QuizSet() {
                   setQuizData={setQuizData}
                   autoResize={autoResize}
                   showAllAnswers={showAllAnswers}
+                  userPermission={userPermission}
+                  ownerPermission={ownerPermission}
                 />
               );
             default:
               return null;
           }
         })}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 w-full mb-8">
-          <div
-            className="relative flex items-center justify-center gap-2 w-full py-4 bg-purple-100 hover:bg-purple-200 border border-dashed border-purple-600 rounded-md cursor-pointer transition-transform duration-500 active:scale-90"
-            onClick={handleAddMultipleChoice}
-          >
-            <FaPlus className="text-purple-600" />
-            <p className="font-semibold text-purple-600 text-md">
-              Multiple Choice Question
-            </p>
+        {(editablePermissionTypes.includes(userPermission) ||
+          user?.id === quizSetInfo.userId) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 w-full mb-8">
+            <div
+              className="relative flex items-center justify-center gap-2 w-full py-4 bg-purple-100 hover:bg-purple-200 border border-dashed border-purple-600 rounded-md cursor-pointer transition-transform duration-500 active:scale-90"
+              onClick={handleAddMultipleChoice}
+            >
+              <FaPlus className="text-purple-600" />
+              <p className="font-semibold text-purple-600 text-md">
+                Multiple Choice Question
+              </p>
+            </div>
+            <div
+              className="relative flex items-center justify-center gap-2 w-full py-4 bg-indigo-100 hover:bg-indigo-200 border border-dashed border-indigo-600 rounded-md cursor-pointer transition-transform duration-500 active:scale-90"
+              onClick={handleAddShortAnswer}
+            >
+              <FaPlus className="text-indigo-600" />
+              <p className="font-semibold text-indigo-600 text-md">
+                Short Answer Question
+              </p>
+            </div>
           </div>
-          <div
-            className="relative flex items-center justify-center gap-2 w-full py-4 bg-indigo-100 hover:bg-indigo-200 border border-dashed border-indigo-600 rounded-md cursor-pointer transition-transform duration-500 active:scale-90"
-            onClick={handleAddShortAnswer}
-          >
-            <FaPlus className="text-indigo-600" />
-            <p className="font-semibold text-indigo-600 text-md">
-              Short Answer Question
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* <div className="w-full flex items-center justify-end gap-2 mb-8">
           <button className="flex items-center justify-center gap-2 bg-purple-600 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-purple-700 transition duration-200 active:ring-4 active:ring-purple-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-purple-200 focus:ring-offset-0">

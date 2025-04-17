@@ -31,6 +31,9 @@ function Layout() {
     // Quiz maker
     "/quiz-maker",
     `/quiz/${id}`,
+    // Classroom
+    `/classroom/detail/${id}`,
+    `/classroom/doing-quiz/${id}`,
   ];
 
   const noHeaderPaddingRoutes = [

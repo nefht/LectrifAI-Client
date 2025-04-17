@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import lectureVideoService from "../../LectureTools/services/lectureVideoService";
 import Notebook from "./components/Notebook/Notebook";
 import { motion } from "framer-motion";
@@ -9,6 +9,8 @@ import { useHeader } from "../../../hooks/useHeader";
 
 function LectureDetail() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const state = location.state;
   const { setHeaderClass } = useHeader();
   const [lectureVideo, setLectureVideo] = useState<any>({});
   const [lectureScriptId, setLectureScriptId] = useState<string>("");

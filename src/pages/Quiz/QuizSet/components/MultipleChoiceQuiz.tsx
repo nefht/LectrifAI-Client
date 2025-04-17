@@ -10,6 +10,7 @@ import DeleteModal from "../../../../components/NotificationModal/DeleteModal";
 import { QuizQuestion } from "../../constants/quiz-data";
 import quizService from "../../services/quizService";
 import { useToast } from "../../../../hooks/useToast";
+import { editablePermissionTypes } from "../constants/permission-type";
 
 interface MultipleChoiceQuizProps {
   index: number;
@@ -20,6 +21,8 @@ interface MultipleChoiceQuizProps {
   setQuizData: (data: any) => void;
   autoResize: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   showAllAnswers: boolean;
+  userPermission: string;
+  ownerPermission: boolean;
 }
 
 const MultipleChoiceQuiz = ({
@@ -31,6 +34,8 @@ const MultipleChoiceQuiz = ({
   setQuizData,
   autoResize,
   showAllAnswers,
+  userPermission,
+  ownerPermission,
 }: MultipleChoiceQuizProps) => {
   const { id } = useParams();
   const { showToast } = useToast();
@@ -102,7 +107,7 @@ const MultipleChoiceQuiz = ({
 
   const handleDeleteQuestion = useMutation({
     mutationFn: async (index: number) => {
-      if (!id) return;
+      if (!id || !editablePermissionTypes.includes(userPermission)) return;
       const updatedQuizData = [...quizData].filter((_, i) => i !== index);
       const response = await quizService.updateQuiz(id, {
         quizzes: updatedQuizData,
@@ -144,37 +149,42 @@ const MultipleChoiceQuiz = ({
                 >
                   <IoKeyOutline className="text-xl text-green-600" />
                 </div>
-                <div className="p-1 rounded-lg bg-purple-300/70 transition duration-200 active:scale-95">
-                  {isEditQuestion === index ? (
-                    handleSaveChanges.isPending ? (
-                      <FaSpinner className="text-xl text-purple-600 animate-spin" />
-                    ) : (
-                      <MdDone
-                        className="text-xl text-purple-600"
-                        onClick={() => handleSaveChanges.mutate(index)}
-                      />
-                    )
-                  ) : (
-                    <MdEditNote
-                      className="text-xl text-purple-600"
-                      onClick={() => setIsEditQuestion(index)}
-                    />
-                  )}
-                </div>
-                {isEditQuestion === index && (
-                  <div className="p-1 rounded-lg bg-purple-300/70 transition duration-200 active:scale-95">
-                    <IoMdClose
-                      className="text-xl text-purple-600"
-                      onClick={() => setIsEditQuestion(null)}
-                    />
-                  </div>
+                {(editablePermissionTypes.includes(userPermission) ||
+                  ownerPermission) && (
+                  <>
+                    <div className="p-1 rounded-lg bg-purple-300/70 transition duration-200 active:scale-95">
+                      {isEditQuestion === index ? (
+                        handleSaveChanges.isPending ? (
+                          <FaSpinner className="text-xl text-purple-600 animate-spin" />
+                        ) : (
+                          <MdDone
+                            className="text-xl text-purple-600"
+                            onClick={() => handleSaveChanges.mutate(index)}
+                          />
+                        )
+                      ) : (
+                        <MdEditNote
+                          className="text-xl text-purple-600"
+                          onClick={() => setIsEditQuestion(index)}
+                        />
+                      )}
+                    </div>
+                    {isEditQuestion === index && (
+                      <div className="p-1 rounded-lg bg-purple-300/70 transition duration-200 active:scale-95">
+                        <IoMdClose
+                          className="text-xl text-purple-600"
+                          onClick={() => setIsEditQuestion(null)}
+                        />
+                      </div>
+                    )}
+                    <div
+                      className="p-1 rounded-lg bg-red-300/70 transition duration-200 active:scale-95"
+                      onClick={() => setIsDeleteModalOpen(true)}
+                    >
+                      <MdDeleteOutline className="text-xl text-red-600" />
+                    </div>
+                  </>
                 )}
-                <div
-                  className="p-1 rounded-lg bg-red-300/70 transition duration-200 active:scale-95"
-                  onClick={() => setIsDeleteModalOpen(true)}
-                >
-                  <MdDeleteOutline className="text-xl text-red-600" />
-                </div>
               </div>
               <div className="flex items-center gap-3 mb-1">
                 {isEditQuestion === index ? (

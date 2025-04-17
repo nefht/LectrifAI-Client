@@ -73,7 +73,7 @@ export const createQuizWithFile = async (
     console.error("Failed to create quiz:", error);
     throw new Error(error.response?.data?.error || "Failed to create quiz.");
   }
-}
+};
 
 /**
  * Get quiz by id
@@ -100,7 +100,7 @@ export const getAllQuizzes = async (params: {
   search?: string;
   sortBy?: string;
   order?: "asc" | "desc";
-})  => {
+}) => {
   try {
     const queryParams: any = {
       page: params.page,
@@ -116,8 +116,7 @@ export const getAllQuizzes = async (params: {
     console.error("Failed to get quizzes:", error);
     throw new Error(error.response?.data?.error || "Failed to get quizzes.");
   }
-}
-
+};
 
 /**
  * Check short answer quiz
@@ -221,6 +220,47 @@ export const deleteQuiz = async (id: string) => {
   }
 };
 
+/**
+ * Share quiz set
+ * @param id
+ * @param isPublic
+ * @param sharedWith {userId: string, permissionType: string}[]
+ * @returns
+ */
+export const shareQuiz = async (
+  id: string,
+  isPublic: boolean,
+  sharedWith: string[]
+) => {
+  try {
+    const response = await api.patch(`/quiz/share/${id}`, {
+      isPublic,
+      sharedWith,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to share quiz:", error);
+    throw new Error(error.response?.data?.error || "Failed to share quiz.");
+  }
+};
+
+/**
+ * Get current user permissions with quiz
+ * @param id
+ * @returns permissionType
+ */
+export const getCurrentUserPermissionWithQuiz = async (id: string) => {
+  try {
+    const response = await api.get(`/quiz/permission/${id}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to get current user permissions with quiz:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to get quiz permissions."
+    );
+  }
+};
+
 const quizService = {
   createQuizWithTopic,
   createQuizWithFile,
@@ -231,6 +271,8 @@ const quizService = {
   updateQuiz,
   updateQuizInfo,
   deleteQuiz,
+  shareQuiz,
+  getCurrentUserPermissionWithQuiz,
 };
 
 export default quizService;

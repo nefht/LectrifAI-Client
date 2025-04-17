@@ -37,7 +37,7 @@ const otherTools = [
   {
     name: "Classroom Management",
     description: "Manage your classroom",
-    href: "#",
+    href: "/classroom/management",
     icon: CursorArrowRaysIcon,
   },
 ];

@@ -31,6 +31,9 @@ import InstantLecturePresenter from "./pages/LectureTools/InstantLecturePresente
 import Storage from "./pages/Storage/Storage";
 import QuizMaker from "./pages/QuizMaker/QuizMaker";
 import QuizSet from "./pages/Quiz/QuizSet/QuizSet";
+import ClassroomManagement from "./pages/ClassroomManagement/ClassroomManagement";
+import ClassroomDetail from "./pages/Classroom/ClassroomDetail/ClassroomDetail";
+import DoingQuizSet from "./pages/Classroom/ClassroomDetail/components/DoingQuizSet";
 
 function App() {
   const { showToast } = useToast();
@@ -103,6 +106,11 @@ function App() {
         <Route path="/quiz-maker" element={<QuizMaker />} />
         <Route path="/quiz/:id" element={<QuizSet />} />
         <Route path="/storage" element={<Storage />} />
+        <Route path="/classroom">
+          <Route path="management" element={<ClassroomManagement />} />
+          <Route path="detail/:id" element={<ClassroomDetail />} />
+          <Route path="doing-quiz/:id" element={<DoingQuizSet />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
