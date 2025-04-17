@@ -1,0 +1,12 @@
+[build]
+  # Chỉ định thư mục build khi quá trình xây dựng xong
+  publish = "build"
+  
+  # Chỉ định lệnh để xây dựng ứng dụng
+  command = "npm run build"
+
+[[redirects]]
+  # Các thiết lập redirect nếu cần
+  from = "/*"
+  to = "/index.html"
+  status = 200
