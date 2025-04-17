@@ -1,6 +1,6 @@
 [build]
   # Chỉ định thư mục build khi quá trình xây dựng xong
-  publish = "build"
+  publish = "dist"
   
   # Chỉ định lệnh để xây dựng ứng dụng
   command = "npm run build"
