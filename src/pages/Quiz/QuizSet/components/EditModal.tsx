@@ -12,12 +12,14 @@ import DropdownInput from "../../../../components/DropdownInput/DropdownInput";
 import { academicLevels } from "../../../LectureTools/LectureVideoGenerator/constants/lecture-settings";
 import { useToast } from "../../../../hooks/useToast";
 import quizService from "../../services/quizService";
+import { editablePermissionTypes } from "../constants/permission-type";
 
 interface EditInfoModalProps {
   open: boolean;
   setOpen: (value: boolean) => void;
   quizSetInfo: any;
   setQuizSetInfo: (value: any) => void;
+  userPermission: string;
 }
 
 function EditInfoModal({
@@ -25,6 +27,7 @@ function EditInfoModal({
   setOpen,
   quizSetInfo,
   setQuizSetInfo,
+  userPermission,
 }: EditInfoModalProps) {
   const { id } = useParams();
   const { showToast } = useToast();
@@ -36,7 +39,7 @@ function EditInfoModal({
 
   const handleUpdateQuizSet = useMutation({
     mutationFn: async (e: React.FormEvent) => {
-      if (!id) return;
+      if (!id || !editablePermissionTypes.includes(userPermission)) return;
       e.preventDefault();
       const response = await quizService.updateQuizInfo(
         id,
@@ -70,7 +73,7 @@ function EditInfoModal({
             transition
             className="relative transform rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
           >
-            <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 rounded-t-lg">
               <div className="sm:flex sm:items-center">
                 <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-purple-200 sm:mx-0 sm:size-10">
                   <MdEditSquare
@@ -127,7 +130,7 @@ function EditInfoModal({
                 />
               </div>
             </div>
-            <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 rounded-b-lg">
               <button
                 disabled={handleUpdateQuizSet.isPending}
                 type="submit"

@@ -237,14 +237,14 @@ export const Card: FC<CardProps> = ({
     setCurrentImages(updatedImages);
 
     // Cập nhật lại state của cardList
-    setCardList((prevState) => {
-      const updatedSlides = [...prevState.slides];
-      updatedSlides[index].imageUrls = updatedImages;
-      return {
-        ...prevState,
-        slides: updatedSlides,
-      };
-    });
+    // setCardList((prevState) => {
+    //   const updatedSlides = [...prevState.slides];
+    //   updatedSlides[index] = updatedImages;
+    //   return {
+    //     ...prevState,
+    //     slides: updatedSlides,
+    //   };
+    // });
   };
 
   // Thêm ảnh vào danh sách
@@ -257,14 +257,14 @@ export const Card: FC<CardProps> = ({
       }));
       setCurrentImages((prevImages) => [...prevImages, ...fileUrls]);
 
-      setCardList((prevState) => {
-        const updatedSlides = [...prevState.slides];
-        updatedSlides[index].imageUrls = [...currentImages, ...fileUrls];
-        return {
-          ...prevState,
-          slides: updatedSlides,
-        };
-      });
+      // setCardList((prevState) => {
+      //   const updatedSlides = [...prevState.slides];
+      //   updatedSlides[index].imageUrls = [...currentImages, ...fileUrls];
+      //   return {
+      //     ...prevState,
+      //     slides: updatedSlides,
+      //   };
+      // });
     }
   };
 
@@ -275,14 +275,14 @@ export const Card: FC<CardProps> = ({
     );
     setCurrentImages(updatedImages);
 
-    setCardList((prevState) => {
-      const updatedSlides = [...prevState.slides];
-      updatedSlides[index].imageUrls = updatedImages;
-      return {
-        ...prevState,
-        slides: updatedSlides,
-      };
-    });
+    // setCardList((prevState) => {
+    //   const updatedSlides = [...prevState.slides];
+    //   updatedSlides[index].imageUrls = updatedImages;
+    //   return {
+    //     ...prevState,
+    //     slides: updatedSlides,
+    //   };
+    // });
   };
 
   const handleViewFile = (url: string) => {
