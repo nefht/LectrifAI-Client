@@ -1,20 +1,25 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { formatDuration } from "../ClassroomDetail";
 import { useNavigate } from "react-router";
+import { useMutation } from "@tanstack/react-query";
+import classroomService from "../../services/classroomService";
 
 interface StartQuizModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   quizInfo: any;
+  message?: { message: string; buttonText: string };
+  handleStartTest: () => void;
 }
 
-function StartQuizModal({ open, setOpen, quizInfo }: StartQuizModalProps) {
-  const navigate = useNavigate();
+function StartQuizModal({
+  open,
+  setOpen,
+  quizInfo,
+  message,
+  handleStartTest,
+}: StartQuizModalProps) {
   if (!open) return null;
-
-  const handleStartTest = () => {
-    navigate("/classroom/doing-quiz/das")
-  };
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-50">
@@ -36,9 +41,7 @@ function StartQuizModal({ open, setOpen, quizInfo }: StartQuizModalProps) {
               <p className="text-center text-gray-600 mb-4 font-medium">
                 Time limit: {formatDuration(quizInfo?.duration) ?? "No limit"}
               </p>
-              <p className="text-center text-gray-800">
-                Do you want to start the test?
-              </p>
+              <p className="text-center text-gray-800">{message?.message}</p>
             </div>
             <div className="bg-gray-100 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
               <button
@@ -46,7 +49,7 @@ function StartQuizModal({ open, setOpen, quizInfo }: StartQuizModalProps) {
                 onClick={handleStartTest}
                 className="inline-flex w-full justify-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 sm:ml-3 sm:w-auto"
               >
-                Start
+                {message?.buttonText ?? "Start"}
               </button>
               <button
                 //   disabled={handleUpdateQuizSet.isPending}

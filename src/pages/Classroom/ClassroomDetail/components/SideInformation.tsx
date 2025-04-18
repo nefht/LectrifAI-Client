@@ -4,7 +4,7 @@ import { MdOutlineForum, MdOutlinePlayLesson } from "react-icons/md";
 import { BiUserPlus } from "react-icons/bi";
 import { IoPeopleOutline } from "react-icons/io5";
 import AddStudentModal from "./AddStudentsModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddQuizModal from "./AddQuizModal";
 
 interface SideInformationProps {
@@ -33,14 +33,14 @@ function SideInformation({
         </h2>
         <p className="text-sm text-gray-600 mb-2">
           <span className="font-medium">Classroom's owner:</span>{" "}
-          {classroomInfo.userId.fullName}
+          {classroomInfo?.userId?.fullName}
         </p>
         <p className="text-sm text-gray-600 mb-2">
-          <span className="font-medium">No.Students:</span>{" "}
-          {classroomInfo.students.length} students
+          <span className="font-medium">No. Members:</span>{" "}
+          {classroomInfo?.students?.length} people
         </p>
         <div className="flex flex-col items-start w-full mt-2 pt-3 border-t border-t-purple-200 text-sm">
-          {classroomInfo.userId._id === user?.id && (
+          {classroomInfo?.userId?._id === user?.id && (
             <div className="flex flex-col w-full pb-2 mb-2 border-b border-b-purple-200">
               <div
                 className="group flex items-center justify-between w-full hover:bg-black/10 hover:font-medium rounded-md p-2 cursor-pointer"
@@ -63,7 +63,7 @@ function SideInformation({
             </div>
           )}
           <div className="group flex items-center justify-between w-full hover:bg-black/10 hover:font-medium rounded-md p-2 cursor-pointer">
-            <p className="text-gray-800">Students list</p>
+            <p className="text-gray-800">List of students</p>
             <IoPeopleOutline className="text-lg text-black/50 group-hover:text-black/90" />
           </div>
           <div className="group flex items-center justify-between w-full hover:bg-black/10 hover:font-medium rounded-md p-2 cursor-pointer">

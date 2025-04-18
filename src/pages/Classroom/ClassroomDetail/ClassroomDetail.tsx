@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { FaCaretDown, FaCaretUp, FaChalkboardTeacher } from "react-icons/fa";
 import { GrTest } from "react-icons/gr";
 import SideInformation from "./components/SideInformation";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import StartQuizModal from "./components/StartQuizModal";
+import classroomService from "../services/classroomService";
+import { useMutation } from "@tanstack/react-query";
 
 export const formatDuration = (durationInSeconds: number) => {
   if (!durationInSeconds || durationInSeconds <= 0) return "No limit"; // Nếu không có thời gian, trả về "No limit"
@@ -76,116 +78,78 @@ const groupByWeek = (data: { createdAt: string }[]) => {
 };
 
 function ClassroomDetail() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [isStartQuizModalOpen, setIsStartQuizModalOpen] = useState(false);
-  const [selectedQuiz, setSelectedQuiz] = useState();
-  const [classroomInfo, setClassroomInfo] = useState({
-    _id: "67feb30f6ad903b1e114bc0e",
-    classroomName: "INT2201 - Cấu trúc dữ liệu và Giải thuật (2025-2026)",
-    userId: {
-      _id: "67c35cca742cf7772ee0e8c8",
-      fullName: "Nguyen Huong Thao",
-      email: "291thao@gmail.com",
-      account: "maiconht",
-    },
-    students: ["67e156e12a0b77e87653a0af"],
-    createdAt: "2025-04-15T19:27:11.343Z",
-    updatedAt: "2025-04-15T19:32:45.062Z",
-    __v: 1,
+  const [modalMessage, setModalMessage] = useState({
+    message: "Do you want to start the quiz?",
+    buttonText: "Start",
   });
+  const [selectedQuiz, setSelectedQuiz] = useState({} as any);
+  const [classroomInfo, setClassroomInfo] = useState({});
 
-  const [classroomMaterials, setClassroomMaterials] = useState([
-    {
-      _id: "67feb645cf0b551c9b50d7ec",
-      classroomId: "67feb30f6ad903b1e114bc0e",
-      quizId: {
-        _id: "67fd1883e14ec39018f66ec4",
-        quizName: "Clustal Omega",
-      },
-      startTime: "2025-03-02T02:46:17.456Z",
-      endTime: "2025-05-02T02:46:17.456Z",
-      __v: 0,
-      createdAt: "2025-03-29T19:40:53.389Z",
-      updatedAt: "2025-04-15T19:40:53.389Z",
-    },
-    {
-      _id: "67feb702ca170408aaacee19",
-      classroomId: "67feb30f6ad903b1e114bc0e",
-      lectureVideoId: {
-        _id: "67f2a3dcfd3534a7c8456174",
-        lectureName: "Quản lý dữ liệu trong Docker: Volumes và Bind Mounts",
-      },
-      lectureScriptId: "67f2a15ffd3534a7c8456168",
-      __v: 0,
-      createdAt: "2025-04-01T19:44:02.977Z",
-      updatedAt: "2025-04-15T19:44:02.977Z",
-    },
-    {
-      _id: "67feb645cf0b551c9b50d7ed",
-      classroomId: "67feb30f6ad903b1e114bc0e",
-      quizId: {
-        _id: "67fccfd441bfced4428b2dd9",
-        quizName: "Bài tập Xác suất (lớp 12)",
-      },
-      duration: 3600,
-      __v: 0,
-      createdAt: "2025-04-09T19:40:53.389Z",
-      updatedAt: "2025-04-15T19:40:53.389Z",
-    },
-    {
-      _id: "67feb702ca170408aaacee19",
-      classroomId: "67feb30f6ad903b1e114bc0e",
-      lectureVideoId: {
-        _id: "67f2a3dcfd3534a7c8456174",
-        lectureName: "Quản lý dữ liệu trong Docker: Volumes và Bind Mounts",
-      },
-      lectureScriptId: "67f2a15ffd3534a7c8456168",
-      __v: 0,
-      createdAt: "2025-04-15T19:44:02.977Z",
-      updatedAt: "2025-04-15T19:44:02.977Z",
-    },
-    {
-      _id: "67feb645cf0b551c9b50d7ec",
-      classroomId: "67feb30f6ad903b1e114bc0e",
-      quizId: {
-        _id: "67fd1883e14ec39018f66ec4",
-        quizName: "Clustal Omega",
-      },
-      startTime: "2025-03-02T02:46:17.456Z",
-      endTime: "2025-05-02T02:46:17.456Z",
-      __v: 0,
-      createdAt: "2025-04-06T19:40:53.389Z",
-      updatedAt: "2025-04-15T19:40:53.389Z",
-    },
-    {
-      _id: "67feb645cf0b551c9b50d7ed",
-      classroomId: "67feb30f6ad903b1e114bc0e",
-      quizId: {
-        _id: "67fccfd441bfced4428b2dd9",
-        quizName: "Bài tập Xác suất (lớp 12)",
-      },
-      duration: 3600,
-      __v: 0,
-      createdAt: "2025-04-09T19:40:53.389Z",
-      updatedAt: "2025-04-15T19:40:53.389Z",
-    },
-
-    {
-      _id: "67feb702ca170408aaacee19",
-      classroomId: "67feb30f6ad903b1e114bc0e",
-      lectureVideoId: {
-        _id: "67f2a3dcfd3534a7c8456174",
-        lectureName: "Quản lý dữ liệu trong Docker: Volumes và Bind Mounts",
-      },
-      lectureScriptId: "67f2a15ffd3534a7c8456168",
-      __v: 0,
-      createdAt: "2025-04-20T19:44:02.977Z",
-      updatedAt: "2025-04-15T19:44:02.977Z",
-    },
-  ]);
+  const [classroomMaterials, setClassroomMaterials] = useState([] as any[]);
+  const [quizStatuses, setQuizStatuses] = useState<Record<string, any>>(
+    {} as any
+  ); // Lưu trạng thái các quiz
   const [groupedData, setGroupedData] = useState(
     groupByWeek(classroomMaterials)
   );
+  const [openWeek, setOpenWeek] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (id) {
+      const fetchClassroomMaterials = async () => {
+        try {
+          const response = await classroomService.getClassroomMaterialsById(id);
+          setClassroomMaterials(response);
+          setGroupedData(groupByWeek(response));
+          console.log(response);
+        } catch (error) {
+          console.error("Error fetching classroom materials:", error);
+        }
+      };
+
+      const fetchClassroomInfo = async () => {
+        try {
+          const response = await classroomService.getClassroomById(id);
+          setClassroomInfo(response);
+          console.log(response);
+        } catch (error) {
+          console.error("Error fetching classroom info:", error);
+        }
+      };
+
+      fetchClassroomMaterials();
+      fetchClassroomInfo();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    // Lấy trạng thái quiz cho tất cả quiz ngay khi mount
+    const fetchQuizStatuses = async () => {
+      try {
+        const statuses: Record<string, any> = {};
+        // Duyệt qua tất cả các quiz trong classroomMaterials
+        for (const item of classroomMaterials) {
+          if (item.quizId) {
+            console.log(item);
+            const response =
+              await classroomService.getAnswerStatusByClassroomQuizId(item._id);
+            statuses[item._id] = {
+              status: response?.studentAnswerStatus,
+              studentAnswerId: response?.studentAnswerId,
+            }; // Gán trạng thái vào quiz
+          }
+        }
+        setQuizStatuses(statuses);
+      } catch (error) {
+        console.error("Error fetching quiz statuses:", error);
+      }
+    };
+
+    fetchQuizStatuses();
+  }, [classroomMaterials]);
 
   useEffect(() => {
     const initialOpenState: Record<string, boolean> = {};
@@ -195,8 +159,6 @@ function ClassroomDetail() {
     setOpenWeek(initialOpenState);
   }, [groupedData]);
 
-  const [openWeek, setOpenWeek] = useState<Record<string, boolean>>({});
-
   const toggleWeek = (weekKey: string | number) => {
     setOpenWeek((prev) => ({
       ...prev,
@@ -204,12 +166,72 @@ function ClassroomDetail() {
     }));
   };
 
+  const handleOpenStartQuizModal = async (item: any) => {
+    try {
+      const studentAnswerStatus = quizStatuses[item._id].status;
+      console.log("Student answer status:", studentAnswerStatus);
+      switch (studentAnswerStatus) {
+        case "not started":
+          setModalMessage({
+            message: "Do you want to start the quiz?",
+            buttonText: "Start",
+          });
+          break;
+        case "disconnected":
+        case "in-progress":
+          setModalMessage({
+            message: "You are doing this quiz. Would you like to continue?",
+            buttonText: "Continue",
+          });
+          break;
+        case "submitted":
+        case "graded":
+          setModalMessage({
+            message: "Quiz submitted. Would you like to review your work?",
+            buttonText: "Review",
+          });
+          break;
+        default:
+          setModalMessage({
+            message: "Do you want to start the quiz?",
+            buttonText: "Start",
+          });
+          break;
+      }
+      setSelectedQuiz(item);
+      setIsStartQuizModalOpen(true);
+    } catch (error) {
+      console.error("Error opening quiz modal:", error);
+    }
+  };
+
+  const handleStartTest = useMutation({
+    mutationFn: async () => {
+      if (modalMessage.buttonText === "Start") {
+        const classroomQuizId = selectedQuiz._id;
+        const response = await classroomService.startQuiz(classroomQuizId);
+        navigate(`/classroom/doing-quiz/${response.studentAnswerId}`);
+      } else {
+        navigate(
+          `/classroom/doing-quiz/${
+            quizStatuses[selectedQuiz._id].studentAnswerId
+          }`
+        );
+      }
+    },
+    onError: (error) => {
+      console.error("Error starting quiz:", error);
+    },
+  });
+
   return (
     <>
       <StartQuizModal
         open={isStartQuizModalOpen}
         setOpen={setIsStartQuizModalOpen}
         quizInfo={selectedQuiz}
+        message={modalMessage}
+        handleStartTest={() => handleStartTest.mutate()}
       />
       <div className="md:px-10 lg:px-16 xl:px-24 py-10 flex flex-col-reverse md:flex-row">
         <div className="w-full px-10 sm:px-20 md:px-0 md:w-[60%] xl:w-2/3">
@@ -231,7 +253,7 @@ function ClassroomDetail() {
                 </div>
               </div>
               <div
-                className={`transition-all duration-700 ease-in-out overflow-hidden ${
+                className={`transition-all duration-700 ease-in-out pb-10${
                   openWeek[weekKey] ? "max-h-[500px]" : "max-h-0" // Đặt max height nếu mở
                 }`}
               >
@@ -242,11 +264,7 @@ function ClassroomDetail() {
                         {item.quizId ? (
                           <div
                             className="flex items-center w-full p-4 bg-gray-50 border border-gray-200 shadow-md rounded-md cursor-pointer"
-                            onClick={() => {
-                              setIsStartQuizModalOpen(true);
-                              setSelectedQuiz(item);
-                              console.log(item);
-                            }}
+                            onClick={() => handleOpenStartQuizModal(item)}
                           >
                             <div>
                               <div className="p-4 bg-teal-200 border border-teal-300 rounded-md mr-5">
