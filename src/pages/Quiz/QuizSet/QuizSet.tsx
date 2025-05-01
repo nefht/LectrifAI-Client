@@ -12,7 +12,7 @@ import {
   FaRegQuestionCircle,
 } from "react-icons/fa";
 import { AiOutlineNumber } from "react-icons/ai";
-import { Avatar } from "flowbite-react";
+import { Avatar, Tooltip } from "flowbite-react";
 import { LuClipboardEdit, LuPresentation } from "react-icons/lu";
 import {
   MdDeleteOutline,
@@ -35,7 +35,9 @@ import {
   editablePermissionTypes,
   ownerPermissionTypes,
 } from "./constants/permission-type";
-import EditInfoModal from "./components/EditModal";
+import EditInfoModal from "./components/EditInfoModal";
+import CreateRoomModal from "./components/CreateRoomModal";
+import ShareUserModal from "../../../components/ShareUserModal/ShareUserModal";
 
 function capitalizeFirstLetter(str: string) {
   if (typeof str !== "string" || str.length === 0) return str;
@@ -61,8 +63,13 @@ function QuizSet() {
 
   // Modal edit Quiz set info
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // Modal share quiz
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [listPermissions, setListPermissions] = useState<any[]>([]);
   // Modal delete Quiz set
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // Modal create multiple players room
+  const [isCreateRoomModalOpen, setIsCreateRoomModalOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -71,25 +78,35 @@ function QuizSet() {
         setQuizData(response.quizData.quizzes);
 
         if (response.userId) {
-          const ownerInfo = await quizService.getUserById(response.userId);
-          setQuizSetInfo({ ...response, owner: ownerInfo });
-          if (user) {
-            setOwnerPermission(response.userId === user.id);
+          setQuizSetInfo(response);
+          if (user && user.id === response.userId._id) {
+            setOwnerPermission(true);
+            setUserPermission("OWNER");
+          } else {
+            const permission = await quizService.getCurrentUserPermissionWithQuiz(
+              id
+            );
+            setUserPermission(permission.permissionType);
           }
         }
       };
 
-      const getUserPermission = async () => {
-        const response = await quizService.getCurrentUserPermissionWithQuiz(id);
-        setUserPermission(response.permissionType);
-      };
+      // const getUserPermission = async () => {
+      //   if (ownerPermission) {
+      //   } else {
+      //     const response = await quizService.getCurrentUserPermissionWithQuiz(
+      //       id
+      //     );
+      //     setUserPermission(response.permissionType);
+      //   }
+      // };
 
       if (state?.message) {
         showToast("success", state.message);
       }
 
       fetchQuizData();
-      getUserPermission();
+      // getUserPermission();
     }
   }, [id]);
 
@@ -162,6 +179,14 @@ function QuizSet() {
     },
   });
 
+  const handleOpenShare = useMutation({
+    mutationFn: async () => {
+      const response = await quizService.getQuizPermissions(quizSetInfo._id);
+      setListPermissions(response);
+      setIsShareModalOpen(true);
+    },
+  });
+
   return (
     <>
       {startLearning && (
@@ -174,6 +199,13 @@ function QuizSet() {
         setQuizSetInfo={setQuizSetInfo}
         userPermission={userPermission}
       />
+      <ShareUserModal
+        type="quiz"
+        open={isShareModalOpen}
+        setOpen={setIsShareModalOpen}
+        selectedItem={quizSetInfo}
+        listPermissions={listPermissions}
+      />
       <DeleteModal
         open={isDeleteModalOpen}
         setOpen={setIsDeleteModalOpen}
@@ -184,10 +216,14 @@ function QuizSet() {
         }}
         handleDelete={() => handleDeleteQuizSet.mutate()}
       />
+      <CreateRoomModal
+        open={isCreateRoomModalOpen}
+        setOpen={setIsCreateRoomModalOpen}
+      />
       <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center px-10 md:px-20 lg:px-40 xl:px-72 py-10 md:py-20">
         {/* Quiz information */}
         <div className="flex flex-col bg-white border border-gray-200 shadow-lg rounded-lg px-8 py-4 w-full mb-8">
-          <div className="flex justify-between">
+          <div className="sm:flex justify-between">
             <h2 className="font-semibold text-md text-gray-700/80">QUIZ</h2>
             <div className="text-base text-gray-700/80">
               Created At:{" "}
@@ -223,10 +259,10 @@ function QuizSet() {
               </div>
             </div>
             <div className="w-full md:w-1/3 flex items-center mb-3 md:justify-start gap-2">
-              <Avatar rounded />
+              <Avatar rounded img={quizSetInfo?.userId?.avatarUrl} />
               <div className="flex flex-col text-gray-800">
-                <p className="font-semibold">{quizSetInfo?.owner?.fullName}</p>
-                <p className="">{quizSetInfo?.owner?.account}</p>
+                <p className="font-semibold">{quizSetInfo?.userId?.fullName}</p>
+                <p className="">{quizSetInfo?.userId?.account}</p>
               </div>
             </div>
           </div>
@@ -244,7 +280,10 @@ function QuizSet() {
             )}
             {(ownerPermissionTypes.includes(userPermission) ||
               user?.id === quizSetInfo.userId) && (
-              <button className="flex items-center justify-center gap-2 bg-green-600 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-green-700 transition duration-200 active:ring-4 active:ring-green-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-green-200 focus:ring-offset-0">
+              <button
+                onClick={() => handleOpenShare.mutate()}
+                className="flex items-center justify-center gap-2 bg-green-600 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-green-700 transition duration-200 active:ring-4 active:ring-green-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-green-200 focus:ring-offset-0"
+              >
                 <IoShareSocialOutline className="text-md" /> Share
               </button>
             )}
@@ -341,7 +380,7 @@ function QuizSet() {
         </div>
 
         {/* Play Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 bg-white border border-gray-200 shadow-lg rounded-lg px-8 py-4 w-full mb-8">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 bg-white border border-gray-200 shadow-lg rounded-lg px-8 py-4 w-full mb-8">
           <button
             className="flex items-center justify-start gap-5 bg-[#8854c0] border-b-4 border-b-[#743bb1] sm:text-xl text-white font-semibold py-4 px-9 rounded-lg shadow-xl hover:bg-[#6f3ca5] transition duration-300 active:translate-y-1 active:ring-4 active:ring-purple-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-purple-200 focus:ring-offset-0"
             onClick={() => setStartLearning(true)}
@@ -352,13 +391,24 @@ function QuizSet() {
               <p className="text-lg">Start Quiz</p>
             </div>
           </button>
-          <button className="flex items-center justify-start gap-5 bg-[#8854c0] border-b-4 border-b-[#743bb1] sm:text-xl text-white font-semibold py-4 px-9 rounded-lg shadow-xl hover:bg-[#6f3ca5] transition duration-300 active:translate-y-1 active:ring-4 active:ring-purple-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-purple-200 focus:ring-offset-0">
+          <button className="flex items-center justify-start gap-5 bg-[#8854c0] border-b-4 border-b-[#743bb1] sm:text-xl text-white font-semibold py-4 px-9 rounded-lg shadow-xl hover:bg-[#6f3ca5] transition duration-300 active:translate-y-1 active:ring-4 active:ring-purple-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-purple-200 focus:ring-offset-0"
+          onClick={() => setIsCreateRoomModalOpen(true)}>
             <LuPresentation className="text-2xl md:text-4xl" />
             <div className="flex flex-col items-start">
               <p className="text-ssm text-gray-100/80">GET LINK AND PLAY</p>
               <p className="text-lg">Multiple Play Mode</p>
             </div>
           </button>
+        </div> */}
+        <div className="z-40 fixed bottom-6 right-6 md:bottom-10 md:right-10">
+          <Tooltip content="Practice Quiz">
+            <button
+              className="flex items-center justify-center gap-3 bg-[#8854c0] border-b-4 border-b-[#743bb1] text-white font-semibold py-3 px-4 md:py-5 md:px-6 rounded-full shadow-xl hover:bg-[#6f3ca5] transition duration-300 active:translate-y-1 active:ring-4 active:ring-purple-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-purple-200 focus:ring-offset-0"
+              onClick={() => setStartLearning(true)}
+            >
+              <FaPlay className="text-xl sm:text-3xl md:text-4xl" />
+            </button>
+          </Tooltip>
         </div>
 
         {/* Quiz Content */}

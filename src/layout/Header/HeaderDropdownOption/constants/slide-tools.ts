@@ -21,13 +21,13 @@ const mainTools = [
     href: "/slide/document-to-pptx-convert",
     icon: CursorArrowRaysIcon,
   },
-  // Chuyển ảnh thành slide (Giữ nguyên nội dung hình ảnh và thêm chú thích)
-  {
-    name: "Image to Slide Converter",
-    description: "Convert images to slides with more information",
-    href: "/slide/image-to-slide",
-    icon: SquaresPlusIcon,
-  },
+  // // Chuyển ảnh thành slide (Giữ nguyên nội dung hình ảnh và thêm chú thích)
+  // {
+  //   name: "Image to Slide Converter",
+  //   description: "Convert images to slides with more information",
+  //   href: "/slide/image-to-slide",
+  //   icon: SquaresPlusIcon,
+  // },
   // // Cải thiện giao diện slide với hỗ trợ AI
   // {
   //   name: "Slide Enhancer",

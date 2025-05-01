@@ -44,6 +44,7 @@ export const login = async (
     return response.data;
   } catch (error: any) {
     console.error("Failed to login:", error);
+    console.log(error.message);
     throw new Error(error.response?.data?.error || "Failed to login.");
   }
 };
@@ -63,7 +64,7 @@ export const changePassword = async (
       oldPassword,
       newPassword,
     });
-    return response.data;
+    return response;
   } catch (error: any) {
     console.error("Failed to change password:", error);
     throw new Error(
@@ -104,7 +105,7 @@ export const resetPassword = async (
       resetToken,
       newPassword,
     });
-    return response.data;
+    return response;
   } catch (error: any) {
     console.error("Failed to reset password:", error);
     throw new Error(error.response?.data?.error || "Failed to reset password.");

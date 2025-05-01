@@ -144,7 +144,13 @@ Post-war consequences were profound. The United Nations was established to promo
             Paste or type your text to get started
           </p>
           <textarea
+            required
             rows={30}
+            minLength={100}
+            maxLength={8000}
+            name={EGeneratedSlideForm.CONTENT}
+            value={presentationOptions[EGeneratedSlideForm.CONTENT]}
+            onChange={handleGetPresentationOptions}
             className="block mt-6 p-4 w-full text-sm text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
             placeholder={placeholder}
           ></textarea>

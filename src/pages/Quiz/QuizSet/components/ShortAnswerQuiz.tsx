@@ -219,13 +219,13 @@ const ShortAnswerQuiz = ({
               )}
               {(showAnswer || showAllAnswers) && (
                 <div className="mr-4 mt-2 text-gray-700 px-4 py-3 bg-purple-100 border border-purple-300 rounded-md">
-                  <p className="font-semibold">
+                  <div className="font-semibold">
                     <ReactMarkdown>{`Answer: ${quiz.answer}`}</ReactMarkdown>
-                  </p>
+                  </div>
                   {quiz.explanation && (
-                    <p className="mt-1 text-gray-600">
+                    <div className="mt-1 text-gray-600">
                       <ReactMarkdown>{quiz.explanation}</ReactMarkdown>
-                    </p>
+                    </div>
                   )}
                 </div>
               )}

@@ -1,5 +1,5 @@
-import React from "react";
-import { useMutation } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import {
   Dialog,
@@ -18,8 +18,9 @@ interface EditInfoModalProps {
   open: boolean;
   setOpen: (value: boolean) => void;
   quizSetInfo: any;
-  setQuizSetInfo: (value: any) => void;
+  setQuizSetInfo?: (value: any) => void;
   userPermission: string;
+  currentListPage?: number;
 }
 
 function EditInfoModal({
@@ -28,25 +29,51 @@ function EditInfoModal({
   quizSetInfo,
   setQuizSetInfo,
   userPermission,
+  currentListPage,
 }: EditInfoModalProps) {
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const [updatedInfo, setUpdatedInfo] = useState(quizSetInfo);
+
+  useEffect(() => {
+    setUpdatedInfo(quizSetInfo);
+  }, [quizSetInfo]);
 
   const handleInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setQuizSetInfo((prevInfo: any) => ({ ...prevInfo, [name]: value }));
+    setUpdatedInfo((prevInfo: any) => ({ ...prevInfo, [name]: value }));
   };
 
   const handleUpdateQuizSet = useMutation({
     mutationFn: async (e: React.FormEvent) => {
-      if (!id || !editablePermissionTypes.includes(userPermission)) return;
+      if (!editablePermissionTypes.includes(userPermission)) return;
       e.preventDefault();
-      const response = await quizService.updateQuizInfo(
-        id,
-        quizSetInfo.quizName,
-        quizSetInfo.academicLevel
-      );
-      setOpen(false);
+      if (id) {
+        const response = await quizService.updateQuizInfo(
+          id,
+          updatedInfo.quizName,
+          updatedInfo.academicLevel
+        );
+        setOpen(false);
+        if (setQuizSetInfo) {
+          setQuizSetInfo((prevInfo: any) => ({
+            ...prevInfo,
+            quizName: updatedInfo.quizName,
+            academicLevel: updatedInfo.academicLevel,
+          }));
+        }
+      } else {
+        const response = await quizService.updateQuizInfo(
+          quizSetInfo._id,
+          updatedInfo.quizName,
+          updatedInfo.academicLevel
+        );
+        setOpen(false);
+        queryClient.invalidateQueries({
+          queryKey: ["quizzes", currentListPage, 10, ""],
+        });
+      }
     },
     onSuccess: () => {
       showToast("success", "Quiz set information updated successfully.");
@@ -56,6 +83,11 @@ function EditInfoModal({
       console.error("Error updating quiz set information:", error);
     },
   });
+
+  const handleCloseModal = () => {
+    setUpdatedInfo(quizSetInfo);
+    setOpen(false);
+  };
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-50">
@@ -110,7 +142,7 @@ function EditInfoModal({
                     maxLength={50}
                     required
                     className="mt-2 border-none w-full rounded-md bg-white py-2 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 dark:focus:outline-indigo-600 sm:text-sm/6"
-                    value={quizSetInfo.quizName}
+                    value={updatedInfo?.quizName}
                     onChange={handleInfoChange}
                   />
                 </div>
@@ -118,14 +150,15 @@ function EditInfoModal({
                   label="Academic Level"
                   required={true}
                   options={academicLevels}
-                  selectedValue={
-                    quizSetInfo.academicLevel || academicLevels[0].value
-                  }
+                  selectedValue={updatedInfo?.academicLevel}
                   onChange={(selectedValue) => {
-                    setQuizSetInfo((prevInfo: any) => ({
-                      ...prevInfo,
-                      academicLevel: selectedValue,
-                    }));
+                    setUpdatedInfo((prevInfo: any) => {
+                      console.log(prevInfo);
+                      return {
+                        ...prevInfo,
+                        academicLevel: selectedValue,
+                      };
+                    });
                   }}
                 />
               </div>
@@ -142,7 +175,7 @@ function EditInfoModal({
                 disabled={handleUpdateQuizSet.isPending}
                 type="button"
                 data-autofocus
-                onClick={() => setOpen(false)}
+                onClick={handleCloseModal}
                 className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
               >
                 Cancel

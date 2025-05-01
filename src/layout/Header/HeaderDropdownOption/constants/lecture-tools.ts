@@ -34,12 +34,12 @@ const otherTools = [
     href: "/quiz-maker",
     icon: ChartPieIcon,
   },
-  {
-    name: "Classroom Management",
-    description: "Manage your classroom",
-    href: "/classroom/management",
-    icon: CursorArrowRaysIcon,
-  },
+  // {
+  //   name: "Classroom Management",
+  //   description: "Manage your classroom",
+  //   href: "/classroom/management",
+  //   icon: CursorArrowRaysIcon,
+  // },
 ];
 const callsToAction = [
   { name: "Instruction", href: "#", icon: PlayCircleIcon },

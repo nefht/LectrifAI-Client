@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import ReactMarkdown from "react-markdown";
 import classroomService from "../../services/classroomService";
 import { useAuth } from "../../../../hooks/useAuth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../../../../hooks/useToast";
 import WarningModal from "../../../../components/NotificationModal/WarningModal";
 
@@ -93,44 +93,75 @@ function DoingQuizSet() {
     };
   }, []);
 
-  useEffect(() => {
-    try {
+  // useEffect(() => {
+  //   try {
+  //     if (!id) return;
+  //     const fetchQuizData = async () => {
+  //       try {
+  //         const response = await classroomService.getStudentAnswerById(id);
+  //         setQuizName(response?.quizName);
+  //         setQuizData(response?.userAnswers);
+  //         if (response?.endedAt) {
+  //           const timeLeft = Math.floor(
+  //             (new Date(response?.endedAt).getTime() - new Date().getTime()) /
+  //               1000
+  //           );
+  //           setTimeLeft(timeLeft);
+  //         }
+  //         if (response?.score) {
+  //           setTotalScore(response?.score);
+  //         }
+  //         setCompletedQuestions(
+  //           response?.userAnswers.map((item: any) => ({
+  //             done: item.userAnswer ? true : false,
+  //             mark: false,
+  //           }))
+  //         );
+  //         setUserAnswers(
+  //           response?.userAnswers.map((item: any) => item.userAnswer)
+  //         );
+  //         setStudentAnswerStatus(response?.status);
+  //         setQuizTotalScore(response?.quizTotalScore);
+  //       } catch (error) {
+  //         console.error("Error fetching quiz data:", error);
+  //       }
+  //     };
+  //     fetchQuizData();
+  //   } catch (error) {
+  //     console.error("Error fetching quiz data:", error);
+  //   }
+  // }, [id]);
+
+  const fetchStudentAnswer = useQuery({
+    queryKey: ["studentAnswer", id],
+    queryFn: async () => {
       if (!id) return;
-      const fetchQuizData = async () => {
-        try {
-          const response = await classroomService.getStudentAnswerById(id);
-          setQuizName(response?.quizName);
-          setQuizData(response?.userAnswers);
-          if (response?.endedAt) {
-            const timeLeft = Math.floor(
-              (new Date(response?.endedAt).getTime() - new Date().getTime()) /
-                1000
-            );
-            setTimeLeft(timeLeft);
-          }
-          if (response?.score) {
-            setTotalScore(response?.score);
-          }
-          setCompletedQuestions(
-            response?.userAnswers.map((item: any) => ({
-              done: item.userAnswer ? true : false,
-              mark: false,
-            }))
-          );
-          setUserAnswers(
-            response?.userAnswers.map((item: any) => item.userAnswer)
-          );
-          setStudentAnswerStatus(response?.status);
-          setQuizTotalScore(response?.quizTotalScore);
-        } catch (error) {
-          console.error("Error fetching quiz data:", error);
-        }
-      };
-      fetchQuizData();
-    } catch (error) {
-      console.error("Error fetching quiz data:", error);
-    }
-  }, [id]);
+
+      const response = await classroomService.getStudentAnswerById(id);
+      setQuizName(response?.quizName);
+      setQuizData(response?.userAnswers);
+      if (response?.endedAt) {
+        const timeLeft = Math.floor(
+          (new Date(response?.endedAt).getTime() - new Date().getTime()) / 1000
+        );
+        setTimeLeft(timeLeft);
+      }
+      if (response?.score) {
+        setTotalScore(response?.score);
+      }
+      setCompletedQuestions(
+        response?.userAnswers.map((item: any) => ({
+          done: item.userAnswer ? true : false,
+          mark: false,
+        }))
+      );
+      setUserAnswers(response?.userAnswers.map((item: any) => item.userAnswer));
+      setStudentAnswerStatus(response?.status);
+      setQuizTotalScore(response?.quizTotalScore);
+
+      return response;
+    },
+  });
 
   // Cập nhật thời gian mỗi giây
   useEffect(() => {
@@ -153,6 +184,14 @@ function DoingQuizSet() {
 
     return () => clearInterval(interval); // Dọn dẹp interval khi component unmount
   }, [timeLeft]);
+
+  useEffect(() => {
+    const textareas = document.querySelectorAll("textarea");
+    textareas.forEach((textarea) => {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    });
+  }, [id]);
 
   const autoResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
@@ -239,8 +278,10 @@ function DoingQuizSet() {
     try {
       handleSubmitStudentAnswer.mutate();
       handleGradeStudentAnswer.mutate();
+      fetchStudentAnswer.refetch();
     } catch (error) {
       console.error("Error submitting and grading:", error);
+      fetchStudentAnswer.refetch();
     }
   };
 

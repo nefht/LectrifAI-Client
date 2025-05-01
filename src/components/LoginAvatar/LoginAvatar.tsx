@@ -1,8 +1,5 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import {
-  UserCircleIcon,
-  PowerIcon,
-} from "@heroicons/react/16/solid";
+import { UserCircleIcon, PowerIcon } from "@heroicons/react/16/solid";
 import { MdStorage } from "react-icons/md";
 import { Avatar } from "flowbite-react";
 import { useAuth } from "../../hooks/useAuth";
@@ -21,7 +18,7 @@ function LoginAvatar({ displayMode }: LoginAvatarProps) {
       {displayMode === "header" ? (
         <Menu>
           <MenuButton>
-            <Avatar rounded />
+            <Avatar rounded img={user?.avatarUrl} />
           </MenuButton>
 
           <MenuItems
@@ -29,9 +26,12 @@ function LoginAvatar({ displayMode }: LoginAvatarProps) {
             anchor="bottom end"
             className="z-[9999] bg-white font-semibold mt-4 max-w-60 origin-top-right rounded-xl border p-1 text-sm/6 transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
           >
-            <div>
+            <div
+              className="cursor-pointer"
+              onClick={() => navigate(`/user-profile/${user?.id}`)}
+            >
               <div className="flex items-center gap-2 p-3">
-                <Avatar rounded />
+                <Avatar rounded img={user?.avatarUrl} />
                 <div>
                   <div className="text-sm/5 font-semibold">
                     {user?.fullName}
@@ -44,7 +44,10 @@ function LoginAvatar({ displayMode }: LoginAvatarProps) {
             </div>
             <div className="my-1 h-px bg-gray-200" />
             <MenuItem>
-              <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-gray-100">
+              <button
+                onClick={() => navigate(`/edit-profile/${user?.id}`)}
+                className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-gray-100"
+              >
                 <UserCircleIcon className="size-4 fill-purple-500" />
                 Profile
                 <kbd className="ml-auto hidden font-sans text-xs text-purple-800 group-data-[focus]:inline">
@@ -81,8 +84,11 @@ function LoginAvatar({ displayMode }: LoginAvatarProps) {
         </Menu>
       ) : (
         <div className="-mx-3">
-          <div className="ml-3 mb-3 flex items-center gap-2">
-            <Avatar rounded />
+          <div
+            className="ml-3 mb-3 flex items-center gap-2 cursor-pointer"
+            onClick={() => navigate(`/user-profile/${user?.id}`)}
+          >
+            <Avatar rounded img={user?.avatarUrl} />
             <div>
               <div className="text-sm/5 font-semibold">{user?.fullName}</div>
               <div className="text-xs/5 text-gray-500 font-normal">
@@ -90,7 +96,10 @@ function LoginAvatar({ displayMode }: LoginAvatarProps) {
               </div>
             </div>
           </div>
-          <button className="group flex w-full items-center gap-3 rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
+          <button
+            onClick={() => navigate(`/edit-profile/${user?.id}`)}
+            className="group flex w-full items-center gap-3 rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+          >
             <UserCircleIcon className="size-4 fill-purple-500 dark:fill-indigo-700" />
             Profile
             <kbd className="ml-auto hidden font-sans text-xs text-purple-800 group-hover:inline dark:text-indigo-800">

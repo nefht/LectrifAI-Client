@@ -5,9 +5,12 @@ import Footer from "./Footer/Footer";
 function Layout() {
   const location = useLocation();
   const { id } = useParams();
+  const { token } = useParams();
 
   // List of routes where the footer should not be displayed
   const noFooterRoutes = [
+    // User profile
+    `/user-profile/${id}`,
     // Generate slides process
     "/slide/generate-process/input",
     "/slide/generate-process/template",
@@ -26,14 +29,21 @@ function Layout() {
     `/lecture/instant-presenter/${id}`,
     // Lecture detail
     `/lecture/detail/${id}`,
+    `/lecture/edit-quiz/${id}`,
     // Storage
     "/storage",
     // Quiz maker
     "/quiz-maker",
     `/quiz/${id}`,
+    // Quiz room
+    `/quiz-room/${id}`,
     // Classroom
+    "/classroom/management",
     `/classroom/detail/${id}`,
     `/classroom/doing-quiz/${id}`,
+    `/classroom/students-list/${id}`,
+    // Classroom invitation
+    `/classroom/join/${token}`,
   ];
 
   const noHeaderPaddingRoutes = [
@@ -41,7 +51,7 @@ function Layout() {
     "/",
     // Lecture video generator
     "/lecture/generate-video",
-  ]
+  ];
 
   // Check if the current route is in the noFooterRoutes array
   const hideFooter = noFooterRoutes.includes(location.pathname);

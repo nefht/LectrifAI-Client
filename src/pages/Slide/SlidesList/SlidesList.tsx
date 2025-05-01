@@ -17,6 +17,9 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
 import generatedSlideService from "../../SlideTools/service/generatedSlideService";
+import { useToast } from "../../../hooks/useToast";
+import DeleteModal from "../../../components/NotificationModal/DeleteModal";
+import { useMutation } from "@tanstack/react-query";
 
 function SlidesList({ searchTerm }: { searchTerm: string }) {
   const navigate = useNavigate();
@@ -25,6 +28,9 @@ function SlidesList({ searchTerm }: { searchTerm: string }) {
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedSlide, setSelectedSlide] = useState<any>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchAllSlideContents = async () => {
@@ -95,160 +101,200 @@ function SlidesList({ searchTerm }: { searchTerm: string }) {
     return pageButtons;
   };
 
-  return (
-    <div className="overflow-x-auto px-4 md:px-10 xl:px-48 pb-10">
-      <Table striped hoverable>
-        <TableHead className="text-white">
-          <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
-            #
-          </TableHeadCell>
-          <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold">
-            Slide Name
-          </TableHeadCell>
-          <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
-            Writing Tone
-          </TableHeadCell>
-          <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
-            Language
-          </TableHeadCell>
-          <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
-            No.Slides
-          </TableHeadCell>
-          <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
-            Created At
-          </TableHeadCell>
-          <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold"></TableHeadCell>
-        </TableHead>
-        <TableBody className="divide-y">
-          {slides.map((slide, index) => {
-            return (
-              <TableRow
-                key={index}
-                onClick={() =>
-                  navigate(
-                    `/slide/generate-process/download/${
-                      slide._id.$oid || slide._id
-                    }`,
-                    { state: { mode: "storage" } }
-                  )
-                }
-                className=" dark:border-gray-700 hover:cursor-pointer hover:bg-purple-100 transition-colors"
-              >
-                <TableCell className="text-center">
-                  {startIndex + index}
-                </TableCell>
-                <TableCell className="font-medium text-gray-900 dark:text-white">
-                  {slide.name}
-                </TableCell>
-                <TableCell className="text-center">
-                  {slide.writingTone}
-                </TableCell>
-                <TableCell className="text-center">{slide.language}</TableCell>
-                <TableCell className="text-center">
-                  {slide.numberOfSlides}
-                </TableCell>
-                <TableCell className="text-center">
-                  {new Date(
-                    slide.createdAt?.$date || slide.createdAt
-                  ).toLocaleDateString("vi-VN")}
-                </TableCell>
-                <TableCell
-                  className="text-center"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Menu as="div" className="relative inline-block text-left">
-                    <Menu.Button>
-                      <HiDotsVertical className="w-5 h-5 text-gray-500 hover:text-gray-700" />
-                    </Menu.Button>
-                    <Menu.Items className="absolute right-0 mt-2 w-28 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black/10 focus:outline-none z-50">
-                      <div className="px-1 py-1">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <button
-                              className={`${
-                                active
-                                  ? "bg-purple-100 text-purple-800 font-semibold"
-                                  : "text-gray-700"
-                              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                            >
-                              Rename
-                            </button>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <button
-                              className={`${
-                                active
-                                  ? "bg-red-100 text-red-600 font-semibold"
-                                  : "text-red-500"
-                              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </Menu.Item>
-                      </div>
-                    </Menu.Items>
-                  </Menu>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+  const handleOpenDeleteModal = (slide: any) => {
+    console.log(slide);
+    setSelectedSlide(slide._id);
+    setIsDeleteModalOpen(true);
+  };
 
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
-          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{startIndex}</span> to{" "}
-                <span className="font-medium">{endIndex}</span> of{" "}
-                <span className="font-medium">{totalResults}</span> results
-              </p>
-            </div>
-            <div>
-              <nav
-                aria-label="Pagination"
-                className="isolate inline-flex -space-x-px rounded-md shadow-xs"
-              >
-                <button
-                  onClick={() => setPage(1)}
-                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+  const handleDeleteSlide = useMutation({
+    mutationFn: async () => {
+      const response = await generatedSlideService.deleteSlideContent(
+        selectedSlide
+      );
+    },
+    onSuccess: (data) => {
+      setSlides((prevSlides) =>
+        prevSlides.filter((slide) => slide._id !== selectedSlide)
+      );
+      setIsDeleteModalOpen(false);
+      showToast("success", "Slide deleted successfully!");
+    },
+    onError: (error: any) => {
+      console.error("Error deleting slide:", error);
+      showToast("error", "Failed to delete slide. Please try again.");
+    }
+  });
+
+  return (
+    <>
+      <DeleteModal
+        open={isDeleteModalOpen}
+        setOpen={setIsDeleteModalOpen}
+        modalInformation={{
+          title: "Delete Slide",
+          content: "Are you sure you want to delete this presentation?",
+        }}
+        disabledButton={handleDeleteSlide.isPending}
+        handleDelete={() => handleDeleteSlide.mutate()}
+      />
+      <div className="overflow-x-auto px-4 md:px-10 xl:px-48 pb-10">
+        <Table striped hoverable>
+          <TableHead className="text-white">
+            <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
+              #
+            </TableHeadCell>
+            <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold">
+              Slide Name
+            </TableHeadCell>
+            <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
+              Writing Tone
+            </TableHeadCell>
+            <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
+              Language
+            </TableHeadCell>
+            <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
+              No.Slides
+            </TableHeadCell>
+            <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold text-center">
+              Created At
+            </TableHeadCell>
+            <TableHeadCell className="bg-purple-700 text-sm xl:text-base font-semibold"></TableHeadCell>
+          </TableHead>
+          <TableBody className="divide-y">
+            {slides.map((slide, index) => {
+              return (
+                <TableRow
+                  key={index}
+                  onClick={() =>
+                    navigate(
+                      `/slide/generate-process/download/${
+                        slide._id.$oid || slide._id
+                      }`,
+                      { state: { mode: "storage" } }
+                    )
+                  }
+                  className=" dark:border-gray-700 hover:cursor-pointer hover:bg-purple-100 transition-colors"
                 >
-                  <span className="sr-only">First</span>
-                  <ChevronDoubleLeftIcon className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => page > 1 && setPage(page - 1)}
-                  className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  <TableCell className="text-center">
+                    {startIndex + index}
+                  </TableCell>
+                  <TableCell className="font-medium text-gray-900 dark:text-white">
+                    {slide.name}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {slide.writingTone}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {slide.language}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {slide.numberOfSlides}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {new Date(
+                      slide.createdAt?.$date || slide.createdAt
+                    ).toLocaleDateString("vi-VN")}
+                  </TableCell>
+                  <TableCell
+                    className="text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Menu as="div" className="relative inline-block text-left">
+                      <Menu.Button>
+                        <HiDotsVertical className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                      </Menu.Button>
+                      <Menu.Items className="absolute right-0 mt-2 w-28 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black/10 focus:outline-none z-50">
+                        <div className="px-1 py-1">
+                          {/* <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                className={`${
+                                  active
+                                    ? "bg-purple-100 text-purple-800 font-semibold"
+                                    : "text-gray-700"
+                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                              >
+                                Rename
+                              </button>
+                            )}
+                          </Menu.Item> */}
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                className={`${
+                                  active
+                                    ? "bg-red-100 text-red-600 font-semibold"
+                                    : "text-red-500"
+                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                onClick={() => handleOpenDeleteModal(slide)}
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </Menu.Item>
+                        </div>
+                      </Menu.Items>
+                    </Menu>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing <span className="font-medium">{startIndex}</span> to{" "}
+                  <span className="font-medium">{endIndex}</span> of{" "}
+                  <span className="font-medium">{totalResults}</span> results
+                </p>
+              </div>
+              <div>
+                <nav
+                  aria-label="Pagination"
+                  className="isolate inline-flex -space-x-px rounded-md shadow-xs"
                 >
-                  <span className="sr-only">Previous</span>
-                  <ChevronLeftIcon className="h-5 w-5" />
-                </button>
-                {renderPageButtons()}
-                <button
-                  onClick={() => page < totalPages && setPage(page + 1)}
-                  className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                >
-                  <span className="sr-only">Next</span>
-                  <ChevronRightIcon className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => setPage(totalPages)}
-                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                >
-                  <span className="sr-only">Last</span>
-                  <ChevronDoubleRightIcon className="h-5 w-5" />
-                </button>
-              </nav>
+                  <button
+                    onClick={() => setPage(1)}
+                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  >
+                    <span className="sr-only">First</span>
+                    <ChevronDoubleLeftIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => page > 1 && setPage(page - 1)}
+                    className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  >
+                    <span className="sr-only">Previous</span>
+                    <ChevronLeftIcon className="h-5 w-5" />
+                  </button>
+                  {renderPageButtons()}
+                  <button
+                    onClick={() => page < totalPages && setPage(page + 1)}
+                    className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  >
+                    <span className="sr-only">Next</span>
+                    <ChevronRightIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => setPage(totalPages)}
+                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  >
+                    <span className="sr-only">Last</span>
+                    <ChevronDoubleRightIcon className="h-5 w-5" />
+                  </button>
+                </nav>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 

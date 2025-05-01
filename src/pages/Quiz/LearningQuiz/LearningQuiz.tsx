@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { FaCheckCircle, FaQuestionCircle, FaTimesCircle } from "react-icons/fa";
 import { QuizQuestion } from "../constants/quiz-data";
 import quizService from "../services/quizService";
+import { Tooltip } from "flowbite-react";
 
 interface LearningQuizProps {
   quizData: QuizQuestion[]; // Dữ liệu quiz
@@ -91,7 +92,7 @@ const LearningQuiz = ({ quizData, stopLearning }: LearningQuizProps) => {
   });
 
   return (
-    <div className="flex flex-col items-center justify-center px-16 pb-20 w-full max-w-full h-full fixed top-0 left-0 right-0 bottom-0 bg-dark bg-gradient-to-b to-indigo-950 from-violet-950 z-50 shadow-lg">
+    <div className="flex flex-col items-center justify-center px-4 md:px-16 pb-20 w-full max-w-full h-full fixed top-0 left-0 right-0 bottom-0 bg-dark bg-gradient-to-b to-indigo-950 from-violet-950 z-50 shadow-lg">
       <div
         className="absolute top-4 right-4 cursor-pointer"
         onClick={stopLearning}
@@ -119,7 +120,7 @@ const LearningQuiz = ({ quizData, stopLearning }: LearningQuizProps) => {
           <div className="w-full h-full flex flex-col justify-between p-10 bg-white rounded-lg overflow-scroll hide-scrollbar">
             {/* Question */}
             <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col-reverse gap-2 items-start sm:gap-0 sm:flex-row sm:items-center justify-between">
                 <p className="text-ssm font-semibold text-gray-500">
                   {currentQuestion?.questionType?.toUpperCase()}
                   <span className="text-purple-800">
@@ -127,7 +128,7 @@ const LearningQuiz = ({ quizData, stopLearning }: LearningQuizProps) => {
                     + {currentQuestion?.points} pts
                   </span>
                 </p>
-                <div className="px-2 py-1.5 text-ssm font-semibold shadow-sm shadow-purple-500/50 bg-purple-200 border-2 border-purple-400/60 rounded-md">
+                <div className="self-center px-2 py-1.5 text-ssm font-semibold shadow-sm shadow-purple-500/50 bg-purple-200 border-2 border-purple-400/60 rounded-md">
                   {correctAnswersCount} / {totalPoints} points
                 </div>
               </div>
@@ -144,16 +145,16 @@ const LearningQuiz = ({ quizData, stopLearning }: LearningQuizProps) => {
                     Congratulation, you got it right!{" "}
                   </p>
                 ) : (
-                  <p className="text-red-600">
+                  <div className="text-red-600">
                     The right answer is:{" "}
-                    <span className="font-medium">
+                    <div className="font-medium">
                       <ReactMarkdown>{currentQuestion.answer}</ReactMarkdown>
-                    </span>
-                  </p>
+                    </div>
+                  </div>
                 )}
-                <p className="text-gray-700 mt-2">
+                <div className="text-gray-700 mt-2">
                   <ReactMarkdown>{currentQuestion.explanation}</ReactMarkdown>
-                </p>{" "}
+                </div>{" "}
               </div>
             )}
 
@@ -203,20 +204,28 @@ const LearningQuiz = ({ quizData, stopLearning }: LearningQuizProps) => {
                   placeholder="Enter your answer..."
                   className="w-full p-3 border border-gray-300 rounded-md text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
-                <FaQuestionCircle
-                  onClick={() => handleAnswerSelect(selectedAnswer || "")}
-                  className="absolute bottom-4 right-9 text-green-600 text-2xl cursor-pointer hover:text-green-800 active:scale-90 transition-transform duration-200"
-                />
+                <div className="absolute bottom-4 right-9 w-7">
+                  <Tooltip content="Show answer" placement="top-end">
+                    <FaQuestionCircle
+                      onClick={() => handleAnswerSelect(selectedAnswer || "")}
+                      className="text-green-600 text-2xl cursor-pointer hover:text-green-800 active:scale-90 transition-transform duration-200"
+                    />
+                  </Tooltip>
+                </div>
 
                 {/* Icon check ở góc dưới bên phải */}
-                <FaCheckCircle
-                  onClick={() => handleCheckShortAnswer.mutate()}
-                  className={`absolute bottom-4 right-2 text-purple-600 text-2xl cursor-pointer hover:text-purple-800 active:scale-90 transition-transform duration-200 ${
-                    feedbackAnswer || handleCheckShortAnswer.isPending
-                      ? "pointer-events-none text-gray-500"
-                      : ""
-                  }`}
-                />
+               <div className="absolute bottom-4 right-1 w-7">
+                  <Tooltip content="Check answer" placement="top-end">
+                    <FaCheckCircle
+                      onClick={() => handleCheckShortAnswer.mutate()}
+                      className={`text-purple-600 text-2xl cursor-pointer hover:text-purple-800 active:scale-90 transition-transform duration-200 ${
+                        feedbackAnswer || handleCheckShortAnswer.isPending
+                          ? "pointer-events-none text-gray-500"
+                          : ""
+                      }`}
+                    />
+                  </Tooltip>
+               </div>
               </div>
             )}
           </div>

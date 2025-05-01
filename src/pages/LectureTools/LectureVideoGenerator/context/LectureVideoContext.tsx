@@ -32,7 +32,7 @@ export const LectureVideoProvider: React.FC<{
     [EGeneratedLectureForm.ACADEMIC_LEVEL]: "",
     [EGeneratedLectureForm.VOICE_TYPE]: "",
     [EGeneratedLectureForm.VOICE_STYLE]: voiceStyles[0].value,
-    [EGeneratedLectureForm.BACKGROUND_MUSIC]: "",
+    // [EGeneratedLectureForm.BACKGROUND_MUSIC]: "",
     [EGeneratedLectureForm.LANGUAGE]: "",
     [EGeneratedLectureForm.LECTURE_SPEED]: lectureSpeeds[1].value,
     [EGeneratedLectureForm.LECTURE_LENGTH]: lectureLengths[1].value,

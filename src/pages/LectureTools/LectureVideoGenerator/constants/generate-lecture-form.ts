@@ -22,7 +22,7 @@ export interface GeneratedLectureForm {
     [EGeneratedLectureForm.ACADEMIC_LEVEL]: string;
     [EGeneratedLectureForm.VOICE_TYPE]: string;
     [EGeneratedLectureForm.VOICE_STYLE]: string;
-    [EGeneratedLectureForm.BACKGROUND_MUSIC]: string;
+    // [EGeneratedLectureForm.BACKGROUND_MUSIC]: string;
     [EGeneratedLectureForm.LANGUAGE]: string;
     [EGeneratedLectureForm.LECTURE_SPEED]: string;
     [EGeneratedLectureForm.LECTURE_LENGTH]: string;

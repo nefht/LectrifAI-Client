@@ -66,6 +66,11 @@
   --text-color: #fff;
 }
 
+/** Avatar flowbite */ 
+[data-testid="flowbite-avatar-img"] {
+  object-fit: cover;
+}
+
 /** Global styles */
 * {
   margin: 0;

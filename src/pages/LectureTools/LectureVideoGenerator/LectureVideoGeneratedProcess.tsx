@@ -42,8 +42,8 @@ function LectureVideoGeneratedProcess() {
               lectureOptions[EGeneratedLectureForm.LANGUAGE],
             [EGeneratedLectureForm.VOICE_TYPE]:
               lectureOptions[EGeneratedLectureForm.VOICE_TYPE],
-            [EGeneratedLectureForm.BACKGROUND_MUSIC]:
-              lectureOptions[EGeneratedLectureForm.BACKGROUND_MUSIC],
+            // [EGeneratedLectureForm.BACKGROUND_MUSIC]:
+            //   lectureOptions[EGeneratedLectureForm.BACKGROUND_MUSIC],
             [EGeneratedLectureForm.VOICE_STYLE]:
               lectureOptions[EGeneratedLectureForm.VOICE_STYLE],
             [EGeneratedLectureForm.LECTURE_SPEED]:

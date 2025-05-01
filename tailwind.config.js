@@ -24,6 +24,9 @@ export default {
       maxWidth: {
         header: "95%",
       },
+      minHeight: {
+        "full-screen": "calc(100vh - 4rem)",
+      },
       maxHeight: {
         "full-screen": "calc(100vh - 4rem)",
       },
@@ -34,7 +37,7 @@ export default {
       backgroundImage: {
         universe: "url('/src/assets/images/home/dark-background.jpg')",
         "blur-gradient":
-          "linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.2) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.7) 75%, white 100%)",
+          "linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.2) 60%, rgba(255,255,255,0.3) 80%, rgba(255,255,255,0.4) 100%)",
         "lecture-universe": "url('/src/assets/images/lecture-video-generator/universe-lecture.jpg')",
       },
       keyframes: {

@@ -1,6 +1,6 @@
 export enum EGeneratedSlideForm {
   TOPIC = "topicText",
-  CONTENT = "content",
+  CONTENT = "topicParagraph",
   TOPIC_FILE= "topicFile",
   TOPIC_FILE_ID = "topicFileId",
   FILE_URLS = "fileUrls",

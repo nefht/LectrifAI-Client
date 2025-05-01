@@ -1,12 +1,13 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router";
 
 interface User {
   id: string;
   fullName: string;
   email: string;
   account: string;
-  role?: string;
+  avatarUrl?: string;
 }
 
 interface AuthData {
@@ -30,6 +31,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const navigate = useNavigate();
   const storedAuthData = JSON.parse(localStorage.getItem("authData") || "null");
   const [authData, setAuthData] = useState<AuthData | null>(storedAuthData);
   const [token, setToken] = useState<string | null>(
@@ -86,6 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(null);
     setUser(null);
     setAuthData(null);
+    navigate("/");
   };
 
   const isAuthenticated = !!token;

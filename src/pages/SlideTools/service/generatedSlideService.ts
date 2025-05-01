@@ -132,6 +132,27 @@ export const generateSlideContentFromFile = async (body: any) => {
 };
 
 /**
+ * Generate slide content from document text
+ * @param topicParagraph
+ * @param writingTone
+ * @param language
+ * @param numberOfSlides
+ * @param templateCode
+ * @returns 
+ */
+export const generateSlideContentFromDocumentText = async (body: any) => {
+  try {
+    const response = await api.post("/slide-content/v3", body);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to generate slide from document text:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to generate slide from document text."
+    );
+  }
+};
+
+/**
  * Update slide content
  * @param id Slide content id
  * @param slideData Slide content data
@@ -148,13 +169,32 @@ export const updateSlideContent = async (id: string, slideData: any) => {
   }
 };
 
+/**
+ * Delete slide content
+ * @param id
+ * @returns
+ */
+export const deleteSlideContent = async (id:string) => {
+  try {
+    const response = await api.delete(`/slide-content/${id}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to delete slide content:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to delete slide content."
+    );
+  }
+}
+
 const generatedSlideService = {
   getAllSlideContents,
   getSlideContent,
   generateSlideContent,
   uploadTopicFile,
   generateSlideContentFromFile,
+  generateSlideContentFromDocumentText,
   updateSlideContent,
+  deleteSlideContent,
 };
 
 export default generatedSlideService;

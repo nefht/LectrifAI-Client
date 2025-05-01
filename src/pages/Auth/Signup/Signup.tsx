@@ -202,7 +202,7 @@ function Signup() {
                   </button>
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <label
                   htmlFor="confirmPassword"
                   className="block mb-2 text-sm font-medium text-gray-800 dark:text-white"
@@ -215,7 +215,7 @@ function Signup() {
                   //     handleVerificationSuccess(token, ekey)
                   //   }
                 />
-              </div>
+              </div> */}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-start">

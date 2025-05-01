@@ -5,8 +5,16 @@ import { GrTest } from "react-icons/gr";
 import SideInformation from "./components/SideInformation";
 import { useNavigate, useParams } from "react-router";
 import StartQuizModal from "./components/StartQuizModal";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ImFilesEmpty } from "react-icons/im";
 import classroomService from "../services/classroomService";
-import { useMutation } from "@tanstack/react-query";
+import { useToast } from "../../../hooks/useToast";
+import { useAuth } from "../../../hooks/useAuth";
+import { IoMdSettings } from "react-icons/io";
+import { MdDeleteOutline } from "react-icons/md";
+import { Menu } from "@headlessui/react";
+import DeleteModal from "../../../components/NotificationModal/DeleteModal";
+import AdjustQuizSettingModal from "./components/AddjustQuizSettingsModal";
 
 export const formatDuration = (durationInSeconds: number) => {
   if (!durationInSeconds || durationInSeconds <= 0) return "No limit"; // Nếu không có thời gian, trả về "No limit"
@@ -79,15 +87,29 @@ const groupByWeek = (data: { createdAt: string }[]) => {
 
 function ClassroomDetail() {
   const { id } = useParams();
+  const { user } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [isStartQuizModalOpen, setIsStartQuizModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState({
     message: "Do you want to start the quiz?",
     buttonText: "Start",
   });
+  // Modal xóa lecture
+  const [isDeleteLectureModalOpen, setIsDeleteLectureModalOpen] =
+    useState(false);
+  // Modal xóa quiz
+  const [isDeleteQuizModalOpen, setIsDeleteQuizModalOpen] = useState(false);
+  // Modal thay đổi settings của quiz
+  const [isChangeQuizSettingsModalOpen, setIsChangeQuizSettingsModalOpen] =
+    useState(false);
+  // Lecture được chọn
+  const [selectedLecture, setSelectedLecture] = useState({} as any);
+  // Quiz được chọn
   const [selectedQuiz, setSelectedQuiz] = useState({} as any);
-  const [classroomInfo, setClassroomInfo] = useState({});
-
+  // Thông tin class
+  const [classroomInfo, setClassroomInfo] = useState<any>({});
+  // Quizzes, lectures của class
   const [classroomMaterials, setClassroomMaterials] = useState([] as any[]);
   const [quizStatuses, setQuizStatuses] = useState<Record<string, any>>(
     {} as any
@@ -97,33 +119,28 @@ function ClassroomDetail() {
   );
   const [openWeek, setOpenWeek] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    if (id) {
-      const fetchClassroomMaterials = async () => {
-        try {
-          const response = await classroomService.getClassroomMaterialsById(id);
-          setClassroomMaterials(response);
-          setGroupedData(groupByWeek(response));
-          console.log(response);
-        } catch (error) {
-          console.error("Error fetching classroom materials:", error);
-        }
-      };
+  const { data: materials = [] } = useQuery({
+    queryKey: ["classroomMaterials", id],
+    queryFn: async () => {
+      if (!id) return {};
+      const response = await classroomService.getClassroomMaterialsById(id);
+      setClassroomMaterials(response);
+      setGroupedData(groupByWeek(response));
+      return response || {};
+    },
+    enabled: !!id,
+  });
 
-      const fetchClassroomInfo = async () => {
-        try {
-          const response = await classroomService.getClassroomById(id);
-          setClassroomInfo(response);
-          console.log(response);
-        } catch (error) {
-          console.error("Error fetching classroom info:", error);
-        }
-      };
-
-      fetchClassroomMaterials();
-      fetchClassroomInfo();
-    }
-  }, [id]);
+  const { data: classroomData } = useQuery({
+    queryKey: ["classroom", id],
+    queryFn: async () => {
+      if (!id) return {};
+      const response = await classroomService.getClassroomById(id);
+      setClassroomInfo(response);
+      return response || {};
+    },
+    enabled: !!id,
+  });
 
   useEffect(() => {
     // Lấy trạng thái quiz cho tất cả quiz ngay khi mount
@@ -224,6 +241,38 @@ function ClassroomDetail() {
     },
   });
 
+  const handleDeleteClassroomLecture = useMutation({
+    mutationFn: async () => {
+      const response = await classroomService.deleteClassroomQuiz(
+        selectedLecture._id
+      );
+      console.log(response);
+      showToast("success", "Lecture deleted successfully!");
+      setClassroomMaterials((prev) =>
+        prev.filter((item) => item._id !== selectedLecture._id)
+      );
+    },
+    onError: () => {
+      showToast("error", "Failed to delete lecture. Please try again later.");
+    },
+  });
+
+  const handleDeleteClassroomQuiz = useMutation({
+    mutationFn: async () => {
+      const response = await classroomService.deleteClassroomQuiz(
+        selectedQuiz._id
+      );
+      console.log(response);
+      showToast("success", "Quiz deleted successfully!");
+      setClassroomMaterials((prev) =>
+        prev.filter((item) => item._id !== selectedQuiz._id)
+      );
+    },
+    onError: () => {
+      showToast("error", "Failed to delete quiz. Please try again later.");
+    },
+  });
+
   return (
     <>
       <StartQuizModal
@@ -232,6 +281,36 @@ function ClassroomDetail() {
         quizInfo={selectedQuiz}
         message={modalMessage}
         handleStartTest={() => handleStartTest.mutate()}
+      />
+      <DeleteModal
+        open={isDeleteLectureModalOpen}
+        setOpen={setIsDeleteLectureModalOpen}
+        modalInformation={{
+          title: "Remove Lecture",
+          content: `Are you sure you want to remove this lecture from classroom? This action is permanent and cannot be undone.`,
+        }}
+        disabledButton={handleDeleteClassroomLecture.isPending}
+        handleDelete={() => {
+          handleDeleteClassroomLecture.mutate();
+        }}
+      />
+      <DeleteModal
+        open={isDeleteQuizModalOpen}
+        setOpen={setIsDeleteQuizModalOpen}
+        modalInformation={{
+          title: "Remove Quiz",
+          content: `Are you sure you want to remove this quiz from classroom? This action is permanent and cannot be undone.`,
+        }}
+        disabledButton={handleDeleteClassroomQuiz.isPending}
+        handleDelete={() => {
+          handleDeleteClassroomQuiz.mutate();
+        }}
+      />
+      <AdjustQuizSettingModal
+        open={isChangeQuizSettingsModalOpen}
+        setOpen={setIsChangeQuizSettingsModalOpen}
+        quizInfo={selectedQuiz}
+        classroomId={id!}
       />
       <div className="md:px-10 lg:px-16 xl:px-24 py-10 flex flex-col-reverse md:flex-row">
         <div className="w-full px-10 sm:px-20 md:px-0 md:w-[60%] xl:w-2/3">
@@ -263,9 +342,64 @@ function ClassroomDetail() {
                       <div key={item._id} className="mb-4">
                         {item.quizId ? (
                           <div
-                            className="flex items-center w-full p-4 bg-gray-50 border border-gray-200 shadow-md rounded-md cursor-pointer"
+                            className="group relative flex items-center w-full p-4 bg-gray-50 border border-gray-200 shadow-md rounded-md cursor-pointer"
                             onClick={() => handleOpenStartQuizModal(item)}
                           >
+                            {user?.id === classroomInfo?.userId?._id && (
+                              <Menu as="div" className="absolute top-3 right-3">
+                                <Menu.Button
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="p-1 bg-teal-200/80 border border-teal-200 rounded-md hover:scale-105"
+                                >
+                                  <IoMdSettings className="text-lg text-teal-800" />
+                                </Menu.Button>
+
+                                <Menu.Items
+                                  transition
+                                  anchor="bottom start"
+                                  className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+                                >
+                                  <div className="py-1">
+                                    <Menu.Item>
+                                      {({ active }) => (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsChangeQuizSettingsModalOpen(
+                                              true
+                                            );
+                                            setSelectedQuiz(item);
+                                          }}
+                                          className={`${
+                                            active ? "bg-gray-100" : ""
+                                          } flex items-center gap-2 px-4 py-2 text-gray-800 w-full text-left`}
+                                        >
+                                          <IoMdSettings className="text-md" />
+                                          Adjust settings
+                                        </button>
+                                      )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                      {({ active }) => (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsDeleteQuizModalOpen(true);
+                                            setSelectedQuiz(item);
+                                          }}
+                                          className={`${
+                                            active ? "bg-gray-100" : ""
+                                          } flex items-center gap-2 px-4 py-2 text-gray-800 w-full text-left`}
+                                        >
+                                          <MdDeleteOutline className="text-md" />
+                                          Remove
+                                        </button>
+                                      )}
+                                    </Menu.Item>
+                                  </div>
+                                </Menu.Items>
+                              </Menu>
+                            )}
                             <div>
                               <div className="p-4 bg-teal-200 border border-teal-300 rounded-md mr-5">
                                 <GrTest className="text-2xl text-teal-900" />
@@ -299,7 +433,7 @@ function ClassroomDetail() {
                           </div>
                         ) : (
                           <div
-                            className="flex items-center w-full p-4 bg-gray-50 border border-gray-200 shadow-md rounded-md cursor-pointer"
+                            className="group relative flex items-center w-full p-4 bg-gray-50 border border-gray-200 shadow-md rounded-md cursor-pointer"
                             onClick={() => {
                               navigate(
                                 `/lecture/detail/${item.lectureVideoId._id}`,
@@ -311,6 +445,18 @@ function ClassroomDetail() {
                               );
                             }}
                           >
+                            {user?.id === classroomInfo?.userId?._id && (
+                              <div
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setIsDeleteLectureModalOpen(true);
+                                  setSelectedLecture(item);
+                                }}
+                                className="absolute top-3 right-3 p-1 bg-fuchsia-200/80 border border-fuchsia-200 rounded-md hover:scale-105"
+                              >
+                                <MdDeleteOutline className="text-lg text-fuchsia-800" />
+                              </div>
+                            )}
                             <div>
                               <div className="p-4 bg-fuchsia-200 border border-fuchsia-300 rounded-md mr-5">
                                 <FaChalkboardTeacher className="text-2xl text-fuchsia-900" />
@@ -336,6 +482,12 @@ function ClassroomDetail() {
               </div>
             </div>
           ))}
+          {classroomMaterials.length === 0 && (
+            <div className="flex items-center justify-center w-full h-28 rounded-xl border border-dashed border-purple-600 bg-purple-200/50 text-purple-800 gap-2">
+              <ImFilesEmpty className="text-xl" />
+              <p className="text-xl font-semibold"> No materials yet!</p>
+            </div>
+          )}
         </div>
 
         <div className="w-full px-10 sm:px-20 md:px-0 mb-10 md:mb-0 md:w-[40%] xl:w-1/3 md:pl-8 lg:pl-16 lg:pr-8">

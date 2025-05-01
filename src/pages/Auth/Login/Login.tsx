@@ -10,8 +10,10 @@ import astronautImg from "../../../assets/images/astronaut.svg";
 import googleLogo from "../../../assets/images/login/google-logo.webp";
 import authService from "../services/authService";
 import { useAuth } from "../../../hooks/useAuth";
+import { useToast } from "../../../hooks/useToast";
 
 function Login() {
+  const {showToast} = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [loginForm, setLoginForm] = useState({
     account: "",
@@ -42,11 +44,13 @@ function Login() {
         loginForm.password,
         rememberMe
       );
+      console.log(response);
 
       login(response.token, response.user);
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to login:", error);
+      showToast("error", error.message || "Login failed");
     }
   };
 
@@ -97,6 +101,7 @@ function Login() {
               </label>
               <input
                 type="text"
+                required
                 name="account"
                 id="account"
                 className="bg-gray-50 border border-gray-300 text-gray-800 rounded-lg focus:ring-purple-600 focus:border-purple-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
@@ -115,6 +120,7 @@ function Login() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  required
                   name="password"
                   id="password"
                   placeholder="••••••••"
@@ -137,16 +143,16 @@ function Login() {
             </div>
             <div className="flex items-center my-4">
               <div className="flex-grow border-t border-gray-300"></div>
-              <span className="px-4 text-gray-500 text-sm">or</span>
+              {/* <span className="px-4 text-gray-500 text-sm">or</span> */}
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
-            <button
+            {/* <button
               type="button"
               className="w-full flex items-center justify-center gap-2 text-gray-800 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
             >
               <img src={googleLogo} alt="Google logo" className="h-5 w-5" />
               Log in with Google
-            </button>
+            </button> */}
             <div className="flex items-center justify-between">
               <div className="flex items-start">
                 <div className="flex items-center h-5">

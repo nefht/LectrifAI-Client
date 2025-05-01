@@ -1,16 +1,34 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import lectureVideoService from "../../LectureTools/services/lectureVideoService";
 import Notebook from "./components/Notebook/Notebook";
 import { motion } from "framer-motion";
-import { FaBook, FaTimes } from "react-icons/fa";
+import { FaBook, FaRegFilePowerpoint, FaTimes } from "react-icons/fa";
 import ChatBot from "../../../components/ChatBot/ChatBot";
 import { useHeader } from "../../../hooks/useHeader";
+import { useToast } from "../../../hooks/useToast";
+import { IoShareSocial } from "react-icons/io5";
+import { Tooltip } from "flowbite-react";
+import { BiSolidRename } from "react-icons/bi";
+import {
+  MdDeleteForever,
+  MdOutlineDelete,
+  MdOutlineQuiz,
+} from "react-icons/md";
+import { useMutation } from "@tanstack/react-query";
+import ShareUserModal from "../../../components/ShareUserModal/ShareUserModal";
+import RenameModal from "../components/RenameModal";
+import DeleteModal from "../../../components/NotificationModal/DeleteModal";
+import uploadedSlideService from "../../../services/uploadedSlideService";
+import { useAuth } from "../../../hooks/useAuth";
 
 function LectureDetail() {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
+  const { showToast } = useToast();
   const location = useLocation();
   const state = location.state;
+  const navigate = useNavigate();
   const { setHeaderClass } = useHeader();
   const [lectureVideo, setLectureVideo] = useState<any>({});
   const [lectureScriptId, setLectureScriptId] = useState<string>("");
@@ -21,6 +39,15 @@ function LectureDetail() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizAnswered, setQuizAnswered] = useState(new Set<number>());
+  // Modal share
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [listPermissions, setListPermissions] = useState<any[]>([]);
+  // Modal rename
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  // Modal delete
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // Current user permission
+  const [userPermission, setUserPermission] = useState("");
 
   useEffect(() => {
     setHeaderClass("bg-white shadow-none");
@@ -31,13 +58,13 @@ function LectureDetail() {
       try {
         if (id) {
           const response = await lectureVideoService.getLectureVideo(id);
-          const lectureScriptId = response.lectureScriptId;
-          const script = await lectureVideoService.getLectureScript(
-            lectureScriptId
-          );
-          setLectureScriptId(lectureScriptId);
-          setLectureScript(script.lectureScript.slides);
+          const lectureScript = response.lectureScriptId.lectureScript.slides;
+
+          setLectureScriptId(response?.lectureScriptId?._id);
+          setLectureScript(lectureScript);
           setLectureVideo(response);
+          console.log(response);
+          setUserPermission(response.permissionType);
         }
       } catch (error: any) {
         console.error("Failed to get lecture video:", error);
@@ -59,7 +86,7 @@ function LectureDetail() {
         currentTime >= timestamps[i] &&
         (i === timestamps.length - 1 || currentTime < timestamps[i + 1])
       ) {
-        newIndex = i + 1; // 🔹 Fix script index khớp với slide
+        newIndex = i + 1; // Fix script index khớp với slide
       }
     }
 
@@ -97,8 +124,65 @@ function LectureDetail() {
     }, 3000);
   };
 
+  const handleOpenShare = useMutation({
+    mutationFn: async () => {
+      if (!id) return;
+      const response = await lectureVideoService.getLectureVideoPermissions(id);
+      setListPermissions(response || []);
+      setIsShareModalOpen(true);
+    },
+  });
+
+  const handleRenameSuccess = (newName: string) => {
+    setLectureVideo((prev: any) => ({ ...prev, lectureName: newName }));
+    setIsRenameModalOpen(false);
+    showToast("success", "Rename successfully!");
+  };
+
+  const handleDeleteLecture = useMutation({
+    mutationFn: async () => {
+      if (!id) return;
+      await lectureVideoService.deleteLectureVideo(id);
+      showToast("success", "Delete successfully!");
+    },
+    onSuccess: () => {
+      setIsDeleteModalOpen(false);
+      navigate("/storage");
+    },
+  });
+
+  const handleDownloadOriginalFile = useMutation({
+    mutationFn: async () => {
+      const response = await uploadedSlideService.downloadSlide(
+        lectureVideo.fileId
+      );
+      showToast("success", "Download successfully!");
+    },
+  });
   return (
     <>
+      <ShareUserModal
+        type="lecture-video"
+        open={isShareModalOpen}
+        setOpen={setIsShareModalOpen}
+        selectedItem={lectureVideo}
+        listPermissions={listPermissions}
+      />
+      <RenameModal
+        open={isRenameModalOpen}
+        setOpen={setIsRenameModalOpen}
+        selectedLecture={lectureVideo}
+        onRenameSuccess={handleRenameSuccess}
+      />
+      <DeleteModal
+        open={isDeleteModalOpen}
+        setOpen={setIsDeleteModalOpen}
+        modalInformation={{
+          title: "Delete Lecture Video",
+          content: "Are you sure you want to delete this lecture?",
+        }}
+        handleDelete={() => handleDeleteLecture.mutate(id ?? lectureVideo._id)}
+      />
       <div className="flex flex-col w-full">
         <div className="relative flex w-full h-full">
           {/* VIDEO LECTURE */}
@@ -129,13 +213,71 @@ function LectureDetail() {
             </div>
             <div className="md:ml-6 flex flex-col gap-3">
               <p className="font-semibold text-2xl">
-                {lectureVideo.lectureName || "Chưa có tên lecture"}
+                {lectureVideo.lectureName || "Lecture Video"}
               </p>
-              <div className="inline-flex items-center text-sm">
-                <p className="font-medium">Created At:&nbsp;</p>
-                <p className="text-gray-600">
-                  {new Date(lectureVideo.createdAt).toLocaleString("vi-VN")}
-                </p>
+              <div
+                className={`flex items-center justify-between ${
+                  isNotebookOpen ? "mr-6" : "md:mr-20"
+                }`}
+              >
+                <div className="inline-flex items-center text-sm">
+                  <p className="font-medium">Created At:&nbsp;</p>
+                  <p className="text-gray-600">
+                    {new Date(lectureVideo.createdAt).toLocaleString("vi-VN")}
+                  </p>
+                </div>
+                <div className="inline-flex gap-2 items-center">
+                  {(userPermission === "EDITOR" ||
+                    user?.id === lectureVideo.userId) && (
+                    <>
+                      <Tooltip content="Share">
+                        <div
+                          onClick={() => handleOpenShare.mutate()}
+                          className="p-1.5 rounded-md bg-green-600/90 hover:bg-green-600 cursor-pointer"
+                        >
+                          <IoShareSocial className="text-white text-xl" />
+                        </div>
+                      </Tooltip>
+                      <Tooltip content="Rename">
+                        <div
+                          onClick={() => setIsRenameModalOpen(true)}
+                          className="p-1.5 rounded-md bg-violet-600 hover:bg-violet-700 cursor-pointer"
+                        >
+                          <BiSolidRename className="text-white text-xl" />
+                        </div>
+                      </Tooltip>
+                      <Tooltip content="Edit Quiz">
+                        <a
+                          target="_blank"
+                          href={`/lecture/edit-quiz/${lectureScriptId}`}
+                        >
+                          <div className="p-1.5 rounded-md bg-gray-600 hover:bg-gray-700 cursor-pointer">
+                            <MdOutlineQuiz className="text-white text-xl" />
+                          </div>
+                        </a>
+                      </Tooltip>
+                    </>
+                  )}
+                  <Tooltip content="Download Original File">
+                    <button
+                      disabled={handleDownloadOriginalFile.isPending}
+                      onClick={() => handleDownloadOriginalFile.mutate()}
+                      className="p-1.5 rounded-md bg-yellow-600 hover:bg-yellow-700 cursor-pointer"
+                    >
+                      <FaRegFilePowerpoint className="text-white text-xl" />
+                    </button>
+                  </Tooltip>
+                  {user?.id === lectureVideo.userId && (
+                    <Tooltip content="Delete">
+                      <div
+                        onClick={() => setIsDeleteModalOpen(true)}
+                        className="p-1 rounded-md bg-red-700 hover:bg-red-800 cursor-pointer"
+                      >
+                        <MdOutlineDelete className="text-white text-2xl" />
+                      </div>
+                    </Tooltip>
+                  )}
+                </div>
               </div>
             </div>
 

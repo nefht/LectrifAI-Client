@@ -233,7 +233,7 @@ export const shareQuiz = async (
   sharedWith: string[]
 ) => {
   try {
-    const response = await api.patch(`/quiz/share/${id}`, {
+    const response = await api.post(`/quiz/share/${id}`, {
       isPublic,
       sharedWith,
     });
@@ -246,17 +246,113 @@ export const shareQuiz = async (
 
 /**
  * Get current user permissions with quiz
- * @param id
+ * @param quizId
  * @returns permissionType
  */
-export const getCurrentUserPermissionWithQuiz = async (id: string) => {
+export const getCurrentUserPermissionWithQuiz = async (quizId: string) => {
   try {
-    const response = await api.get(`/quiz/permission/${id}`);
+    const response = await api.get(`/quiz/permission/${quizId}`);
     return response.data;
   } catch (error: any) {
     console.error("Failed to get current user permissions with quiz:", error);
     throw new Error(
       error.response?.data?.error || "Failed to get quiz permissions."
+    );
+  }
+};
+
+/**
+ * Get quiz permissions
+ * @param quizId
+ * @returns
+ */
+export const getQuizPermissions = async (quizId: string) => {
+  try {
+    const response = await api.get(`/quiz/share/${quizId}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to get quiz permissions:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to get quiz permissions."
+    );
+  }
+};
+
+/**
+ * Create room for multiple players
+ * @param quizId
+ * @param timeLimit
+ * @param maxPlayers
+ * @retunrs
+ */
+export const createMultiplePlayersRoom = async (
+  quizId: string,
+  timeLimit: number,
+  maxPlayers: number
+) => {
+  try {
+    const response = await api.post("/quiz/multiple-play", {
+      quizId,
+      timeLimit,
+      maxPlayers,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to create room for multiple players:", error);
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to create room for multiple players."
+    );
+  }
+};
+
+/**
+ * Join room for multiple players
+ * @param token
+ * @returns
+ */
+export const joinMultiplePlayersRoom = async (token: string) => {
+  try {
+    const response = await api.get(`/quiz/multiple-play/${token}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to join room for multiple players:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to join room for multiple players."
+    );
+  }
+};
+
+/**
+ * Get room info by id
+ * @param id
+ * @returns
+ */
+export const getRoomById = async (id: string) => {
+  try {
+    const response = await api.get(`/quiz/multiple-play/${id}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to get quiz room information:", error);
+    throw new Error(
+      error.reponse?.data?.error || "Failed to get quiz room information"
+    );
+  }
+};
+
+/**
+ * Get public quizzes by userId
+ * @param userId
+ * @returns
+ */
+export const getPublicQuizzesByUserId = async (userId: string) => {
+  try {
+    const response = await api.get(`/quiz/user/${userId}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to get public quizzes by userId:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to get public quizzes."
     );
   }
 };
@@ -273,6 +369,11 @@ const quizService = {
   deleteQuiz,
   shareQuiz,
   getCurrentUserPermissionWithQuiz,
+  getQuizPermissions,
+  createMultiplePlayersRoom,
+  joinMultiplePlayersRoom,
+  getRoomById,
+  getPublicQuizzesByUserId,
 };
 
 export default quizService;

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import DeleteModal from "../../../../components/NotificationModal/DeleteModal";
+import { Tooltip } from "flowbite-react";
 
 interface QuizProps {
   quiz?: {
@@ -116,12 +117,14 @@ function QuizQuestion({
           <label className="font-semibold text-gray-900 dark:text-white">
             Question:
           </label>
-          <div
-            className="p-1 bg-transparent hover:bg-red-600/50 rounded-lg active:scale-90 cursor-pointer"
-            onClick={handleDeleteQuizQuestion}
-          >
-            <MdDeleteOutline className="text-white text-xl " />
-          </div>
+         <Tooltip content="Remember to click Save after deleting">
+            <div
+              className="p-1 bg-transparent hover:bg-red-500/50 dark:hover:bg-red-600/50 hover:text-red-800 dark:hover:text-white rounded-lg active:scale-90 cursor-pointer"
+              onClick={handleDeleteQuizQuestion}
+            >
+              <MdDeleteOutline className="dark:text-white text-xl " />
+            </div>
+         </Tooltip>
         </div>
         <textarea
           required

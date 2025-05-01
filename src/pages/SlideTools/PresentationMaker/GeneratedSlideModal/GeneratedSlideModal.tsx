@@ -113,14 +113,28 @@ export default function GeneratedSlideModal({
     mutationFn: async (event: React.FormEvent) => {
       event.preventDefault();
       try {
-        const response = await generatedSlideService.generateSlideContent(
-          presentationOptions
-        );
+        const response = await generatedSlideService.generateSlideContent({
+          [EGeneratedSlideForm.TOPIC]:
+            presentationOptions[EGeneratedSlideForm.TOPIC],
+          [EGeneratedSlideForm.WRITING_TONE]:
+            presentationOptions[EGeneratedSlideForm.WRITING_TONE],
+          [EGeneratedSlideForm.LANGUAGE]:
+            presentationOptions[EGeneratedSlideForm.LANGUAGE],
+          [EGeneratedSlideForm.NUMBER_OF_SLIDES]:
+            presentationOptions[EGeneratedSlideForm.NUMBER_OF_SLIDES],
+          [EGeneratedSlideForm.TEMPLATE_CODE]:
+            presentationOptions[EGeneratedSlideForm.TEMPLATE_CODE],
+          [EGeneratedSlideForm.SPECIFIC_REQUIREMENTS]:
+            presentationOptions[EGeneratedSlideForm.SPECIFIC_REQUIREMENTS],
+        });
         if (response) {
           setSlideData(response);
           const slideId = response._id;
           navigate(`/slide/generate-process/outline/${slideId}`, {
-            state: { mode: "modal", message: "Generate slide content successfully!" },
+            state: {
+              mode: "modal",
+              message: "Generate slide content successfully!",
+            },
           });
         } else {
           showToast("error", "Failed to generate presentation.");

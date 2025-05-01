@@ -6,9 +6,9 @@ import { Avatar } from "flowbite-react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { TiDelete } from "react-icons/ti";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { FiMaximize } from "react-icons/fi";
 import { Dialog, DialogPanel, Transition } from "@headlessui/react";
 import lectrifaiAvatar from "../../../assets/images/logo/logo2.png";
@@ -28,6 +28,7 @@ export interface Message {
 
 function InstantLecturePresenter() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const { setHeaderClass } = useHeader();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -76,18 +77,26 @@ function InstantLecturePresenter() {
   }, [id]);
 
   // Lấy danh sách các bài giảng đã lưu
-  useEffect(() => {
-    async function fetchLectures() {
-      try {
-        const response = await instantLectureService.getAllInstantLectures();
-        setLectures(response);
-      } catch (error) {
-        console.error("Error fetching lectures:", error);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchLectures() {
+  //     try {
+  //       const response = await instantLectureService.getAllInstantLectures();
+  //       setLectures(response);
+  //     } catch (error) {
+  //       console.error("Error fetching lectures:", error);
+  //     }
+  //   }
 
-    fetchLectures();
-  }, []);
+  //   fetchLectures();
+  // }, []);
+  const fetchLectures = useQuery({
+    queryKey: ["lectures"],
+    queryFn: async () => {
+      const response = await instantLectureService.getAllInstantLectures();
+      setLectures(response);
+      return response;
+    },
+  });
 
   // Lấy history của bài giảng
   useEffect(() => {
@@ -192,8 +201,144 @@ function InstantLecturePresenter() {
     }));
   };
 
+  // const handleSendMessage = useMutation({
+  //   mutationFn: async () => {
+  //     if (messageData.text || messageData.files[0]) {
+  //       try {
+  //         setMessages((prev) => [...prev!, { ...messageData }]);
+  //         setMessageData({
+  //           text: "",
+  //           files: [],
+  //           fileUrls: [],
+  //           role: "user", // Reset the role after sending
+  //         });
+  //         // Loading
+  //         setIsLoading(true);
+  //         // Show full screen
+  //         if (!streamedImage) {
+  //           setStreamedImage(messageData.fileUrls[0] || "");
+  //         }
+  //         setStreamedText("");
+
+  //         const audioQueue: string[] = []; // Initialize audio queue
+  //         let isPlaying = false;
+
+  //         const playAudio = async (audioString: string) => {
+  //           if (isPlaying) {
+  //             audioQueue.push(audioString); // Add to queue if already playing
+  //           } else {
+  //             isPlaying = true;
+  //             const audioData = atob(audioString);
+  //             const byteArray = new Uint8Array(audioData.length);
+  //             for (let i = 0; i < audioData.length; i++) {
+  //               byteArray[i] = audioData.charCodeAt(i);
+  //             }
+  //             const blob = new Blob([byteArray], { type: "audio/mpeg" });
+  //             const audioUrl = URL.createObjectURL(blob);
+  //             const audio = new Audio(audioUrl);
+  //             audio.play();
+
+  //             audio.onended = () => {
+  //               isPlaying = false;
+  //               if (audioQueue.length > 0) {
+  //                 playAudio(audioQueue.shift()!); // Play audio tiếp theo trong queue
+  //               }
+  //             };
+  //           }
+  //         };
+
+  //         let response;
+  //         if (!id) {
+  //           response = await instantLectureService.createInstantLecture(
+  //             messageData.text,
+  //             messageData.files[0],
+  //             settings.teachingStyle,
+  //             settings.languageCode,
+  //             settings.voiceType
+  //           );
+  //         } else {
+  //           response = await instantLectureService.sendMessage(
+  //             id,
+  //             messageData.text,
+  //             messageData.files[0],
+  //             settings.teachingStyle,
+  //             settings.languageCode,
+  //             settings.voiceType
+  //           );
+  //         }
+  //         const reader = response?.getReader();
+  //         const decoder = new TextDecoder();
+  //         let botResponse = "";
+  //         let buffer = ""; // Tạm thời lưu các đoạn chưa parse được
+
+  //         if (reader) {
+  //           setIsLoading(false);
+  //           setShowFullScreenStream(true);
+  //           while (true) {
+  //             const { done, value } = await reader.read();
+  //             if (done) break;
+
+  //             const chunk = decoder.decode(value, { stream: true });
+  //             buffer += chunk;
+
+  //             let boundary;
+  //             while ((boundary = buffer.indexOf("\n\n\n")) !== -1) {
+  //               const jsonStr = buffer.slice(0, boundary).trim();
+  //               buffer = buffer.slice(boundary + 3); // remove parsed part
+
+  //               try {
+  //                 const parsed = JSON.parse(jsonStr);
+  //                 if (parsed.text) {
+  //                   botResponse += parsed.text;
+  //                   setStreamedText((prev) => prev + parsed.text);
+  //                   setMessages((prev) => {
+  //                     if (!prev || prev.length === 0) return [];
+
+  //                     const lastMsg = prev[prev.length - 1];
+  //                     if (lastMsg.role === "model") {
+  //                       // Nếu đã có message model ở cuối thì cập nhật nội dung
+  //                       return [
+  //                         ...prev.slice(0, -1),
+  //                         { ...lastMsg, text: botResponse },
+  //                       ];
+  //                     } else {
+  //                       // Nếu message cuối cùng là của user, thêm mới message model
+  //                       return [
+  //                         ...prev,
+  //                         {
+  //                           text: parsed.text,
+  //                           files: [],
+  //                           fileUrls: [],
+  //                           role: "model",
+  //                         },
+  //                       ];
+  //                     }
+  //                   });
+  //                 }
+  //                 if (parsed.audio) {
+  //                   await playAudio(parsed.audio);
+  //                 }
+  //               } catch (err) {
+  //                 console.error("JSON parse error:", err, jsonStr);
+  //               }
+  //             }
+  //           }
+  //         }
+
+  //         console.log("Response:", response);
+  //       } catch (error) {
+  //         console.error("Error sending message:", error);
+  //       }
+  //     } else {
+  //       showToast("warning", "Please enter a message or upload an image.");
+  //     }
+  //   },
+  // });
+
+  // Sử dụng WebAudio API với AudioBufferSourceNode liên tiếp
   const handleSendMessage = useMutation({
     mutationFn: async () => {
+      console.log(id);
       if (messageData.text || messageData.files[0]) {
         try {
           setMessages((prev) => [...prev!, { ...messageData }]);
@@ -201,40 +346,66 @@ function InstantLecturePresenter() {
             text: "",
             files: [],
             fileUrls: [],
-            role: "user", // Reset the role after sending
+            role: "user",
           });
-          // Loading
           setIsLoading(true);
-          // Show full screen
+
           if (!streamedImage) {
             setStreamedImage(messageData.fileUrls[0] || "");
           }
           setStreamedText("");
 
-          const audioQueue: string[] = []; // Initialize audio queue
-          let isPlaying = false;
+          // Sử dụng Web Audio API
+          const audioContext = new window.AudioContext();
+          let audioQueue: any[] = [];
+          let isDecoding = false;
+          let startTime = 0;
 
-          const playAudio = async (audioString: string) => {
-            if (isPlaying) {
-              audioQueue.push(audioString); // Add to queue if already playing
-            } else {
-              isPlaying = true;
-              const audioData = atob(audioString);
+          // Xử lý các audio một cách mượt mà
+          const scheduleBuffers = async () => {
+            if (isDecoding || audioQueue.length === 0) return;
+
+            isDecoding = true;
+
+            try {
+              // Lấy buffer kế tiếp từ hàng đợi
+              const audioBase64 = audioQueue.shift();
+              const audioData = atob(audioBase64);
               const byteArray = new Uint8Array(audioData.length);
               for (let i = 0; i < audioData.length; i++) {
                 byteArray[i] = audioData.charCodeAt(i);
               }
-              const blob = new Blob([byteArray], { type: "audio/mpeg" });
-              const audioUrl = URL.createObjectURL(blob);
-              const audio = new Audio(audioUrl);
-              audio.play();
 
-              audio.onended = () => {
-                isPlaying = false;
-                if (audioQueue.length > 0) {
-                  playAudio(audioQueue.shift()!); // Play audio tiếp theo trong queue
-                }
-              };
+              // Giải mã dữ liệu âm thanh
+              const audioBuffer = await audioContext.decodeAudioData(
+                byteArray.buffer
+              );
+
+              // Tạo source và kết nối
+              const source = audioContext.createBufferSource();
+              source.buffer = audioBuffer;
+              source.connect(audioContext.destination);
+
+              // Nếu là buffer đầu tiên, bắt đầu ngay lập tức
+              // Nếu không, lên lịch phát sau buffer trước đó
+              if (startTime === 0) {
+                startTime = audioContext.currentTime;
+              }
+
+              source.start(startTime);
+
+              // Cập nhật thời gian bắt đầu cho buffer tiếp theo
+              startTime += audioBuffer.duration;
+
+              // Khi buffer này gần kết thúc, lên lịch giải mã buffer tiếp theo
+              setTimeout(() => {
+                isDecoding = false;
+                scheduleBuffers();
+              }, audioBuffer.duration * 1000 - 3000); // Trừ 2000ms để có overlap nhỏ
+            } catch (err) {
+              console.error("Error processing audio:", err);
+              isDecoding = false;
+              scheduleBuffers(); // Tiếp tục với buffer tiếp theo nếu có lỗi
             }
           };
 
@@ -247,6 +418,14 @@ function InstantLecturePresenter() {
               settings.languageCode,
               settings.voiceType
             );
+
+            const updatedLectures = await fetchLectures.refetch();
+            console.log(updatedLectures)
+            if (updatedLectures.data && Array.isArray(updatedLectures.data)) {
+              navigate(`/lecture/instant-presenter/${updatedLectures.data[0]._id}`, {
+                replace: true,
+              }); // { replace: true } sẽ thay thế URL hiện tại trong lịch sử trình duyệt
+            }
           } else {
             response = await instantLectureService.sendMessage(
               id,
@@ -257,14 +436,16 @@ function InstantLecturePresenter() {
               settings.voiceType
             );
           }
+
           const reader = response?.getReader();
           const decoder = new TextDecoder();
           let botResponse = "";
-          let buffer = ""; // Tạm thời lưu các đoạn chưa parse được
+          let buffer = "";
 
           if (reader) {
             setIsLoading(false);
             setShowFullScreenStream(true);
+
             while (true) {
               const { done, value } = await reader.read();
               if (done) break;
@@ -275,7 +456,7 @@ function InstantLecturePresenter() {
               let boundary;
               while ((boundary = buffer.indexOf("\n\n\n")) !== -1) {
                 const jsonStr = buffer.slice(0, boundary).trim();
-                buffer = buffer.slice(boundary + 3); // remove parsed part
+                buffer = buffer.slice(boundary + 3);
 
                 try {
                   const parsed = JSON.parse(jsonStr);
@@ -287,13 +468,11 @@ function InstantLecturePresenter() {
 
                       const lastMsg = prev[prev.length - 1];
                       if (lastMsg.role === "model") {
-                        // Nếu đã có message model ở cuối thì cập nhật nội dung
                         return [
                           ...prev.slice(0, -1),
                           { ...lastMsg, text: botResponse },
                         ];
                       } else {
-                        // Nếu message cuối cùng là của user, thêm mới message model
                         return [
                           ...prev,
                           {
@@ -307,7 +486,13 @@ function InstantLecturePresenter() {
                     });
                   }
                   if (parsed.audio) {
-                    await playAudio(parsed.audio);
+                    // Thêm audio vào queue
+                    audioQueue.push(parsed.audio);
+
+                    // Nếu chưa đang giải mã, bắt đầu xếp lịch các audio buffer
+                    if (!isDecoding) {
+                      scheduleBuffers();
+                    }
                   }
                 } catch (err) {
                   console.error("JSON parse error:", err, jsonStr);
@@ -315,13 +500,15 @@ function InstantLecturePresenter() {
               }
             }
           }
-
+          fetchLectures.refetch();
           console.log("Response:", response);
         } catch (error) {
           console.error("Error sending message:", error);
+          showToast("error", "Failed to send message.");
+          setIsLoading(false);
         }
       } else {
-        showToast("warning", "Please enter a message or upload a file.");
+        showToast("warning", "Please enter a message or upload an image.");
       }
     },
   });

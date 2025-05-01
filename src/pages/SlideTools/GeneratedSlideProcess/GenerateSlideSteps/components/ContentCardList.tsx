@@ -282,6 +282,7 @@ function ContentCardList() {
             <SlideCard
               key={index}
               cardIndex={index}
+              lastIndex={cards.length - 1}
               heading={item.heading}
               bulletPoints={item.bulletPoints}
               imageUrls={item.imageUrls}

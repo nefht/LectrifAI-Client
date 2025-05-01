@@ -16,6 +16,7 @@ import DeleteModal from "../../../../../components/NotificationModal/DeleteModal
 
 type SlideCardProps = {
   cardIndex: number;
+  lastIndex: number;
   heading: string;
   bulletPoints: (string | string[])[];
   imageUrls?: {
@@ -53,6 +54,7 @@ type SlideCardProps = {
 
 const SlideCard = ({
   cardIndex,
+  lastIndex,
   heading,
   bulletPoints,
   imageUrls,
@@ -147,10 +149,12 @@ const SlideCard = ({
 
       <div className="w-full flex flex-col items-center">
         <div className="relative flex items-stretch w-full h-auto bg-white border border-gray-300 rounded-md my-2 overflow-hidden shadow-lg">
-          <FaRegTrashCan
-            className={`absolute top-5 right-5 hover:text-purple-700 hover:cursor-pointer transform hover:scale-125 transition-transform duration-200 ease-in-out hover:shadow-lg`}
-            onClick={() => setDeleteCardModalOpen(true)}
-          />
+          {cardIndex !== lastIndex && (
+            <FaRegTrashCan
+              className={`absolute top-7 right-5 hover:text-purple-700 hover:cursor-pointer transform hover:scale-125 transition-transform duration-200 ease-in-out hover:shadow-lg`}
+              onClick={() => setDeleteCardModalOpen(true)}
+            />
+          )}
           <div className="flex items-center justify-center w-12 bg-purple-300 border-r border-gray-300 hover:cursor-pointer font-bold text-gray-700">
             {cardIndex + 1}
           </div>
@@ -303,24 +307,27 @@ const SlideCard = ({
                     )}
                   </div>
                 ) : (
-                  <div
-                    className="group flex flex-col items-center justify-center ml-2 mb-4 h-40 p-4 xl:p-0 border-2 border-purple-300 border-dashed rounded-lg cursor-pointer bg-purple-50 dark:bg-gray-700 hover:bg-purple-100 dark:border-purple-600 dark:hover:border-purple-500 dark:hover:bg-purple-600"
-                    onClick={() => addBulletPoint(cardIndex, 0)}
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <FaCirclePlus className="w-8 h-8 mb-2 text-purple-500 dark:text-purple-400 group-active:scale-110 transition" />
-                      <p className="text-center mb-2 font-semibold text-purple-500 dark:text-purple-400">
-                        Add bullet points to this slide
-                      </p>
-                    </div>
-                  </div>
+                  <>
+                    {cardIndex !== lastIndex && (
+                      <div
+                        className="group flex flex-col items-center justify-center ml-2 mb-4 h-40 p-4 xl:p-0 border-2 border-purple-300 border-dashed rounded-lg cursor-pointer bg-purple-50 dark:bg-gray-700 hover:bg-purple-100 dark:border-purple-600 dark:hover:border-purple-500 dark:hover:bg-purple-600"
+                        onClick={() => addBulletPoint(cardIndex, 0)}
+                      >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <FaCirclePlus className="w-8 h-8 mb-2 text-purple-500 dark:text-purple-400 group-active:scale-110 transition" />
+                          <p className="text-center mb-2 font-semibold text-purple-500 dark:text-purple-400">
+                            Add bullet points to this slide
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-4 px-6 pb-4 w-full h-1/2 overflow-auto">
-              {imageUrls &&
-                imageUrls.length > 0 &&
-                imageUrls.map((image, index) => (
+            {imageUrls && imageUrls.length > 0 && (
+              <div className="flex items-center gap-4 px-6 pb-4 w-full h-1/2 overflow-auto">
+                {imageUrls.map((image, index) => (
                   <div key={index} className="relative">
                     <img
                       key={index}
@@ -336,7 +343,8 @@ const SlideCard = ({
                     />
                   </div>
                 ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
         <div

@@ -11,7 +11,7 @@ export const getUploadedSlides = async () => {
 };
 
 /**
- * 
+ *
  * @param id of the slide
  * @returns slide in detail
  */
@@ -28,7 +28,7 @@ export const getUploadedSlideById = async (id: string) => {
 };
 
 /**
- * 
+ * Download file slide from fileId
  * @param id of the slide
  */
 export const downloadSlide = async (id: string) => {
@@ -38,9 +38,9 @@ export const downloadSlide = async (id: string) => {
     });
 
     // Lấy tên file từ header
-    const contentDisposition = response.headers["content-disposition"]
-      ?.split("filename*=")[1]
-      ?.split("''")[1];
+    const contentDisposition =
+      response.headers["content-disposition"]?.split("filename*=")[1];
+
     const fileName = contentDisposition
       ? decodeURIComponent(contentDisposition)
       : "downloaded_file";

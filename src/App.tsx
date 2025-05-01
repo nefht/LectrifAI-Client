@@ -34,6 +34,14 @@ import QuizSet from "./pages/Quiz/QuizSet/QuizSet";
 import ClassroomManagement from "./pages/ClassroomManagement/ClassroomManagement";
 import ClassroomDetail from "./pages/Classroom/ClassroomDetail/ClassroomDetail";
 import DoingQuizSet from "./pages/Classroom/ClassroomDetail/components/DoingQuizSet";
+import ClassroomInvitation from "./pages/ClassroomManagement/ClassroomInvitation/ClassroomInvitation";
+import QuizRoom from "./pages/Quiz/QuizSet/QuizRoom/QuizRoom";
+import JoinQuizRoom from "./pages/Quiz/QuizSet/QuizRoom/JoinQuizRoom";
+import EditLectureQuiz from "./pages/Lecture/EditLectureQuiz/EditLectureQuiz";
+import Profile from "./pages/Profile/Profile";
+import StudentsList from "./pages/Classroom/StudentsList/StudentsList";
+import UserProfile from "./pages/UserProfile/UserProfile";
+import AccessDenied from "./pages/AccessDenied/AccessDenied";
 
 function App() {
   const { showToast } = useToast();
@@ -52,6 +60,13 @@ function App() {
           showToast("error", "Please login to continue");
           navigate("/login");
         }
+        if (error.response && error.response.status === 403) {
+          showToast("error", "You do not have access permission");
+        }
+        // if (error.response && error.response.status === 400) {
+        //   showToast("error", error.reponse.data.error);
+        //   console.log(error);
+        // }
         return Promise.reject(error);
       }
     );
@@ -62,9 +77,11 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/forgot-password/:id" element={<ResetPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
+        <Route path="/user-profile/:id" element={<UserProfile />} />
+        <Route path="/edit-profile/:id" element={<Profile />} />
         <Route path="/slide">
           <Route path="list" element={<SlidesList searchTerm={""} />} />
           <Route path="detail/:id" element={<SlideDetail />} />
@@ -85,6 +102,7 @@ function App() {
         <Route path="/lecture">
           <Route path="list" element={<LecturesList searchTerm={""} />} />
           <Route path="detail/:id" element={<LectureDetail />} />
+          <Route path="edit-quiz/:id" element={<EditLectureQuiz />} />
           <Route path="generate-video" element={<LectureVideoGenerator />} />
           <Route
             path="generate-video-process"
@@ -105,13 +123,18 @@ function App() {
         </Route>
         <Route path="/quiz-maker" element={<QuizMaker />} />
         <Route path="/quiz/:id" element={<QuizSet />} />
+        <Route path="/quiz-room/:id" element={<QuizRoom />} />
+        <Route path="/quiz-room/join/:token" element={<JoinQuizRoom />} />{" "}
         <Route path="/storage" element={<Storage />} />
         <Route path="/classroom">
           <Route path="management" element={<ClassroomManagement />} />
           <Route path="detail/:id" element={<ClassroomDetail />} />
           <Route path="doing-quiz/:id" element={<DoingQuizSet />} />
+          <Route path="join/:token" element={<ClassroomInvitation />} />
+          <Route path="students-list/:id" element={<StudentsList />} />
         </Route>
         <Route path="*" element={<NotFound />} />
+        <Route path="/access-denied" element={<AccessDenied />} />
       </Route>
     </Routes>
   );

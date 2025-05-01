@@ -41,7 +41,7 @@ export const createLectureScript = async (scriptSettings: {
   academicLevel: string;
   language: string;
   voiceType: string;
-  backgroundMusic: string;
+  // backgroundMusic: string;
   voiceStyle: string;
   lectureSpeed: string;
   lectureLength: string;
@@ -94,7 +94,7 @@ export const getUploadedSlide = async (fileId: string) => {
 };
 
 /**
- * Update lecture script
+ * Update lecture script - khi đang tạo video
  * @param id lecture script id
  * @param lectureScript
  * @return
@@ -189,6 +189,123 @@ export const getAllLectureVideos = async (params: {
   }
 };
 
+/**
+ * Get lecture video permissions
+ * @param lectureVideoId The lecture video id
+ * @returns
+ */
+export const getLectureVideoPermissions = async (lectureVideoId: string) => {
+  try {
+    const response = await api.get(`/lecture-video/share/${lectureVideoId}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to get lecture video permissions:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to get lecture video permissions."
+    );
+  }
+};
+
+/**
+ * Share lecture video
+ * @param lectureVideoId The lecture video id
+ * @param isPublic
+ * @param sharedWith Array of users
+ * @returns
+ */
+export const shareLectureVideo = async (
+  lectureVideoId: string,
+  isPublic: boolean,
+  sharedWith: string[]
+) => {
+  try {
+    const response = await api.post(`/lecture-video/share/${lectureVideoId}`, {
+      isPublic,
+      sharedWith,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to share lecture video:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to share lecture video."
+    );
+  }
+};
+
+/**
+ * Delete lecture video
+ * @param lectureVideoId The lecture video id
+ * @returns The response from the server
+ */
+export const deleteLectureVideo = async (lectureVideoId: string) => {
+  try {
+    const response = await api.delete(`/lecture-video/${lectureVideoId}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to delete lecture video:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to delete lecture video."
+    );
+  }
+};
+
+/**
+ * Update lecture video
+ * @param lectureVideoId The lecture video id
+ * @param lectureName
+ * @returns
+ */
+export const updateLectureVideo = async (
+  lectureVideoId: string,
+  lectureName: string
+) => {
+  try {
+    const response = await api.patch(`/lecture-video/${lectureVideoId}`, {
+      lectureName,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to update lecture video:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to update lecture video."
+    );
+  }
+};
+
+/**
+ * Update lecture script - sau khi đã tạo video, có check permission
+ * @param id lecture script id
+ * @param lectureScript
+ */
+export const editLectureQuiz = async (id: string, lectureScript: any) => {
+  try {
+    const response = await api.patch(`/lecture-script/edit-quiz/${id}`, lectureScript);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to update lecture script:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to update lecture script."
+    );
+  }
+};
+
+/**
+ * Get public lecture video by userId
+ * @param userId
+ * @returns
+ */
+export const getPublicLectureVideosByUserId = async (userId: string) => {
+  try {
+    const response = await api.get(`/lecture-video/user/${userId}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to get public lecture videos:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to get public lecture videos."
+    );
+  }
+}
+
 const lectureVideoService = {
   uploadSlide,
   createLectureScript,
@@ -198,6 +315,12 @@ const lectureVideoService = {
   createLectureVideo,
   getLectureVideo,
   getAllLectureVideos,
+  getLectureVideoPermissions,
+  shareLectureVideo,
+  deleteLectureVideo,
+  updateLectureVideo,
+  editLectureQuiz,
+  getPublicLectureVideosByUserId,
 };
 
 export default lectureVideoService;

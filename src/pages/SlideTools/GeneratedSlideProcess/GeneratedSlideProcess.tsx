@@ -123,6 +123,28 @@ function GenerateSlideProcess() {
                       message: "Slide content generated successfully.",
                     },
                   });
+                } 
+                 if (presentationOptions[EGeneratedSlideForm.CONTENT]) {
+                  const response =
+                    await generatedSlideService.generateSlideContentFromDocumentText({
+                      [EGeneratedSlideForm.CONTENT]:
+                        presentationOptions[EGeneratedSlideForm.CONTENT],
+                      [EGeneratedSlideForm.WRITING_TONE]:
+                        presentationOptions[EGeneratedSlideForm.WRITING_TONE],
+                      [EGeneratedSlideForm.LANGUAGE]:
+                        presentationOptions[EGeneratedSlideForm.LANGUAGE],
+                      [EGeneratedSlideForm.NUMBER_OF_SLIDES]:
+                        presentationOptions[
+                          EGeneratedSlideForm.NUMBER_OF_SLIDES
+                        ],
+                      [EGeneratedSlideForm.TEMPLATE_CODE]:
+                        presentationOptions[EGeneratedSlideForm.TEMPLATE_CODE],
+                    });
+                  navigate(`${path}/outline/${response._id}`, {
+                    state: {
+                      message: "Slide content generated successfully.",
+                    },
+                  });
                 }
               } catch (error) {
                 showToast("error", "Failed to generate slide content.");

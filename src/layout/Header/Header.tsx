@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { SiGoogleclassroom } from "react-icons/si";
 import styles from "./Header.module.css";
-import { useLocation, useNavigate } from "react-router";
 import { Button } from "flowbite-react";
 import logo from "../../assets/images/logo/logo1.png";
 import CategorySearchBar from "../../components/CategorySearchBar/CategorySearchBar";
@@ -95,6 +96,14 @@ function Header() {
               displayMode="header"
               optionTitle="Templates"
             /> */}
+            <div className="hidden lg:flex lg:gap-x-12">
+              <a
+                href="/classroom/management"
+                className="xl:text-sm/6 text-ssm/6 font-semibold text-gray-900 dark:text-white"
+              >
+                Classroom
+              </a>
+            </div>
             {/* <div className="hidden lg:flex lg:gap-x-12">
               <a
                 href="/about-us"
@@ -159,6 +168,13 @@ function Header() {
                     displayMode="dialog"
                     optionTitle="Templates"
                   /> */}
+                  <a
+                    href="/classroom/management"
+                    className="flex items-center gap-3 -mx-3 rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    <SiGoogleclassroom className="text-lg text-purple-800/60 dark:text-indigo-800/90" />{" "}
+                    Classroom Management
+                  </a>
                   {/* <a
                     href="#"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
