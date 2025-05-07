@@ -49,7 +49,7 @@ interface PasswordChange {
 
 function Profile() {
   const { id } = useParams();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, setUser: setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [user, setUser] = useState<User | null>(null);
@@ -151,13 +151,30 @@ function Profile() {
       if (!user || !profile) return;
 
       try {
-        // Handle avatar upload if a new file is selected
+        // Handle upload avatar nếu có file được chọn
         if (avatarFile) {
-          await userService.uploadUserAvatar(avatarFile);
+          const uploadAvatarRes = await userService.uploadUserAvatar(
+            avatarFile
+          );
+          setCurrentUser((prev) => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              avatarUrl: uploadAvatarRes.avatarUrl,
+            };
+          });
         }
 
         // Update user info
-        await userService.updateUser(user);
+        const updatedUser = await userService.updateUser(user);
+        setCurrentUser((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            email: updatedUser.email,
+            fullName: updatedUser.fullName,
+          };
+        });
 
         // Update profile info
         await userService.updateUserProfile(profile);

@@ -40,7 +40,8 @@ function QuizFromDocument({ languages }: QuizFromDocumentProps) {
               className="w-full h-36 p-4 border border-gray-300 rounded-lg resize-none focus:ring-1 focus:ring-purple-500"
               placeholder="Paste up to 8,000 words"
               value={quizMakerOptions[EQuizMakerOptions.DOCUMENT_TEXT]}
-              maxLength={8000}
+              minLength={200}
+              maxLength={10000}
               onChange={handleGetQuizMakerOptions}
             />
           )}
@@ -148,7 +149,7 @@ function QuizFromDocument({ languages }: QuizFromDocumentProps) {
               name={EQuizMakerOptions.NUMBER_OF_QUESTIONS}
               className="mt-2 grid w-full border-none grid-cols-1 rounded-md bg-white py-2 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 dark:focus:outline-indigo-600 sm:text-sm/6"
               min={1}
-              max={30}
+              max={40}
               placeholder="Number of questions"
               required
               value={quizMakerOptions[EQuizMakerOptions.NUMBER_OF_QUESTIONS]}
@@ -164,7 +165,7 @@ function QuizFromDocument({ languages }: QuizFromDocumentProps) {
         <textarea
           className="w-full h-36 p-4 border border-gray-300 rounded-lg resize-none focus:ring-1 focus:ring-purple-500"
           placeholder="Your text here..."
-          maxLength={8000}
+          maxLength={1000}
           name={EQuizMakerOptions.SPECIFIC_REQUIREMENTS}
           value={quizMakerOptions[EQuizMakerOptions.SPECIFIC_REQUIREMENTS]}
           onChange={handleGetQuizMakerOptions}

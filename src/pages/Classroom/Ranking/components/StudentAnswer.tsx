@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { IoFlag, IoFlagOutline } from "react-icons/io5";
 import { useParams } from "react-router";
-import { io } from "socket.io-client";
 import ReactMarkdown from "react-markdown";
 import classroomService from "../../services/classroomService";
 import { useAuth } from "../../../../hooks/useAuth";
@@ -17,24 +16,13 @@ const status = [
   "graded",
 ];
 
-// Hàm format thời gian theo định dạng HH:MM
-const formatTime = (timeInSeconds: number) => {
-  const hours = Math.floor(timeInSeconds / 3600);
-  const minutes = Math.floor((timeInSeconds % 3600) / 60);
-  const seconds = timeInSeconds % 60;
-  if (hours < 0 || minutes < 0 || seconds < 0) {
-    return "00:00:00";
-  }
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-    2,
-    "0"
-  )}:${String(seconds).padStart(2, "0")}`;
-};
-
 const SERVER_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
-function DoingQuizSet() {
-  const { id } = useParams();
+interface StudentAnswerProps {
+  studentAnswerId: string;
+}
+
+function StudentAnswer({ studentAnswerId }: StudentAnswerProps) {
   const { token } = useAuth();
   const { showToast } = useToast();
   const [quizName, setQuizName] = useState("Clustal Omega");
@@ -55,9 +43,6 @@ function DoingQuizSet() {
   const [studentAnswerStatus, setStudentAnswerStatus] = useState<string | null>(
     null
   );
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
-
-  const [socket, setSocket] = useState<any>(null);
 
   useEffect(() => {
     if (
@@ -66,39 +51,16 @@ function DoingQuizSet() {
     ) {
       return;
     }
-
-    const socket = io(SERVER_URL, {
-      query: { token },
-    });
-
-    setSocket(socket);
-
-    // Kết nối với socket server khi component mount
-    socket.on("connect", () => {
-      console.log("Connected to WebSocket server");
-    });
-
-    // Lắng nghe sự kiện 'answer-updated' từ server
-    socket.on("answer-updated", (data) => {
-      console.log(data); // In ra thông điệp từ server
-    });
-
-    // Lắng nghe sự kiện 'error' từ server
-    socket.on("error", (data) => {
-      console.error(data.message); // In ra lỗi từ server
-    });
-
-    return () => {
-      socket.disconnect(); // Dọn dẹp khi component unmount
-    };
   }, []);
 
   const fetchStudentAnswer = useQuery({
-    queryKey: ["studentAnswer", id],
+    queryKey: ["studentAnswer", studentAnswerId],
     queryFn: async () => {
-      if (!id) return;
+      if (!studentAnswerId) return;
 
-      const response = await classroomService.getStudentAnswerById(id);
+      const response = await classroomService.getStudentAnswerById(
+        studentAnswerId
+      );
       setQuizName(response?.quizName);
       setQuizData(response?.userAnswers);
       if (response?.endedAt) {
@@ -124,41 +86,6 @@ function DoingQuizSet() {
     },
   });
 
-  // Cập nhật thời gian mỗi giây
-  useEffect(() => {
-    if (timeLeft === null) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime === null || prevTime === undefined) {
-          return null;
-        }
-        if (prevTime === 0) {
-          clearInterval(interval);
-          // Tự động nộp bài khi thời gian hết
-          handleSumbitAndGrade();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval); // Dọn dẹp interval khi component unmount
-  }, [timeLeft]);
-
-  useEffect(() => {
-    const textareas = document.querySelectorAll("textarea");
-    textareas.forEach((textarea) => {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    });
-  }, [id]);
-
-  const autoResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    e.target.style.height = "auto";
-    e.target.style.height = e.target.scrollHeight + "px";
-  };
-
   const scrollToQuestion = (index: number) => {
     if (questionRefs.current[index]) {
       questionRefs.current[index]?.scrollIntoView({
@@ -168,137 +95,23 @@ function DoingQuizSet() {
     }
   };
 
-  // Cập nhật câu trả lời
-  const handleQuestionCompletion = (index: number, answer: string) => {
-    const updatedAnswers = [...userAnswers];
-    updatedAnswers[index] = answer;
-    setUserAnswers(updatedAnswers);
-
-    setCompletedQuestions((prev) => {
-      const updated = [...prev];
-      updated[index] = {
-        ...updated[index],
-        done: answer ? true : false,
-      };
-      return updated;
-    });
-
-    // Gửi sự kiện 'update-answer' lên server qua WebSocket
-    socket.emit("update-answer", {
-      studentAnswerId: id,
-      questionIndex: index,
-      userAnswer: answer,
-    });
-  };
-
-  // Toggle mark flag
-  const toggleMarkFlag = (index: number) => {
-    setCompletedQuestions((prev) => {
-      const updated = [...prev];
-      updated[index] = {
-        ...updated[index],
-        mark: !updated[index].mark, // Đổi trạng thái mark
-      }; // Đổi trạng thái flag
-      return updated;
-    });
-  };
-
-  const handleSubmitStudentAnswer = useMutation({
-    mutationFn: async () => {
-      try {
-        if (!id) return;
-        const response = await classroomService.submitQuizAnswers(id);
-        setTotalScore("Grading...");
-      } catch (error) {
-        console.error("Error submitting student answer:", error);
-      }
-    },
-    onSuccess: () => {
-      setIsSubmitModalOpen(false);
-      setStudentAnswerStatus("submitted");
-      showToast("success", "Quiz submitted successfully!");
-    },
-  });
-
-  const handleGradeStudentAnswer = useMutation({
-    mutationFn: async () => {
-      try {
-        if (!id) return;
-        const response = await classroomService.gradeStudentAnswer(id);
-        console.log(response.studentAnswer);
-        setQuizData(response.studentAnswer.userAnswers);
-        setTotalScore(response.score);
-        fetchStudentAnswer.refetch();
-      } catch (error) {
-        fetchStudentAnswer.refetch();
-        console.error("Error grading student answer:", error);
-        setTotalScore("Error grading");
-      }
-    },
-  });
-
-  const handleSumbitAndGrade = async () => {
-    try {
-      handleSubmitStudentAnswer.mutate();
-      handleGradeStudentAnswer.mutate();
-      // fetchStudentAnswer.refetch();
-    } catch (error) {
-      console.error("Error submitting and grading:", error);
-      fetchStudentAnswer.refetch();
-    }
-  };
-
   return (
     <>
-      <WarningModal
-        open={isSubmitModalOpen}
-        setOpen={setIsSubmitModalOpen}
-        modalInformation={{
-          title: "Submit quiz",
-          content: "Are you sure you want to submit?",
-        }}
-        handleFunction={handleSumbitAndGrade}
-        disabledButton={
-          handleSubmitStudentAnswer.isPending ||
-          handleGradeStudentAnswer.isPending
-        }
-      />
       <div className="w-full min-h-screen bg-gray-100 flex flex-row-reverse gap-4 md:gap-4 lg:gap-6 px-6 lg:px-16 xl:px-24 2xl:px-32 py-10">
         <div className="mb-10 md:w-1/4">
           <div className="sticky top-20 right-10 flex flex-col items-center">
-            {studentAnswerStatus === "submitted" ||
-            studentAnswerStatus === "graded" ? (
+            {totalScore && (
               <div className="mb-4 text-center bg-green-200 border border-green-300 px-2 lg:px-4 py-2 rounded-md shadow-md">
                 <h2 className="font-semibold text-gray-800">
                   <span className="hidden md:block text-md lg:text-lg xl:text-xl">
-                    Your score:
+                    User score:
                   </span>
                   <span className="text-lg lg:text-xl xl:text-2xl text-green-800">
                     {totalScore} / {quizTotalScore}
                   </span>
                 </h2>
               </div>
-            ) : (
-              <div className="mb-4 text-center bg-purple-200 border border-purple-300 px-2 lg:px-4 py-2 rounded-md shadow-md">
-                <h2 className="font-semibold text-gray-800">
-                  <span className="hidden md:block text-md lg:text-lg xl:text-xl">
-                    Time Remaining:
-                  </span>
-                  <span
-                    className={`text-lg lg:text-xl xl:text-2xl ${
-                      timeLeft
-                        ? timeLeft > 60
-                          ? ""
-                          : "text-red-800"
-                        : "text-purple-800"
-                    }`}
-                  >
-                    {timeLeft ? formatTime(timeLeft) : "No limit"}
-                  </span>
-                </h2>
-              </div>
             )}
-
             <div className="bg-white rounded-lg shadow-lg px-3 md:px-6 py-4 border border-gray-200">
               <h2 className="hidden md:block font-medium text-lg xl:text-xl text-center mb-4">
                 {quizName}
@@ -327,32 +140,6 @@ function DoingQuizSet() {
                 ))}
               </div>
             </div>
-            {studentAnswerStatus !== "graded" &&
-              studentAnswerStatus !== "submitted" && (
-                <div className="mt-4 w-full flex items-center justify-center">
-                  <button
-                    className="flex gap-1 bg-purple-600 font-medium text-white px-4 py-2 rounded-md shadow-md hover:bg-purple-500 transition-all duration-200 ring-2 ring-purple-300 hover:ring-purple-400 active:scale-95"
-                    onClick={() => setIsSubmitModalOpen(true)}
-                    disabled={
-                      handleSubmitStudentAnswer.isPending ||
-                      handleGradeStudentAnswer.isPending
-                    }
-                  >
-                    Submit <span className="hidden md:block">Quiz</span>
-                  </button>
-                </div>
-              )}
-            {studentAnswerStatus === "submitted" && !totalScore && (
-              <div className="mt-4 w-full flex flex-row items-center justify-center">
-                <button
-                  className="flex gap-1 bg-purple-600 font-medium text-white px-4 py-2 rounded-md shadow-md hover:bg-purple-500 transition-all duration-200 ring-2 ring-purple-300 hover:ring-purple-400 active:scale-95"
-                  onClick={() => handleGradeStudentAnswer.mutate()}
-                  disabled={handleGradeStudentAnswer.isPending}
-                >
-                  Grade <span className="hidden md:block">Quiz</span>
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
@@ -364,16 +151,6 @@ function DoingQuizSet() {
                 ref={(el) => (questionRefs.current[index] = el)}
                 className="relative scroll-mt-[80px] group flex flex-col bg-white border border-gray-200 shadow-lg rounded-lg pl-6 pr-3 py-5 w-full mb-4"
               >
-                <div
-                  className="z-40 absolute top-5 right-5 text-lg cursor-pointer"
-                  onClick={() => toggleMarkFlag(index)}
-                >
-                  {completedQuestions[index].mark ? (
-                    <IoFlag className="text-red-800" />
-                  ) : (
-                    <IoFlagOutline className="text-red-800" />
-                  )}
-                </div>
                 <div className="flex flex-col gap-4">
                   <div key={index} className="flex items-center gap-4 md:gap-8">
                     <div className="mb-auto flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-purple-100 rounded-full text-purple-600 font-semibold md:text-lg">
@@ -382,7 +159,8 @@ function DoingQuizSet() {
                     <div className="relative flex flex-col w-full">
                       <div className="flex items-center gap-3 mb-1">
                         <div className="py-0.5 px-2 bg-purple text-purple-600 font-semibold bg-purple-100 border border-purple-300 rounded-md text-[12px]">
-                          {studentAnswerStatus === "graded" &&
+                          {(studentAnswerStatus === "graded" ||
+                            quiz.userScore) &&
                             quiz?.userScore + " / "}{" "}
                           {quiz.points} points
                         </div>
@@ -421,9 +199,6 @@ function DoingQuizSet() {
                                       : "bg-red-600"
                                     : ""
                                 }`}
-                                onChange={() =>
-                                  handleQuestionCompletion(index, option)
-                                }
                                 checked={userAnswers[index] === option}
                               />
                               <p className="text-gray-600">{option}</p>
@@ -431,22 +206,11 @@ function DoingQuizSet() {
                           ))}
                         </div>
                       ) : (
-                        <textarea
-                          rows={1}
-                          disabled={
-                            studentAnswerStatus === "submitted" ||
-                            studentAnswerStatus === "graded"
-                          }
-                          className="rounded-md mr-4 px-4 py-2 text-gray-800 mb-3 bg-purple-100 border-none focus:ring-1 focus:ring-purple-600 resize-none overflow-hidden"
-                          value={userAnswers[index]}
-                          onInput={autoResize}
-                          onChange={(e) =>
-                            handleQuestionCompletion(index, e.target.value)
-                          }
-                          placeholder="Your answer..."
-                        />
+                        <div className="rounded-md mr-4 px-4 py-2 text-gray-800 mb-3 bg-purple-100 border-none focus:ring-1 focus:ring-purple-600 resize-none overflow-hidden">
+                          {userAnswers[index]}
+                        </div>
                       )}
-                      {studentAnswerStatus === "graded" && (
+                      {(studentAnswerStatus === "graded" || quiz.userScore) && (
                         <>
                           <div className="mt-2 flex flex-col rounded-md mr-4 px-4 py-2 text-gray-800 mb-3 bg-green-100 border border-green-200">
                             <div className="font-medium text-gray-800">
@@ -482,4 +246,4 @@ function DoingQuizSet() {
   );
 }
 
-export default DoingQuizSet;
+export default StudentAnswer;

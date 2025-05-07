@@ -61,7 +61,7 @@ function DocumentToPptxConverter() {
               <p className="text-xs/5 text-gray-600">
                 .pdf, .doc, .docx, .txt, .md
               </p>
-              <p className="text-xs/5 text-gray-600">Max. 25MB per file.</p>
+              <p className="text-xs/5 text-gray-600">Max. 20MB per file.</p>
             </div>
           </label>
           <Link

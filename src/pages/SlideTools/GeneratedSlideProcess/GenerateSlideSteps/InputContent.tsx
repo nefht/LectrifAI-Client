@@ -146,8 +146,8 @@ Post-war consequences were profound. The United Nations was established to promo
           <textarea
             required
             rows={30}
-            minLength={100}
-            maxLength={8000}
+            minLength={200}
+            maxLength={10000}
             name={EGeneratedSlideForm.CONTENT}
             value={presentationOptions[EGeneratedSlideForm.CONTENT]}
             onChange={handleGetPresentationOptions}

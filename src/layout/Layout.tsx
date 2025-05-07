@@ -9,9 +9,12 @@ function Layout() {
 
   // List of routes where the footer should not be displayed
   const noFooterRoutes = [
+    // Home page
+    "/",
     // User profile
     `/user-profile/${id}`,
     // Generate slides process
+    "/slide/document-to-pptx-convert",
     "/slide/generate-process/input",
     "/slide/generate-process/template",
     `/slide/generate-process/outline/${id}`,
@@ -42,6 +45,7 @@ function Layout() {
     `/classroom/detail/${id}`,
     `/classroom/doing-quiz/${id}`,
     `/classroom/students-list/${id}`,
+    `/classroom/ranking/${id}`,
     // Classroom invitation
     `/classroom/join/${token}`,
   ];

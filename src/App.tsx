@@ -42,6 +42,7 @@ import Profile from "./pages/Profile/Profile";
 import StudentsList from "./pages/Classroom/StudentsList/StudentsList";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import AccessDenied from "./pages/AccessDenied/AccessDenied";
+import ClassroomRanking from "./pages/Classroom/Ranking/ClassroomRanking";
 
 function App() {
   const { showToast } = useToast();
@@ -132,6 +133,7 @@ function App() {
           <Route path="doing-quiz/:id" element={<DoingQuizSet />} />
           <Route path="join/:token" element={<ClassroomInvitation />} />
           <Route path="students-list/:id" element={<StudentsList />} />
+          <Route path="ranking/:id" element={<ClassroomRanking />} />
         </Route>
         <Route path="*" element={<NotFound />} />
         <Route path="/access-denied" element={<AccessDenied />} />

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import classroomService from "../../services/classroomService";
 import { formatDuration } from "../ClassroomDetail";
 import { useToast } from "../../../../hooks/useToast";
+import { formatToLocalISOString } from "../../../../utils/ComponentBase";
 
 interface AdjustQuizSettingModalProps {
   open: boolean;
@@ -43,11 +44,11 @@ function AdjustQuizSettingModal({
   useEffect(() => {
     if (quizInfo && open) {
       const startTimeFormatted = quizInfo.startTime
-        ? new Date(quizInfo.startTime).toISOString().slice(0, 16)
+        ? formatToLocalISOString(quizInfo.startTime)
         : null;
 
       const endTimeFormatted = quizInfo.endTime
-        ? new Date(quizInfo.endTime).toISOString().slice(0, 16)
+        ? formatToLocalISOString(quizInfo.endTime)
         : null;
 
       // Parse duration thành hours, minutes, seconds
@@ -69,21 +70,21 @@ function AdjustQuizSettingModal({
     }
   }, [quizInfo, open]);
 
-   useEffect(() => {
-     // Validate thời gian mở < thời gian đóng
-     if (quizSettings.startTime && quizSettings.endTime) {
-       const startTime = new Date(quizSettings.startTime).getTime();
-       const endTime = new Date(quizSettings.endTime).getTime();
+  useEffect(() => {
+    // Validate thời gian mở < thời gian đóng
+    if (quizSettings.startTime && quizSettings.endTime) {
+      const startTime = new Date(quizSettings.startTime).getTime();
+      const endTime = new Date(quizSettings.endTime).getTime();
 
-       if (startTime >= endTime) {
-         setValidationError("Start time must be before end time");
-       } else {
-         setValidationError(null);
-       }
-     } else {
-       setValidationError(null);
-     }
-   }, [quizSettings.startTime, quizSettings.endTime]);
+      if (startTime >= endTime) {
+        setValidationError("Start time must be before end time");
+      } else {
+        setValidationError(null);
+      }
+    } else {
+      setValidationError(null);
+    }
+  }, [quizSettings.startTime, quizSettings.endTime]);
 
   const updateQuizSetting = (field: string, value: any) => {
     setQuizSettings((prev) => ({
@@ -122,8 +123,9 @@ function AdjustQuizSettingModal({
         endTime: quizSettings.endTime
           ? new Date(quizSettings.endTime)
           : undefined,
-        duration: quizSettings.duration || undefined,
+        duration: quizSettings.duration ?? undefined,
       };
+      console.log("Updated settings:", updatedSettings);
 
       const response = await classroomService.updateClassroomQuiz(
         quizInfo._id,
@@ -285,7 +287,13 @@ function AdjustQuizSettingModal({
             <button
               type="button"
               onClick={() => handleUpdateQuizSettings.mutate()}
-              disabled={handleUpdateQuizSettings.isPending || !!validationError}
+              disabled={
+                handleUpdateQuizSettings.isPending ||
+                !!validationError ||
+                (!quizSettings.startTime &&
+                  !quizSettings.endTime &&
+                  !quizSettings.duration)
+              }
               className={`px-4 py-2 rounded-md text-sm font-medium text-white ${
                 validationError
                   ? "bg-teal-400 cursor-not-allowed"

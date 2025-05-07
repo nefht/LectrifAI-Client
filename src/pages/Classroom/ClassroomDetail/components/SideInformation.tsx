@@ -153,7 +153,10 @@ function SideInformation({
             <p className="text-gray-800">List of students</p>
             <IoPeopleOutline className="text-lg text-black/50 group-hover:text-black/90" />
           </div>
-          <div className="group flex items-center justify-between w-full hover:bg-black/10 hover:font-medium rounded-md p-2 cursor-pointer">
+          <div
+            onClick={() => navigate(`/classroom/ranking/${classroomInfo._id}`)}
+            className="group flex items-center justify-between w-full hover:bg-black/10 hover:font-medium rounded-md p-2 cursor-pointer"
+          >
             <p className="text-gray-800"> Ranking</p>
             <PiRanking className="text-xl text-black/50 group-hover:text-black/90" />
           </div>

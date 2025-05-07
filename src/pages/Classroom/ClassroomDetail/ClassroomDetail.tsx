@@ -14,7 +14,7 @@ import { IoMdSettings } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
 import { Menu } from "@headlessui/react";
 import DeleteModal from "../../../components/NotificationModal/DeleteModal";
-import AdjustQuizSettingModal from "./components/AddjustQuizSettingsModal";
+import AdjustQuizSettingModal from "./components/AdjustQuizSettingsModal";
 
 export const formatDuration = (durationInSeconds: number) => {
   if (!durationInSeconds || durationInSeconds <= 0) return "No limit"; // Nếu không có thời gian, trả về "No limit"

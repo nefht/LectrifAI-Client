@@ -45,6 +45,11 @@ function MyClassroomCard({
         classroom._id
       );
       showToast("success", "Classroom deleted successfully!");
+      setUserClassrooms((prevClassrooms: any) =>
+        prevClassrooms.filter((classroom: any) => classroom._id !== response._id)
+      );
+      setIsDeleteModalOpen(false);
+      return response;
     },
     onError: (error) => {
       showToast("error", "Failed to delete classroom. Please try again later.");

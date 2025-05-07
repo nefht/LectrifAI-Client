@@ -372,6 +372,41 @@ export const updateClassroomQuiz = async (
   }
 };
 
+/**
+ * Get classroom ranking
+ * @param classroomId
+ * @returns
+ */
+export const getClassroomRanking = async (classroomId: string) => {
+  try {
+    const response = await api.get(`/student-answer/ranking/${classroomId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching classroom ranking:", error);
+    throw new Error(
+      "Failed to fetch classroom ranking. Please try again later."
+    );
+  }
+};
+
+/**
+ * Get student quiz details list
+ * @param classroomId
+ * @param studentId
+ * @returns
+ */
+export const getStudentQuizDetails = async (classroomId: string, studentId:string) => {
+  try {
+    const response = await api.get(`/student-answer/${classroomId}/student/${studentId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching student quiz details:", error);
+    throw new Error(
+      "Failed to fetch student quiz details. Please try again later."
+    );
+  }
+};
+
 const classroomService = {
   getClassroomById,
   getClassroomMaterialsById,
@@ -392,6 +427,8 @@ const classroomService = {
   deleteClassroomLectureVideo,
   deleteClassroomQuiz,
   updateClassroomQuiz,
+  getClassroomRanking,
+  getStudentQuizDetails,
 };
 
 export default classroomService;

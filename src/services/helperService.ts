@@ -23,5 +23,32 @@ export const getAllLanguages = async () => {
   }
 };
 
-const helperService = { getAllLanguages };
+
+/**
+ * Search content based on category and query
+ * @param {string} category - The category to search in (all, slides, lectures, quizzes, users)
+ * @param {string} query - The search query
+ */
+export const searchByCategory = async (category: string, query: string) => {
+  try {
+    // Convert category name to match backend format
+    const categoryParam = category === "All categories" 
+      ? "all" 
+      : category.toLowerCase();
+    
+    const response = await api.get("/helpers/search", {
+      params: {
+        category: categoryParam,
+        query
+      }
+    });
+    
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to search content:", error);
+    throw new Error(error.response?.data?.message || "Failed to search content.");
+  }
+};
+
+const helperService = { getAllLanguages, searchByCategory };
 export default helperService;

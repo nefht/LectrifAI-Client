@@ -82,7 +82,7 @@ function QuizFromTopic({ languages }: QuizFromTopicProps) {
               type="number"
               className="mt-2 grid w-full border-none grid-cols-1 rounded-md bg-white py-2 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-purple-600 dark:focus:outline-indigo-600 sm:text-sm/6"
               min={1}
-              max={30}
+              max={40}
               placeholder="Number of questions"
               required
               name="numberOfQuestions"
@@ -99,7 +99,7 @@ function QuizFromTopic({ languages }: QuizFromTopicProps) {
         <textarea
           className="w-full h-36 p-4 border border-gray-300 rounded-lg resize-none focus:ring-1 focus:ring-purple-500"
           placeholder="Your text here..."
-          maxLength={8000}
+          maxLength={1000}
           name="specificRequirements"
           value={quizMakerOptions[EQuizMakerOptions.SPECIFIC_REQUIREMENTS]}
           onChange={handleGetQuizMakerOptions}

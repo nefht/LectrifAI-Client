@@ -18,6 +18,7 @@ interface AuthData {
 
 interface AuthContextType {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   token: string | null;
   login: (token: string, user: User) => void;
   logout: () => void;
@@ -67,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (authData) {
       localStorage.setItem("authData", JSON.stringify(authData));
     }
-  }, [authData]);
+  }, [authData, user]);
 
   const login = (token: string, user: User) => {
     try {
@@ -95,7 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, isAuthenticated }}
+      value={{ user, setUser, token, login, logout, isAuthenticated }}
     >
       {children}
     </AuthContext.Provider>

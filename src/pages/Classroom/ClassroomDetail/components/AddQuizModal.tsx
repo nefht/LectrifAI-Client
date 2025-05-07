@@ -108,6 +108,7 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
     field: string,
     value: any
   ) => {
+    console.log(value);
     setQuizSettings((prev) => {
       const updatedSettings = {
         ...prev,
@@ -208,9 +209,13 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
       }
       showToast("success", "Quizzes added successfully!");
       handleCloseModal();
+      return addedQuizzes;
+      console.log("RESPONSE", addedQuizzes);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error adding quizzes:", error);
       showToast("error", "Failed to add quizzes. Please try again.");
+      showToast("error", error.message);
     },
   });
 

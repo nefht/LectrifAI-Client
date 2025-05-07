@@ -116,7 +116,7 @@ function Signup() {
                     name="email"
                     id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-800 rounded-lg focus:ring-purple-600 focus:border-purple-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                    placeholder="abcde@google.com"
+                    placeholder="abcde@gmail.com"
                     onChange={handleChange}
                   />
                 </div>
@@ -242,9 +242,10 @@ function Signup() {
               <button
                 type="button"
                 className="w-full flex items-center justify-center gap-2 text-gray-800 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                onClick={() => navigate("/login")}
               >
-                <img src={googleLogo} alt="Google logo" className="h-5 w-5" />
-                Continue with Google
+                {/* <img src={googleLogo} alt="Google logo" className="h-5 w-5" /> */}
+                Back to Login
               </button>
               <button
                 type="submit"

@@ -71,7 +71,7 @@ function Home() {
       {theme === "light" && (
         <>
           <img
-            className="w-1/2 xl:w-auto max-h-full absolute left-0 bottom-0"
+            className="w-1/2 xl:w-auto max-h-full min-[900px]:max-h-max xl:max-h-full absolute left-0 bottom-0"
             src={backgroundLeftDecoration}
             alt=""
           />
