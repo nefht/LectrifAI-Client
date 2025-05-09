@@ -1,15 +1,13 @@
 import { Image, Slide, Text, Table, Shape, Line } from "react-pptx";
-import titleSlideImg from "../../../assets/templates/minimalist-03/title-slide.png";
-import contentSlideImg from "../../../assets/templates/minimalist-03/content-slide.png";
-import contentSlide2Img from "../../../assets/templates/minimalist-03/content-slide-2.png";
-import contentSlide3Img from "../../../assets/templates/minimalist-03/content-slide-3.png";
-import contentSlide4Img from "../../../assets/templates/minimalist-03/content-slide-4.png";
-import contentSlide5Img from "../../../assets/templates/minimalist-03/content-slide-5.png";
-import endSlideImg from "../../../assets/templates/minimalist-03/end-slide.png";
+import titleSlideImg from "../../../assets/templates/colorful-01/title-slide.png";
+import contentSlideImg from "../../../assets/templates/colorful-01/content-slide.png";
+import contentSlide2Img from "../../../assets/templates/colorful-01/content-slide-2.png";
+import contentSlide3Img from "../../../assets/templates/colorful-01/content-slide-3.png";
+import contentSlide4Img from "../../../assets/templates/colorful-01/content-slide-4.png";
 
 import { ExportSlideData } from "../constants/export-slide-data";
 
-function MinimalistTemplate03(data: any) {
+function ColorfulTemplate01(data: any) {
   console.log(data);
   // Title slide
   const titleSlide = [
@@ -30,7 +28,7 @@ function MinimalistTemplate03(data: any) {
           fontFace: "Candara",
         }}
       >
-        {data.title.toUpperCase()}
+        {data.title}
       </Text>
     </Slide>,
   ];
@@ -63,9 +61,7 @@ function MinimalistTemplate03(data: any) {
         ? contentSlide2Img
         : index % 5 === 2
         ? contentSlide3Img
-        : index % 5 === 3
-        ? contentSlide4Img
-        : contentSlide5Img;
+        : contentSlide4Img;
 
     return [
       <Slide
@@ -75,12 +71,11 @@ function MinimalistTemplate03(data: any) {
         {/* Heading */}
         <Text
           style={{
-            x: 0.5,
-            y: 0.4,
-            w: "90%",
-            h: 0.5,
-            color: "#664B34",
-            fontSize: 20,
+            x: 1,
+            y: 0.2,
+            w: "85%",
+            h: 0.8,
+            fontSize: 17,
             bold: true,
             fontFace: "Candara",
           }}
@@ -168,7 +163,7 @@ function MinimalistTemplate03(data: any) {
     return (
       <Slide
         key={slideData.heading}
-        style={{ backgroundImage: { kind: "path", path: endSlideImg } }}
+        style={{ backgroundImage: { kind: "path", path: titleSlideImg } }}
       >
         <Text
           style={{
@@ -203,4 +198,4 @@ function MinimalistTemplate03(data: any) {
   ];
 }
 
-export default MinimalistTemplate03;
+export default ColorfulTemplate01;

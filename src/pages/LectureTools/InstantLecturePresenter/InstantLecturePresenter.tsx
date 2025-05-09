@@ -59,6 +59,9 @@ function InstantLecturePresenter() {
     languageCode: storedSettings.languageCode || "vi-VN",
     voiceType: storedSettings.voiceType || "FEMALE",
   });
+  // Audio context reference
+  const audioContextRef = useRef<AudioContext | null>(null); // Quản lý AudioContext
+  const audioSourcesRef = useRef<AudioBufferSourceNode[]>([]); // Lưu trữ AudioBufferSourceNode đang phát
 
   useEffect(() => {
     setHeaderClass("shadow-none dark:border-none bg-white");
@@ -335,6 +338,29 @@ function InstantLecturePresenter() {
   //   },
   // });
 
+  // Dừng phát audio khi đóng màn hình stream
+  useEffect(() => {
+    if (!showFullScreenStream) {
+      stopAllAudio();
+    }
+  }, [showFullScreenStream]);
+
+  // Dừng phát audio
+  const stopAllAudio = () => {
+    if (audioContextRef.current) {
+      // Stop tất cả audio sources
+      audioSourcesRef.current.forEach((source) => {
+        try {
+          source.stop();
+        } catch (e) {}
+      });
+      audioSourcesRef.current = [];
+
+      // Suspend audio context
+      audioContextRef.current.suspend().catch(console.error);
+    }
+  };
+
   // Sử dụng WebAudio API với AudioBufferSourceNode liên tiếp
   const handleSendMessage = useMutation({
     mutationFn: async () => {
@@ -356,7 +382,11 @@ function InstantLecturePresenter() {
           setStreamedText("");
 
           // Sử dụng Web Audio API
-          const audioContext = new window.AudioContext();
+          // const audioContext = new window.AudioContext();
+          // Khởi tạo audio context mới
+          stopAllAudio(); // Dừng audio trước đó nếu có
+          audioContextRef.current = new window.AudioContext();
+          audioSourcesRef.current = [];
           let audioQueue: any[] = [];
           let isDecoding = false;
           let startTime = 0;
@@ -377,19 +407,20 @@ function InstantLecturePresenter() {
               }
 
               // Giải mã dữ liệu âm thanh
-              const audioBuffer = await audioContext.decodeAudioData(
-                byteArray.buffer
-              );
+              const audioBuffer =
+                await audioContextRef.current!.decodeAudioData(
+                  byteArray.buffer
+                );
 
               // Tạo source và kết nối
-              const source = audioContext.createBufferSource();
+              const source = audioContextRef.current!.createBufferSource();
               source.buffer = audioBuffer;
-              source.connect(audioContext.destination);
+              source.connect(audioContextRef.current!.destination);
 
               // Nếu là buffer đầu tiên, bắt đầu ngay lập tức
               // Nếu không, lên lịch phát sau buffer trước đó
               if (startTime === 0) {
-                startTime = audioContext.currentTime;
+                startTime = audioContextRef.current!.currentTime;
               }
 
               source.start(startTime);
@@ -420,11 +451,14 @@ function InstantLecturePresenter() {
             );
 
             const updatedLectures = await fetchLectures.refetch();
-            console.log(updatedLectures)
+            console.log(updatedLectures);
             if (updatedLectures.data && Array.isArray(updatedLectures.data)) {
-              navigate(`/lecture/instant-presenter/${updatedLectures.data[0]._id}`, {
-                replace: true,
-              }); // { replace: true } sẽ thay thế URL hiện tại trong lịch sử trình duyệt
+              navigate(
+                `/lecture/instant-presenter/${updatedLectures.data[0]._id}`,
+                {
+                  replace: true,
+                }
+              ); // { replace: true } sẽ thay thế URL hiện tại trong lịch sử trình duyệt
             }
           } else {
             response = await instantLectureService.sendMessage(
@@ -801,6 +835,7 @@ function InstantLecturePresenter() {
                 className="w-full h-10 md:h-auto max-h-60 text-sm md:text-base resize-none border-none bg-transparent ring-transparent focus:ring-transparent dark:text-white dark:placeholder-gray-400 dark:bg-transparent dark:focus:ring-transparent custom-scrollbar"
                 placeholder="Your message here..."
                 value={messageData.text}
+                maxLength={10000}
                 onChange={(e) => handleChangeMessage(e)}
                 onPaste={handlePasteImage}
               ></textarea>

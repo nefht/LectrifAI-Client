@@ -42,17 +42,29 @@ function ShareUserModal({
 
   useEffect(() => {
     console.log("Selected item:", selectedItem);
+    console.log(listPermissions);
     if (listPermissions && listPermissions.length > 0) {
+      const listPermissionsWithoutOwner = listPermissions.filter(
+        (per) => per.permissionType !== "OWNER"
+      );
+      console.log("Without owner: ", listPermissionsWithoutOwner);
       setSelectedUsers(listPermissions);
+
       if (selectedItem.isPublic) {
         setSharingMode("PUBLIC");
-      } else {
+        setIsPublic(true);
+      } else if (listPermissionsWithoutOwner.length > 0) {
         setSharingMode("SHARE");
+      } else {
+        setSharingMode("PRIVATE");
+        setIsPrivate(true);
       }
     } else if (selectedItem && selectedItem.isPublic) {
       setSharingMode("PUBLIC");
+      setIsPublic(true);
     } else {
       setSharingMode("PRIVATE");
+      setIsPrivate(true);
     }
     if (selectedItem) {
       setSharedItem(selectedItem);
@@ -145,6 +157,14 @@ function ShareUserModal({
       let sharedWith = [...selectedUsers];
       if (isPrivate) {
         sharedWith = [];
+      } else {
+        const sharedWithoutOwner = sharedWith.filter(
+          (per: any) => per.permissionType !== "OWNER"
+        );
+        if (!(sharedWithoutOwner.length > 0) && !isPublic) {
+          showToast("warning", "You must select at least a user!");
+          return;
+        }
       }
       if (type === "lecture-video") {
         const response = await lectureVideoService.shareLectureVideo(
@@ -152,12 +172,12 @@ function ShareUserModal({
           isPublic,
           sharedWith
         );
-        console.log(response);
         if (currentListPage) {
           queryClient.invalidateQueries({
             queryKey: ["lectureVideos", currentListPage, 10, ""],
           });
         }
+        showToast("success", "Set access permissions successfully!");
       }
       if (type === "quiz") {
         const response = quizService.shareQuiz(
@@ -165,18 +185,19 @@ function ShareUserModal({
           isPublic,
           sharedWith
         );
-        console.log(response);
+        showToast("success", "Set access permissions successfully!");
+        console.log("currentListPage", currentListPage);
         if (currentListPage) {
           queryClient.invalidateQueries({
             queryKey: ["quizzes", currentListPage, 10, ""],
           });
         }
       }
-      showToast("success", "Set access permissions successfully!");
       handleCloseModal();
     },
-    onError: () => {
+    onError: (error) => {
       showToast("error", "Failed to set access permissions.");
+      showToast("error", error.message);
     },
   });
 

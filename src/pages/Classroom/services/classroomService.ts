@@ -8,9 +8,12 @@ export const getClassroomById = async (classroomId: string) => {
   try {
     const response = await api.get(`/classroom/${classroomId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching classroom:", error);
-    throw new Error("Failed to fetch classroom. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to fetch classroom. Please try again later."
+    );
   }
 };
 
@@ -22,10 +25,11 @@ export const getClassroomMaterialsById = async (classroomId: string) => {
   try {
     const response = await api.get(`/classroom/materials/${classroomId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching classroom materials:", error);
     throw new Error(
-      "Failed to fetch classroom materials. Please try again later."
+      error.response?.data?.error ||
+        "Failed to fetch classroom materials. Please try again later."
     );
   }
 };
@@ -41,9 +45,12 @@ export const startQuiz = async (classroomQuizId: string) => {
       classroomQuizId,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error starting quiz:", error);
-    throw new Error("Failed to start quiz. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to start quiz. Please try again later."
+    );
   }
 };
 
@@ -56,9 +63,12 @@ export const getStudentAnswerById = async (studentAnswerId: string) => {
   try {
     const response = await api.get(`student-answer/${studentAnswerId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching student answer:", error);
-    throw new Error("Failed to fetch student answer. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to fetch student answer. Please try again later."
+    );
   }
 };
 
@@ -71,9 +81,12 @@ export const submitQuizAnswers = async (studentAnswerId: string) => {
   try {
     const response = await api.post(`student-answer/submit/${studentAnswerId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error submitting quiz answers:", error);
-    throw new Error("Failed to submit quiz answers. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to submit quiz answers. Please try again later."
+    );
   }
 };
 
@@ -86,9 +99,12 @@ export const gradeStudentAnswer = async (studentAnswerId: string) => {
   try {
     const response = await api.post(`student-answer/grade/${studentAnswerId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error grading student answer:", error);
-    throw new Error("Failed to grade student answer. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to grade student answer. Please try again later."
+    );
   }
 };
 
@@ -103,10 +119,11 @@ export const getAnswerStatusByClassroomQuizId = async (
   try {
     const response = await api.get(`student-answer/status/${classroomQuizId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching student answer status:", error);
     throw new Error(
-      "Failed to fetch student answer status. Please try again later."
+      error.response?.data?.error ||
+        "Failed to fetch student answer status. Please try again later."
     );
   }
 };
@@ -126,10 +143,11 @@ export const addStudentsToClassroom = async (
       studentIds,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error adding students to classroom:", error);
     throw new Error(
-      "Failed to add students to classroom. Please try again later."
+      error.response?.data?.error ||
+        "Failed to add students to classroom. Please try again later."
     );
   }
 };
@@ -154,10 +172,11 @@ export const addQuizzesToClassroom = async (
       quizzes,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error adding quizzes to classroom:", error);
     throw new Error(
-      "Failed to add quizzes to classroom. Please try again later."
+      error.response?.data?.error ||
+        "Failed to add quizzes to classroom. Please try again later."
     );
   }
 };
@@ -180,10 +199,11 @@ export const addLecturesToClassroom = async (
       lectureVideos,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error adding lectures to classroom:", error);
     throw new Error(
-      "Failed to add lectures to classroom. Please try again later."
+      error.response?.data?.error ||
+        "Failed to add lectures to classroom. Please try again later."
     );
   }
 };
@@ -203,9 +223,12 @@ export const renameClassroom = async (
       classroomName,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error renaming classroom:", error);
-    throw new Error("Failed to rename classroom. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to rename classroom. Please try again later."
+    );
   }
 };
 
@@ -218,9 +241,12 @@ export const resetInviteLink = async (classroomId: string) => {
   try {
     const response = await api.put(`/classroom/reset-invite/${classroomId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error resetting invite link:", error);
-    throw new Error("Failed to reset invite link. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to reset invite link. Please try again later."
+    );
   }
 };
 
@@ -233,10 +259,11 @@ export const getClassroomByInviteToken = async (inviteToken: string) => {
   try {
     const response = await api.get(`/classroom/invite/${inviteToken}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching classroom by invite token:", error);
     throw new Error(
-      "Failed to fetch classroom by invite token. Please try again later."
+      error.response?.data?.error ||
+        "Failed to fetch classroom by invite token. Please try again later."
     );
   }
 };
@@ -250,10 +277,12 @@ export const joinClassroomByInviteToken = async (inviteToken: string) => {
   try {
     const response = await api.get(`/classroom/join/${inviteToken}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error joining classroom by invite token:", error);
     throw new Error(
-      "Failed to join classroom by invite token. Please try again later."
+      error.response?.data?.error || 
+        error.response?.data?.message ||
+        "Failed to join classroom by invite token. Please try again later."
     );
   }
 };
@@ -282,9 +311,12 @@ export const getStudentsList = async (
       },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching students list:", error);
-    throw new Error("Failed to fetch students list. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to fetch students list. Please try again later."
+    );
   }
 };
 
@@ -304,10 +336,11 @@ export const removeStudentsFromClassroom = async (
       { studentIds }
     );
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error removing students from classroom:", error);
     throw new Error(
-      "Failed to remove students from classroom. Please try again later."
+      error?.response?.data?.error ||
+        "Failed to remove students from classroom. Please try again later."
     );
   }
 };
@@ -325,10 +358,11 @@ export const deleteClassroomLectureVideo = async (
       `/classroom-lecture/${classroomLectureId}`
     );
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting classroom lecture video:", error);
     throw new Error(
-      "Failed to delete classroom lecture video. Please try again later."
+      error.response?.data?.error ||
+        "Failed to delete classroom lecture video. Please try again later."
     );
   }
 };
@@ -342,9 +376,12 @@ export const deleteClassroomQuiz = async (classroomQuizId: string) => {
   try {
     const response = await api.delete(`/classroom-quiz/${classroomQuizId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting classroom quiz:", error);
-    throw new Error("Failed to delete classroom quiz. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to delete classroom quiz. Please try again later."
+    );
   }
 };
 
@@ -366,9 +403,12 @@ export const updateClassroomQuiz = async (
       updatedSettings
     );
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating classroom quiz:", error);
-    throw new Error("Failed to update classroom quiz. Please try again later.");
+    throw new Error(
+      error.response?.data?.error ||
+        "Failed to update classroom quiz. Please try again later."
+    );
   }
 };
 
@@ -381,10 +421,11 @@ export const getClassroomRanking = async (classroomId: string) => {
   try {
     const response = await api.get(`/student-answer/ranking/${classroomId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching classroom ranking:", error);
     throw new Error(
-      "Failed to fetch classroom ranking. Please try again later."
+      error.response?.data?.error ||
+        "Failed to fetch classroom ranking. Please try again later."
     );
   }
 };
@@ -395,14 +436,20 @@ export const getClassroomRanking = async (classroomId: string) => {
  * @param studentId
  * @returns
  */
-export const getStudentQuizDetails = async (classroomId: string, studentId:string) => {
+export const getStudentQuizDetails = async (
+  classroomId: string,
+  studentId: string
+) => {
   try {
-    const response = await api.get(`/student-answer/${classroomId}/student/${studentId}`);
+    const response = await api.get(
+      `/student-answer/${classroomId}/student/${studentId}`
+    );
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching student quiz details:", error);
     throw new Error(
-      "Failed to fetch student quiz details. Please try again later."
+      error.response?.data?.error ||
+        "Failed to fetch student quiz details. Please try again later."
     );
   }
 };

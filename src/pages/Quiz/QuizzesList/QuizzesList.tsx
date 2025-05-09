@@ -37,7 +37,7 @@ function QuizzesList({ searchTerm }: { searchTerm: string }) {
   const navigate = useNavigate();
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const [limit] = useState(9);
+  const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   // Modal share
@@ -386,38 +386,40 @@ function QuizzesList({ searchTerm }: { searchTerm: string }) {
                                 </button>
                               )}
                             </Menu.Item>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleOpenShare.mutate(quiz)}
-                                  className={`${
-                                    active
-                                      ? "bg-violet-100 text-violet-800 font-semibold"
-                                      : "text-gray-700"
-                                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                >
-                                  Share
-                                </button>
-                              )}
-                            </Menu.Item>
                             {isOwner && (
+                            <>
                               <Menu.Item>
                                 {({ active }) => (
                                   <button
-                                    onClick={() => {
-                                      setIsDeleteModalOpen(true);
-                                      setSelectedQuiz(quiz);
-                                    }}
+                                    onClick={() => handleOpenShare.mutate(quiz)}
                                     className={`${
                                       active
-                                        ? "bg-red-100 text-red-600 font-semibold"
-                                        : "text-red-500"
+                                        ? "bg-violet-100 text-violet-800 font-semibold"
+                                        : "text-gray-700"
                                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                   >
-                                    Delete
+                                    Share
                                   </button>
                                 )}
                               </Menu.Item>
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      onClick={() => {
+                                        setIsDeleteModalOpen(true);
+                                        setSelectedQuiz(quiz);
+                                      }}
+                                      className={`${
+                                        active
+                                          ? "bg-red-100 text-red-600 font-semibold"
+                                          : "text-red-500"
+                                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                            </>
                             )}
                           </div>
                         </Menu.Items>

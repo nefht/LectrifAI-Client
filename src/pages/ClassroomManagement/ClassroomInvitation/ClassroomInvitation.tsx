@@ -36,9 +36,11 @@ function ClassroomInvitation() {
       );
       showToast("success", "You have joined the classroom successfully.");
       navigate(`/classroom/detail/${response.classroom._id}`);
+      return response;
     },
     onError: (error) => {
-      showToast("error", "Failed to join classroom. Please try again.");
+      // showToast("error", "Failed to join classroom. Please try again.");
+      showToast("error", error.message ?? error);
       console.error("Error joining classroom:", error);
     },
   });

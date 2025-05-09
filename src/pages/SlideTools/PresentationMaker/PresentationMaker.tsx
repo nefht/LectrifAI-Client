@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import classNames from "classnames/bind";
 import { RiQuestionLine } from "react-icons/ri";
 import styles from "./PresentationMaker.module.css";
@@ -10,9 +10,19 @@ const cx = classNames.bind(styles);
 
 function PresentationMaker() {
   const [modalOpen, setModalOpen] = useState(false);
+  const stepsRef = useRef<HTMLOListElement | null>(null); 
 
   const handleOpenModal = () => {
     setModalOpen(!modalOpen);
+  };
+
+  const scrollToSteps = () => {
+    if (stepsRef.current) {
+      stepsRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
   return (
@@ -63,6 +73,7 @@ function PresentationMaker() {
               <button
                 className="flex items-center justify-center rounded-full w-full sm:w-2/5 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                 type="button"
+                onClick={scrollToSteps}
               >
                 <RiQuestionLine className="mr-2" />{" "}
                 <p className="xl:text-xl">How does it work?</p>
@@ -84,17 +95,22 @@ function PresentationMaker() {
             >
               Generate presentations in minutes
             </span>
-            <p
+            <ol
+              ref={stepsRef}
               className={`text-base text-justify lg:text-lg 2xl:text-xl/relaxed mt-2 lg:mt-4 mb-4 lg:mb-6 ${cx(
                 "description-2"
-              )}`}
+              )} scroll-mt-[200px]`}
             >
-              When lack of inspiration or time constraints are something you’re
-              worried about, it’s a good idea to seek help. Slidesgo comes to
-              the rescue with its latest functionality—the AI Presentation
-              Maker! With a few clicks, you’ll have wonderful slideshows that
-              suit your own needs. And it’s totally free!
-            </p>
+              <li>
+                1. Enter a short topic and choose the configurations you want
+                for your slides.
+              </li>
+              <li>
+                2. Select a template you like and start creating the slides.
+              </li>
+              <li>3. Edit the outline of your slides.</li>
+              <li>4. Preview and export the file to your device.</li>
+            </ol>
           </div>
         </div>
       </div>

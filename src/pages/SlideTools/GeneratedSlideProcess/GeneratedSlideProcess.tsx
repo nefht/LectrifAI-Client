@@ -86,8 +86,9 @@ function GenerateSlideProcess() {
                       message: "File uploaded successfully.",
                     },
                   });
-                } catch (error) {
+                } catch (error: any) {
                   showToast("error", "Failed to upload file.");
+                  showToast("error", error.message);
                 }
               } else if (presentationOptions[EGeneratedSlideForm.CONTENT]) {
                 navigate(`${path}/template`);
@@ -123,23 +124,27 @@ function GenerateSlideProcess() {
                       message: "Slide content generated successfully.",
                     },
                   });
-                } 
-                 if (presentationOptions[EGeneratedSlideForm.CONTENT]) {
+                }
+                if (presentationOptions[EGeneratedSlideForm.CONTENT]) {
                   const response =
-                    await generatedSlideService.generateSlideContentFromDocumentText({
-                      [EGeneratedSlideForm.CONTENT]:
-                        presentationOptions[EGeneratedSlideForm.CONTENT],
-                      [EGeneratedSlideForm.WRITING_TONE]:
-                        presentationOptions[EGeneratedSlideForm.WRITING_TONE],
-                      [EGeneratedSlideForm.LANGUAGE]:
-                        presentationOptions[EGeneratedSlideForm.LANGUAGE],
-                      [EGeneratedSlideForm.NUMBER_OF_SLIDES]:
-                        presentationOptions[
-                          EGeneratedSlideForm.NUMBER_OF_SLIDES
-                        ],
-                      [EGeneratedSlideForm.TEMPLATE_CODE]:
-                        presentationOptions[EGeneratedSlideForm.TEMPLATE_CODE],
-                    });
+                    await generatedSlideService.generateSlideContentFromDocumentText(
+                      {
+                        [EGeneratedSlideForm.CONTENT]:
+                          presentationOptions[EGeneratedSlideForm.CONTENT],
+                        [EGeneratedSlideForm.WRITING_TONE]:
+                          presentationOptions[EGeneratedSlideForm.WRITING_TONE],
+                        [EGeneratedSlideForm.LANGUAGE]:
+                          presentationOptions[EGeneratedSlideForm.LANGUAGE],
+                        [EGeneratedSlideForm.NUMBER_OF_SLIDES]:
+                          presentationOptions[
+                            EGeneratedSlideForm.NUMBER_OF_SLIDES
+                          ],
+                        [EGeneratedSlideForm.TEMPLATE_CODE]:
+                          presentationOptions[
+                            EGeneratedSlideForm.TEMPLATE_CODE
+                          ],
+                      }
+                    );
                   navigate(`${path}/outline/${response._id}`, {
                     state: {
                       message: "Slide content generated successfully.",
@@ -162,6 +167,7 @@ function GenerateSlideProcess() {
                   slideData
                 );
                 navigate(`${path}/download/${id}`);
+                showToast("success", "Slide content updated successfully.");
               } catch (error) {
                 showToast("error", "Failed to update slide content.");
               }
@@ -176,7 +182,7 @@ function GenerateSlideProcess() {
   const selectTemplatePath = `${path}/template`;
   const reviewOutlinePath = `${path}/outline/${id}`;
   const { setHeaderClass } = useHeader();
-  const { exportPptx } = useSlideExport();
+  // const { exportPptx } = useSlideExport();
 
   // Custom header CSS
   useEffect(() => {
@@ -271,22 +277,23 @@ function GenerateSlideProcess() {
         <Outlet />
         <div className="flex gap-2 items-center justify-end w-full mt-10 mb-20">
           {/* {location.pathname !== processStepsPaths[0].pathName && ( */}
-          {location.pathname === processStepsPaths[1]?.pathName && (
-            <Link
-              to={navigation("back")}
-              className={`flex gap-2 items-center rounded-md px-4 py-2 text-sm font-semibold text-black hover:text-gray-700 ${
-                location.pathname ===
-                  processStepsPaths[processStepsPaths?.length - 1].pathName &&
-                "text-white text-center bg-black hover:bg-gray-800 hover:text-white"
-              }`}
-            >
-              {location.pathname ===
-                processStepsPaths[processStepsPaths?.length - 1].pathName && (
-                <FaArrowLeftLong className="text-lg" />
-              )}
-              Go back
-            </Link>
-          )}
+          {(location.pathname === processStepsPaths[1]?.pathName &&
+            processStepsPaths.length > 2) && (
+              <Link
+                to={navigation("back")}
+                className={`flex gap-2 items-center rounded-md px-4 py-2 text-sm font-semibold text-black hover:text-gray-700 ${
+                  location.pathname ===
+                    processStepsPaths[processStepsPaths?.length - 1].pathName &&
+                  "text-white text-center bg-black hover:bg-gray-800 hover:text-white"
+                }`}
+              >
+                {location.pathname ===
+                  processStepsPaths[processStepsPaths?.length - 1].pathName && (
+                  <FaArrowLeftLong className="text-lg" />
+                )}
+                Go back
+              </Link>
+            )}
           {location.pathname !==
             processStepsPaths[processStepsPaths?.length - 1].pathName && (
             <button

@@ -61,8 +61,8 @@ export const useToastProvider = () => {
 
   const ToastContainer = () => (
     <div className="fixed top-5 right-5 z-[999] flex flex-col gap-2 shadow-lg">
-      {toasts.map((toast) => (
-        <Toast key={toast.id}>
+      {toasts.map((toast, index) => (
+        <Toast key={toast.id + index}>
           <div
             className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-lg ${
               toast.status === "success"

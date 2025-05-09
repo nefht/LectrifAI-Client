@@ -21,6 +21,12 @@ interface QuizSettings {
   durationSeconds: number;
 }
 
+interface ValidationErrors {
+  startTime: string | null;
+  endTime: string | null;
+  dateRange: string | null;
+}
+
 function AdjustQuizSettingModal({
   open,
   setOpen,
@@ -39,7 +45,11 @@ function AdjustQuizSettingModal({
     durationSeconds: 0,
   });
 
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({
+    startTime: null,
+    endTime: null,
+    dateRange: null,
+  });
 
   useEffect(() => {
     if (quizInfo && open) {
@@ -66,25 +76,57 @@ function AdjustQuizSettingModal({
         durationSeconds: seconds,
       });
 
-      setValidationError(null);
+      setValidationErrors({
+        startTime: null,
+        endTime: null,
+        dateRange: null,
+      });
     }
   }, [quizInfo, open]);
 
+  const isValidDate = (dateString: string) => {
+    if (!dateString) return true; // Nếu trống thì không cần validate
+    const date = new Date(dateString);
+    return !isNaN(date.getTime());
+  };
+
+  const validateDateFormat = (field: string, value: string | null) => {
+    if (!value) return null;
+    return isValidDate(value) ? null : `Invalid date format`;
+  };
+
   useEffect(() => {
-    // Validate thời gian mở < thời gian đóng
-    if (quizSettings.startTime && quizSettings.endTime) {
+    const startTimeError = validateDateFormat(
+      "startTime",
+      quizSettings.startTime
+    );
+    const endTimeError = validateDateFormat("endTime", quizSettings.endTime);
+
+    let dateRangeError = null;
+    if (
+      !startTimeError &&
+      !endTimeError &&
+      quizSettings.startTime &&
+      quizSettings.endTime
+    ) {
       const startTime = new Date(quizSettings.startTime).getTime();
       const endTime = new Date(quizSettings.endTime).getTime();
 
       if (startTime >= endTime) {
-        setValidationError("Start time must be before end time");
-      } else {
-        setValidationError(null);
+        dateRangeError = "Start time must be before end time";
       }
-    } else {
-      setValidationError(null);
     }
+
+    setValidationErrors({
+      startTime: startTimeError,
+      endTime: endTimeError,
+      dateRange: dateRangeError,
+    });
   }, [quizSettings.startTime, quizSettings.endTime]);
+
+  const hasValidationErrors = () => {
+    return Object.values(validationErrors).some((error) => error !== null);
+  };
 
   const updateQuizSetting = (field: string, value: any) => {
     setQuizSettings((prev) => ({
@@ -116,6 +158,15 @@ function AdjustQuizSettingModal({
 
   const handleUpdateQuizSettings = useMutation({
     mutationFn: async () => {
+      if (hasValidationErrors()) {
+        const firstError =
+          validationErrors.startTime ||
+          validationErrors.endTime ||
+          validationErrors.dateRange;
+        showToast("warning", firstError || "Validation error");
+        return;
+      }
+
       const updatedSettings = {
         startTime: quizSettings.startTime
           ? new Date(quizSettings.startTime)
@@ -179,7 +230,7 @@ function AdjustQuizSettingModal({
                   <input
                     type="datetime-local"
                     className={`block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50 text-sm ${
-                      validationError
+                      validationErrors.startTime
                         ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                         : "border-gray-300 focus:border-teal-500 focus:ring-teal-500"
                     }`}
@@ -188,6 +239,11 @@ function AdjustQuizSettingModal({
                       updateQuizSetting("startTime", e.target.value)
                     }
                   />
+                  {validationErrors.startTime && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {validationErrors.startTime}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -197,7 +253,7 @@ function AdjustQuizSettingModal({
                   <input
                     type="datetime-local"
                     className={`block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50 text-sm ${
-                      validationError
+                      validationErrors.endTime || validationErrors.dateRange
                         ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                         : "border-gray-300 focus:border-teal-500 focus:ring-teal-500"
                     }`}
@@ -206,9 +262,14 @@ function AdjustQuizSettingModal({
                       updateQuizSetting("endTime", e.target.value)
                     }
                   />
-                  {validationError && (
-                    <p className="mt-1 text-ssm text-red-600">
-                      {validationError}
+                  {validationErrors.endTime && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {validationErrors.endTime}
+                    </p>
+                  )}
+                  {validationErrors.dateRange && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {validationErrors.dateRange}
                     </p>
                   )}
                 </div>
@@ -289,13 +350,13 @@ function AdjustQuizSettingModal({
               onClick={() => handleUpdateQuizSettings.mutate()}
               disabled={
                 handleUpdateQuizSettings.isPending ||
-                !!validationError ||
+                hasValidationErrors() ||
                 (!quizSettings.startTime &&
                   !quizSettings.endTime &&
                   !quizSettings.duration)
               }
               className={`px-4 py-2 rounded-md text-sm font-medium text-white ${
-                validationError
+                hasValidationErrors()
                   ? "bg-teal-400 cursor-not-allowed"
                   : "bg-teal-600 hover:bg-teal-700"
               } disabled:bg-teal-400`}

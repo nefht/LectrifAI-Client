@@ -23,19 +23,19 @@ createRoot(document.getElementById("root")!).render(
           <ThemeProvider>
             <ToastProvider>
               <HeaderProvider>
-                  <QuizOptionsContextProvider>
-                    <LectureDataProvider>
-                      <LectureVideoProvider>
-                        <GeneratedSlideProcessProvider>
+                <QuizOptionsContextProvider>
+                  <LectureDataProvider>
+                    <LectureVideoProvider>
+                      <GeneratedSlideProcessProvider>
+                        <SlideExportProvider>
                           <SlideDataProvider>
-                            <SlideExportProvider>
-                              <App />
-                            </SlideExportProvider>
+                            <App />
                           </SlideDataProvider>
-                        </GeneratedSlideProcessProvider>
-                      </LectureVideoProvider>
-                    </LectureDataProvider>
-                  </QuizOptionsContextProvider>
+                        </SlideExportProvider>
+                      </GeneratedSlideProcessProvider>
+                    </LectureVideoProvider>
+                  </LectureDataProvider>
+                </QuizOptionsContextProvider>
               </HeaderProvider>
             </ToastProvider>
           </ThemeProvider>

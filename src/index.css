@@ -46,6 +46,12 @@
     -webkit-text-fill-color: transparent;
     animation: gradient-wave 3s infinite ease-in-out;
   }
+
+  .pptx-genjs {
+    li {
+      white-space: pre-wrap !important;
+    }
+  }
 }
 
 :root {
@@ -66,7 +72,7 @@
   --text-color: #fff;
 }
 
-/** Avatar flowbite */ 
+/** Avatar flowbite */
 [data-testid="flowbite-avatar-img"] {
   object-fit: cover;
 }

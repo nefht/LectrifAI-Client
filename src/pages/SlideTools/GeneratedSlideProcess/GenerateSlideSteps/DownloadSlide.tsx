@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { LuDownload } from "react-icons/lu";
 import templateSlide from "../../../../assets/templates/template1.pptx";
 import SlidePresentation from "../../../../shared/templates/SlidePresentation";
@@ -7,6 +7,7 @@ import { useSlideData } from "../../hooks/useSlideData";
 import { useGeneratedSlide } from "../hooks/useGeneratedSlide";
 import generatedSlideService from "../../service/generatedSlideService";
 import { useSlideExport } from "../../../../hooks/useSlideExport";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 function DownloadSlide() {
   const { id } = useParams();
@@ -56,31 +57,31 @@ function DownloadSlide() {
           if (response?.slideData) {
             // Convert image URLs to base64
             const updatedSlideData = { ...response.slideData };
-            const imagePromises = updatedSlideData.slides.map(
-              async (slide: any) => {
-                const updatedSlide = { ...slide };
-                if (updatedSlide.imageUrls) {
-                  const imagePromises = updatedSlide.imageUrls.map(
-                    async (image: { title: string; imageUrl: string }) => {
-                      const { base64Image, width, height } =
-                        await convertImageToBase64(image.imageUrl);
-                      return {
-                        title: image.title,
-                        imageUrl: base64Image,
-                        width: width,
-                        height: height,
-                      };
-                    }
-                  );
-                  updatedSlide.imageUrls = await Promise.all(imagePromises);
-                }
-                return updatedSlide;
-              }
-            );
+            // const imagePromises = updatedSlideData.slides.map(
+            //   async (slide: any) => {
+            //     const updatedSlide = { ...slide };
+            //     if (updatedSlide.imageUrls) {
+            //       const imagePromises = updatedSlide.imageUrls.map(
+            //         async (image: { title: string; imageUrl: string }) => {
+            //           const { base64Image, width, height } =
+            //             await convertImageToBase64(image.imageUrl);
+            //           return {
+            //             title: image.title,
+            //             imageUrl: base64Image,
+            //             width: width,
+            //             height: height,
+            //           };
+            //         }
+            //       );
+            //       updatedSlide.imageUrls = await Promise.all(imagePromises);
+            //     }
+            //     return updatedSlide;
+            //   }
+            // );
 
-            // setSlideData(response?.slideData);
-            const updatedSlides = await Promise.all(imagePromises);
-            updatedSlideData.slides = updatedSlides;
+            // // setSlideData(response?.slideData);
+            // const updatedSlides = await Promise.all(imagePromises);
+            // updatedSlideData.slides = updatedSlides;
             setSlideData(updatedSlideData);
             console.log("Updated Slide Data:", updatedSlideData);
           }
@@ -99,19 +100,25 @@ function DownloadSlide() {
       <h1 className="font-degular font-semibold text-2xl md:text-3xl xl:text-4xl">
         Download your presentation
       </h1>
-      <p className="font-degular text-xl mb-4">
-        Preview your presentation and download it as a PPTX or PDF file
+      <p className="font-degular text-xl mb-4 text-center flex items-center justify-center">
+        Preview your presentation and download it as a PPTX file. The downloaded
+        presentation might be a bit different due to the display mode of web
+        browser.
       </p>
       <SlidePresentation templateCode={templateCode} data={slideData} />
-      <div className="w-full mt-16">
+      <div className="w-full mt-16 flex gap-2">
+        <Link
+          to={`/slide/generate-process/outline/${id}`}
+          className={`flex gap-2 items-center rounded-md px-4 py-2 text-sm font-semibold
+            text-white text-center bg-black hover:bg-gray-800 hover:text-white`}
+        >
+          <FaArrowLeftLong className="text-lg" />
+          Go back
+        </Link>
         <button
           className=" ml-auto flex gap-2 items-center rounded-md px-4 py-2 text-sm font-semibold text-white bg-purple-600 shadow-sm hover:bg-purple-500"
           onClick={() => {
-            downloadPptxHelper(
-              templateCode,
-              slideData,
-              slideData.title
-            );
+            downloadPptxHelper(templateCode, slideData, slideData.title);
           }}
         >
           Download presentation

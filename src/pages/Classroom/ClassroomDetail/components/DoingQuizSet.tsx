@@ -105,7 +105,15 @@ function DoingQuizSet() {
         const timeLeft = Math.floor(
           (new Date(response?.endedAt).getTime() - new Date().getTime()) / 1000
         );
+        console.log(timeLeft);
         setTimeLeft(timeLeft);
+        if (
+          response.status !== "submitted" &&
+          response.status !== "graded" &&
+          timeLeft <= 0
+        ) {
+          handleSumbitAndGrade();
+        }
       }
       if (response?.score) {
         setTotalScore(response?.score);
@@ -383,7 +391,7 @@ function DoingQuizSet() {
                       <div className="flex items-center gap-3 mb-1">
                         <div className="py-0.5 px-2 bg-purple text-purple-600 font-semibold bg-purple-100 border border-purple-300 rounded-md text-[12px]">
                           {studentAnswerStatus === "graded" &&
-                            quiz?.userScore + " / "}{" "}
+                            ((quiz?.userScore ?? "0") + " / ")}{" "}
                           {quiz.points} points
                         </div>
 

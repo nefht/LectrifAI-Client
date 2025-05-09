@@ -63,6 +63,7 @@ function App() {
         }
         if (error.response && error.response.status === 403) {
           showToast("error", "You do not have access permission");
+          navigate("/access-denied");
         }
         // if (error.response && error.response.status === 400) {
         //   showToast("error", error.reponse.data.error);

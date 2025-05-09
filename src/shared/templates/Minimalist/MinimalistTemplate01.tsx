@@ -14,9 +14,9 @@ function MinimalistTemplate01(data: any) {
     >
       <Text
         style={{
-          x: 1,
-          y: 1.5,
-          w: 8,
+          x: 0.5,
+          y: 1.2,
+          w: 9,
           h: 1.5,
           fontSize: 40,
           bold: true,
@@ -27,7 +27,7 @@ function MinimalistTemplate01(data: any) {
       >
         {data.title}
       </Text>
-      <Text
+      {/* <Text
         style={{
           x: 1,
           y: 3.5,
@@ -39,8 +39,8 @@ function MinimalistTemplate01(data: any) {
           fontFace: "Arial",
         }}
       >
-        {"- Bài thuyết trình -"}
-      </Text>
+        {"- Here goes your presentation -"}
+      </Text> */}
     </Slide>,
   ];
 
@@ -74,7 +74,7 @@ function MinimalistTemplate01(data: any) {
         <Text
           style={{
             x: 0.5,
-            y: 0.5,
+            y: 0.4,
             w: "90%",
             h: 0.5,
             fontSize: 20,
@@ -85,7 +85,7 @@ function MinimalistTemplate01(data: any) {
         </Text>
 
         {/* Bullet Points */}
-        <Text style={{ x: 1, y: 1, w: "80%", h: textHeight, fontSize: 15 }}>
+        <Text style={{ x: 1, y: 1.2, w: "80%", h: textHeight, fontSize: 15 }}>
           {slideData.bulletPoints.map((bulletPoint, index) => {
             if (Array.isArray(bulletPoint)) {
               return bulletPoint.map((subBullet, subIndex) => (
@@ -100,7 +100,7 @@ function MinimalistTemplate01(data: any) {
                   }}
                 >
                   {/* ◦ {subBullet} */}
-                  {`◦   ` + subBullet}
+                  {`      ◦     ` + subBullet}
                 </Text.Bullet>
               ));
             } else {
@@ -134,7 +134,7 @@ function MinimalistTemplate01(data: any) {
                 src={{ kind: "path", path: image.imageUrl }}
                 style={{
                   x: 1 + (imagesNum > 2 ? 3 : 4) * index,
-                  y: "50%",
+                  y: "60%",
                   w: wRatio * 4,
                   h: hRatio * 4,
                   sizing: {
@@ -181,7 +181,7 @@ function MinimalistTemplate01(data: any) {
         <Text
           style={{
             x: 0.5,
-            y: 0.5,
+            y: 0.4,
             w: "90%",
             h: 0.5,
             fontSize: 20,
@@ -192,7 +192,7 @@ function MinimalistTemplate01(data: any) {
         </Text>
 
         {/* Bullet Points */}
-        <Text style={{ x: 1, y: 1, w: "80%", h: textHeight, fontSize: 15 }}>
+        <Text style={{ x: 1, y: 1.2, w: "80%", h: textHeight, fontSize: 15 }}>
           {slideData.bulletPoints.map((bulletPoint, index) => {
             if (Array.isArray(bulletPoint)) {
               return bulletPoint.map((subBullet, subIndex) => (
@@ -207,7 +207,7 @@ function MinimalistTemplate01(data: any) {
                   }}
                 >
                   {/* ◦ {subBullet} */}
-                  {`◦   ` + subBullet}
+                  {`      ◦     ` + subBullet}
                 </Text.Bullet>
               ));
             } else {
@@ -241,7 +241,7 @@ function MinimalistTemplate01(data: any) {
                 src={{ kind: "path", path: image.imageUrl }}
                 style={{
                   x: 1 + (imagesNum > 2 ? 3 : 4) * index,
-                  y: "50%",
+                  y: "60%",
                   w: wRatio * 4,
                   h: hRatio * 4,
                   sizing: {
@@ -258,14 +258,43 @@ function MinimalistTemplate01(data: any) {
     ];
   };
 
+  const endSlide = (slideData: ExportSlideData) => {
+    return (
+      <Slide
+        key={slideData.heading}
+        style={{ backgroundImage: { kind: "path", path: contentSlideImg } }}
+      >
+        <Text
+          style={{
+            x: 0.5,
+            y: "40%",
+            w: "90%",
+            h: 0.5,
+            fontSize: 40,
+            bold: true,
+            align: "center",
+          }}
+        >
+          {slideData.heading}
+        </Text>
+      </Slide>
+    );
+  };
+
   return [
     ...titleSlide,
     ...(data.slides
-      ? data.slides.map((slideData: ExportSlideData, index: any) =>
-          index % 2 === 0
-            ? contentSlideV1(slideData)
-            : contentSlideV2(slideData)
-        )
+      ? data.slides.map((slideData: ExportSlideData, index: any) => {
+          if (index === data.slides.length - 1) {
+            return endSlide(slideData);
+          } else if (index % 2 === 0) {
+            return contentSlideV1(slideData);
+          } else if (index % 2 === 1) {
+            return contentSlideV2(slideData);
+          } else {
+            return [];
+          }
+        })
       : []),
   ];
 }

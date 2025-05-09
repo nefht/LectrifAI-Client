@@ -108,7 +108,7 @@ function SlidePresentation({
                 leaveFrom="translate-y-0 opacity-100"
                 leaveTo="translate-y-4 opacity-0"
               >
-                <DialogPanel className="pointer-events-auto relative bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] lg:max-h-full overflow-auto hide-scrollbar">
+                <DialogPanel className="pptx-genjs pointer-events-auto relative bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] lg:max-h-full overflow-auto hide-scrollbar">
                   <Preview>
                     <Presentation>{slides[currentSlide]}</Presentation>
                   </Preview>
@@ -133,7 +133,7 @@ function SlidePresentation({
       <div className="w-full flex flex-col items-center justify-center ">
         {/* Slide chính */}
         <div className="relative flex w-full max-h-screen items-center justify-center gap-4 mb-7 group">
-          <div className="w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
+          <div className="pptx-genjs w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
             <Preview>
               <Presentation>{slides[currentSlide]}</Presentation>
             </Preview>
@@ -170,7 +170,7 @@ function SlidePresentation({
               slides.map((slide, index) => (
                 <div
                   key={index}
-                  className={`relative w-20 md:w-28 lg:w-32 xl:w-40 flex-shrink-0 cursor-pointer rounded-md overflow-hidden border-2 ${
+                  className={`pptx-genjs relative w-20 md:w-28 lg:w-32 xl:w-40 flex-shrink-0 cursor-pointer rounded-md overflow-hidden border-2 ${
                     index === currentSlide
                       ? "border-gray-400"
                       : "border-transparent"
@@ -198,7 +198,7 @@ function SlidePresentation({
         {/* Hidden Slide Render for Thumbnails */}
         <div className="hidden">
           {slides.map((slide, index) => (
-            <div key={index}>
+            <div className="pptx-genjs" key={index}>
               <Preview>
                 <Presentation>{slide}</Presentation>
               </Preview>

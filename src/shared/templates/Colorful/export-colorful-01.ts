@@ -1,42 +1,44 @@
 import PptxGenJS from "pptxgenjs";
-import titleSlideImg from "../../../assets/templates/minimalist-01/title-slide.png";
-import contentSlideImg from "../../../assets/templates/minimalist-01/content-slide.png";
-import contentSlide2Img from "../../../assets/templates/minimalist-01/content-slide-2.png";
+import titleSlideImg from "../../../assets/templates/colorful-01/title-slide.png";
+import contentSlideImg from "../../../assets/templates/colorful-01/content-slide.png";
+import contentSlide2Img from "../../../assets/templates/colorful-01/content-slide-2.png";
+import contentSlide3Img from "../../../assets/templates/colorful-01/content-slide-3.png";
+import contentSlide4Img from "../../../assets/templates/colorful-01/content-slide-4.png";
 import { SlideData } from "../../../components/DragAndDrop/constants/slide-data";
 
-const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
+const exportColorful01 = (slideData: SlideData, fileName?: string) => {
   let pptx = new PptxGenJS();
 
   // Title Slide
   let slide = pptx.addSlide();
   slide.background = { path: titleSlideImg };
   slide.addText(slideData?.title, {
-    x: 0.5,
-    y: 1.5,
-    w: 9,
+    x: 1,
+    y: 1.9,
+    w: "80%",
     h: 1.5,
     fontSize: 40,
     bold: true,
-    color: "#000000",
+    color: "#664B34",
     align: "center",
-    fontFace: "Arial",
+    fontFace: "Candara",
+    lineSpacingMultiple: 1.3,
   });
-  // slide.addText("- Here goes your presentation! - ", {
-  //   x: 1,
-  //   y: 3.5,
-  //   w: 8,
-  //   h: 1,
-  //   fontSize: 18,
-  //   color: "#000000",
-  //   align: "center",
-  //   fontFace: "Arial",
-  // });
 
   let lastIndex = slideData?.slides?.length - 1;
   slideData?.slides?.forEach((slideData, index) => {
     let slide = pptx.addSlide();
     slide.background = {
-      path: index % 2 === 0 ? contentSlideImg : contentSlide2Img,
+      path:
+        index === lastIndex
+          ? titleSlideImg
+          : index % 4 === 0
+          ? contentSlideImg
+          : index % 4 === 1
+          ? contentSlide2Img
+          : index % 4 === 2
+          ? contentSlide3Img
+          : contentSlide4Img,
     };
 
     // Kiểm tra nếu là slide cuối cùng
@@ -49,9 +51,9 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
         h: 0.5,
         fontSize: 40,
         bold: true,
-        color: "#000000",
+        color: "#664B34",
         align: "center",
-        fontFace: "Arial",
+        fontFace: "Candara",
       });
     } else {
       // Heading
@@ -62,7 +64,8 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
         h: 0.5,
         fontSize: 18,
         bold: true,
-        fontFace: "Arial",
+        color: "#664B34",
+        fontFace: "Candara",
       });
 
       // Bullet Points
@@ -118,9 +121,9 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
         y: 1,
         w: "90%",
         h: textHeight,
-        color: "#000000",
         margin: 1,
         fontFace: "Arial",
+        color: "#624738",
       });
 
       const imagesNum = (slideData?.imageUrls ?? []).length;
@@ -147,4 +150,4 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
   pptx.writeFile({ fileName: fileName ?? "GeneratedPresentation.pptx" });
 };
 
-export default exportMinimalist01;
+export default exportColorful01;

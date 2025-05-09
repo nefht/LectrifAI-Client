@@ -93,7 +93,7 @@ function SideInformation({
           <span className="font-medium">No. Students:</span>{" "}
           {classroomInfo?.students?.length} people
         </p>
-        {inviteLink && (
+        {inviteLink && classroomInfo?.userId?._id === user?.id && (
           <div className="flex items-center gap-2 mb-2">
             <p className="font-medium text-sm text-gray-600">Invite link:</p>
             <button

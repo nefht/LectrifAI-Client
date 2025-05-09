@@ -394,40 +394,42 @@ function LecturesList({ searchTerm }: { searchTerm: string }) {
                                 </button>
                               )}
                             </Menu.Item>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={() =>
-                                    handleOpenShare.mutate(lecture)
-                                  }
-                                  className={`${
-                                    active
-                                      ? "bg-indigo-100 text-indigo-800 font-semibold"
-                                      : "text-gray-700"
-                                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                >
-                                  Share
-                                </button>
-                              )}
-                            </Menu.Item>
                             {isOwner && (
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    onClick={() => {
-                                      setIsDeleteModalOpen(true);
-                                      setSelectedLecture(lecture);
-                                    }}
-                                    className={`${
-                                      active
-                                        ? "bg-red-100 text-red-600 font-semibold"
-                                        : "text-red-500"
-                                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                  >
-                                    Delete
-                                  </button>
-                                )}
-                              </Menu.Item>
+                              <>
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      onClick={() =>
+                                        handleOpenShare.mutate(lecture)
+                                      }
+                                      className={`${
+                                        active
+                                          ? "bg-indigo-100 text-indigo-800 font-semibold"
+                                          : "text-gray-700"
+                                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                    >
+                                      Share
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      onClick={() => {
+                                        setIsDeleteModalOpen(true);
+                                        setSelectedLecture(lecture);
+                                      }}
+                                      className={`${
+                                        active
+                                          ? "bg-red-100 text-red-600 font-semibold"
+                                          : "text-red-500"
+                                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                              </>
                             )}
                           </div>
                         </Menu.Items>

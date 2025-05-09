@@ -184,6 +184,18 @@ function ClassroomDetail() {
   };
 
   const handleOpenStartQuizModal = async (item: any) => {
+    if (classroomInfo?.userId?._id !== user?.id) {
+      const currentTime = Date.now();
+      if (item.endTime && currentTime > new Date(item.endTime).getTime()) {
+        showToast("warning", "Quiz has expired!");
+        return;
+      }
+      if (item.startTime && currentTime < new Date(item.startTime).getTime()) {
+        showToast("warning", "Quiz has not opened yet!");
+        return;
+      }
+    }
+
     try {
       const studentAnswerStatus = quizStatuses[item._id].status;
       console.log("Student answer status:", studentAnswerStatus);
@@ -217,6 +229,7 @@ function ClassroomDetail() {
       }
       setSelectedQuiz(item);
       setIsStartQuizModalOpen(true);
+      console.log(item);
     } catch (error) {
       console.error("Error opening quiz modal:", error);
     }

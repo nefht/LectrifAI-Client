@@ -1,42 +1,45 @@
 import PptxGenJS from "pptxgenjs";
-import titleSlideImg from "../../../assets/templates/minimalist-01/title-slide.png";
-import contentSlideImg from "../../../assets/templates/minimalist-01/content-slide.png";
-import contentSlide2Img from "../../../assets/templates/minimalist-01/content-slide-2.png";
+import titleSlideImg from "../../../assets/templates/minimalist-03/title-slide.png";
+import contentSlideImg from "../../../assets/templates/minimalist-03/content-slide.png";
+import contentSlide2Img from "../../../assets/templates/minimalist-03/content-slide-2.png";
+import contentSlide3Img from "../../../assets/templates/minimalist-03/content-slide-3.png";
+import contentSlide4Img from "../../../assets/templates/minimalist-03/content-slide-4.png";
+import contentSlide5Img from "../../../assets/templates/minimalist-03/content-slide-5.png";
+import endSlideImg from "../../../assets/templates/minimalist-03/end-slide.png";
 import { SlideData } from "../../../components/DragAndDrop/constants/slide-data";
 
-const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
+const exportMinimalist03 = (slideData: SlideData, fileName?: string) => {
   let pptx = new PptxGenJS();
 
   // Title Slide
   let slide = pptx.addSlide();
   slide.background = { path: titleSlideImg };
-  slide.addText(slideData?.title, {
-    x: 0.5,
+  slide.addText(slideData?.title?.toUpperCase(), {
+    x: 1,
     y: 1.5,
-    w: 9,
+    w: "80%",
     h: 1.5,
     fontSize: 40,
     bold: true,
-    color: "#000000",
+    color: "#664B34",
     align: "center",
-    fontFace: "Arial",
+    fontFace: "Candara",
   });
-  // slide.addText("- Here goes your presentation! - ", {
-  //   x: 1,
-  //   y: 3.5,
-  //   w: 8,
-  //   h: 1,
-  //   fontSize: 18,
-  //   color: "#000000",
-  //   align: "center",
-  //   fontFace: "Arial",
-  // });
 
   let lastIndex = slideData?.slides?.length - 1;
   slideData?.slides?.forEach((slideData, index) => {
     let slide = pptx.addSlide();
     slide.background = {
-      path: index % 2 === 0 ? contentSlideImg : contentSlide2Img,
+      path: index === lastIndex ? endSlideImg :
+        index % 5 === 0
+          ? contentSlideImg
+          : index % 5 === 1
+          ? contentSlide2Img
+          : index % 5 === 2
+          ? contentSlide3Img
+          : index % 5 === 3
+          ? contentSlide4Img
+          : contentSlide5Img,
     };
 
     // Kiểm tra nếu là slide cuối cùng
@@ -49,20 +52,21 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
         h: 0.5,
         fontSize: 40,
         bold: true,
-        color: "#000000",
+        color: "#664B34",
         align: "center",
-        fontFace: "Arial",
+        fontFace: "Candara",
       });
     } else {
       // Heading
       slide.addText(slideData?.heading.toUpperCase(), {
         x: 0.5,
-        y: 0.4,
+        y: 0.15,
         w: "90%",
         h: 0.5,
         fontSize: 18,
         bold: true,
-        fontFace: "Arial",
+        color: "#664B34",
+        fontFace: "Candara",
       });
 
       // Bullet Points
@@ -118,9 +122,9 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
         y: 1,
         w: "90%",
         h: textHeight,
-        color: "#000000",
         margin: 1,
         fontFace: "Arial",
+        color: "#624738",
       });
 
       const imagesNum = (slideData?.imageUrls ?? []).length;
@@ -147,4 +151,4 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
   pptx.writeFile({ fileName: fileName ?? "GeneratedPresentation.pptx" });
 };
 
-export default exportMinimalist01;
+export default exportMinimalist03;
