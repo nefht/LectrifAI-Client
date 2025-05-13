@@ -53,9 +53,27 @@ export const createChatMessage = async (body: {
   }
 };
 
+/**
+ * Delete chat message
+ * @param lectureId The message id
+ * @returns The response from the server
+ */
+export const deleteChatMessage = async (lectureId: string) => {
+  try { 
+    const response = await api.delete(`/chat-message/${lectureId}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to delete chat message:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to delete chat message."
+    );
+  }
+}
+
 const chatBotService = {
   getChatMessages,
   createChatMessage,
+  deleteChatMessage,
 };
 
 export default chatBotService;

@@ -21,7 +21,13 @@ interface QuizSettings {
   durationHours: number;
   durationMinutes: number;
   durationSeconds: number;
-  validationError?: string;
+  // validationError?: string;
+}
+
+interface ValidationErrors {
+  startTime: string | null;
+  endTime: string | null;
+  dateRange: string | null;
 }
 
 function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
@@ -35,6 +41,10 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
     Record<string, QuizSettings>
   >({});
   const [showSettingsFor, setShowSettingsFor] = useState<string | null>(null);
+
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, ValidationErrors>
+  >({});
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
@@ -75,6 +85,16 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
             durationSeconds: 0,
           },
         }));
+
+        // Khởi tạo validation errors cho quiz mới được chọn
+        setValidationErrors((prev) => ({
+          ...prev,
+          [quiz._id]: {
+            startTime: null,
+            endTime: null,
+            dateRange: null,
+          },
+        }));
         return [...prevSelected, quiz];
       }
     });
@@ -92,6 +112,13 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
       return newSettings;
     });
 
+    // Bỏ validation errors của quiz
+    setValidationErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[quizId];
+      return newErrors;
+    });
+
     // Đóng settings của quiz
     if (showSettingsFor === quizId) {
       setShowSettingsFor(null);
@@ -100,6 +127,17 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
 
   const toggleSettings = (quizId: string) => {
     setShowSettingsFor(showSettingsFor === quizId ? null : quizId);
+  };
+
+  const isValidDate = (dateString: string) => {
+    if (!dateString) return true; // Empty thì không check validation
+    const date = new Date(dateString);
+    return !isNaN(date.getTime());
+  };
+
+  const validateDateFormat = (value: string | null) => {
+    if (!value) return null;
+    return isValidDate(value) ? null : "Invalid date format";
   };
 
   // Validate startTime, endTime và update settings
@@ -118,26 +156,75 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
         },
       };
 
-      // Chỉ validate nếu có cả startTime và endTime
-      const startTime = updatedSettings[quizId].startTime;
-      const endTime = updatedSettings[quizId].endTime;
+      // // Chỉ validate nếu có cả startTime và endTime
+      // const startTime = updatedSettings[quizId].startTime;
+      // const endTime = updatedSettings[quizId].endTime;
 
-      if (startTime && endTime) {
-        const startDateTime = new Date(startTime).getTime();
-        const endDateTime = new Date(endTime).getTime();
+      // if (startTime && endTime) {
+      //   const startDateTime = new Date(startTime).getTime();
+      //   const endDateTime = new Date(endTime).getTime();
 
-        updatedSettings[quizId].validationError =
-          startDateTime >= endDateTime
-            ? "Start time must be before end time"
-            : undefined;
-      } else {
-        // Xóa validation nếu có thời gian không được set
-        updatedSettings[quizId].validationError = undefined;
+      //   updatedSettings[quizId].validationError =
+      //     startDateTime >= endDateTime
+      //       ? "Start time must be before end time"
+      //       : undefined;
+      // } else {
+      //   // Xóa validation nếu có thời gian không được set
+      //   updatedSettings[quizId].validationError = undefined;
+      // }
+      if (field === "startTime") {
+        setValidationErrors((prev) => ({
+          ...prev,
+          [quizId]: {
+            ...prev[quizId],
+            startTime: validateDateFormat(value),
+          },
+        }));
+      } else if (field === "endTime") {
+        setValidationErrors((prev) => ({
+          ...prev,
+          [quizId]: {
+            ...prev[quizId],
+            endTime: validateDateFormat(value),
+          },
+        }));
       }
 
       return updatedSettings;
     });
   };
+
+  useEffect(() => {
+    Object.keys(quizSettings).forEach((quizId) => {
+      const settings = quizSettings[quizId];
+      const startTimeError = validateDateFormat(settings.startTime);
+      const endTimeError = validateDateFormat(settings.endTime);
+
+      let dateRangeError = null;
+      if (
+        !startTimeError &&
+        !endTimeError &&
+        settings.startTime &&
+        settings.endTime
+      ) {
+        const startTime = new Date(settings.startTime).getTime();
+        const endTime = new Date(settings.endTime).getTime();
+
+        if (startTime >= endTime) {
+          dateRangeError = "Start time must be before end time";
+        }
+      }
+
+      setValidationErrors((prev) => ({
+        ...prev,
+        [quizId]: {
+          startTime: startTimeError,
+          endTime: endTimeError,
+          dateRange: dateRangeError,
+        },
+      }));
+    });
+  }, [quizSettings]);
 
   const updateDurationField = (
     quizId: string,
@@ -169,8 +256,11 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
 
   // Check xem có quiz nào lỗi validation không
   const hasValidationErrors = () => {
-    return Object.values(quizSettings).some(
-      (settings) => settings.validationError
+    // return Object.values(quizSettings).some(
+    //   (settings) => settings.validationError
+    // );
+    return Object.values(validationErrors).some((errors) =>
+      Object.values(errors).some((error) => error !== null)
     );
   };
 
@@ -178,9 +268,31 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
     mutationFn: async () => {
       // Check validation
       if (hasValidationErrors()) {
+        // showToast(
+        //   "error",
+        //   "Please fix the invalid fields before adding quizzes."
+        // );
+        // return;
+        let firstErrorMessage = "";
+
+        // Hiển thị lỗi đầu tiên
+        Object.entries(validationErrors).some(([quizId, errors]) => {
+          const firstError =
+            errors.startTime || errors.endTime || errors.dateRange;
+          if (firstError) {
+            const quiz = selectedQuizzes.find((q) => q._id === quizId);
+            firstErrorMessage = `Error in ${
+              quiz?.quizName || "quiz"
+            }: ${firstError}`;
+            return true;
+          }
+          return false;
+        });
+
         showToast(
           "error",
-          "Please fix the validation errors before adding quizzes."
+          firstErrorMessage ||
+            "Please fix the validation errors before adding quizzes."
         );
         return;
       }
@@ -225,6 +337,7 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
     setQuizSettings({});
     setSearchQuery("");
     setFilteredQuizzes([]);
+    setValidationErrors({});
   };
 
   return (
@@ -302,7 +415,8 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
                           <input
                             type="datetime-local"
                             className={`mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50 text-sm ${
-                              quizSettings[quiz._id]?.validationError
+                              // quizSettings[quiz._id]?.validationError
+                              validationErrors[quiz._id]?.startTime
                                 ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                                 : "border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                             }`}
@@ -315,6 +429,11 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
                               )
                             }
                           />
+                          {validationErrors[quiz._id]?.startTime && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {validationErrors[quiz._id]?.startTime}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700">
@@ -323,7 +442,9 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
                           <input
                             type="datetime-local"
                             className={`mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50 text-sm ${
-                              quizSettings[quiz._id]?.validationError
+                              // quizSettings[quiz._id]?.validationError
+                              validationErrors[quiz._id]?.endTime ||
+                              validationErrors[quiz._id]?.dateRange
                                 ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                                 : "border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                             }`}
@@ -336,9 +457,19 @@ function AddQuizModal({ open, setOpen, classroomInfo }: AddQuizModalProps) {
                               )
                             }
                           />
-                          {quizSettings[quiz._id]?.validationError && (
+                          {/* {quizSettings[quiz._id]?.validationError && (
                             <p className="mt-1 text-sm text-red-600">
                               {quizSettings[quiz._id]?.validationError}
+                            </p>
+                          )} */}
+                          {validationErrors[quiz._id]?.endTime && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {validationErrors[quiz._id]?.endTime}
+                            </p>
+                          )}
+                          {validationErrors[quiz._id]?.dateRange && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {validationErrors[quiz._id]?.dateRange}
                             </p>
                           )}
                         </div>

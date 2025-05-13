@@ -5,7 +5,7 @@ import { GrTest } from "react-icons/gr";
 import SideInformation from "./components/SideInformation";
 import { useNavigate, useParams } from "react-router";
 import StartQuizModal from "./components/StartQuizModal";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ImFilesEmpty } from "react-icons/im";
 import classroomService from "../services/classroomService";
 import { useToast } from "../../../hooks/useToast";
@@ -90,6 +90,7 @@ function ClassroomDetail() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isStartQuizModalOpen, setIsStartQuizModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState({
     message: "Do you want to start the quiz?",
@@ -256,14 +257,13 @@ function ClassroomDetail() {
 
   const handleDeleteClassroomLecture = useMutation({
     mutationFn: async () => {
-      const response = await classroomService.deleteClassroomQuiz(
+      const response = await classroomService.deleteClassroomLectureVideo(
         selectedLecture._id
       );
       console.log(response);
       showToast("success", "Lecture deleted successfully!");
-      setClassroomMaterials((prev) =>
-        prev.filter((item) => item._id !== selectedLecture._id)
-      );
+      setIsDeleteLectureModalOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["classroomMaterials", id] });
     },
     onError: () => {
       showToast("error", "Failed to delete lecture. Please try again later.");
@@ -277,9 +277,8 @@ function ClassroomDetail() {
       );
       console.log(response);
       showToast("success", "Quiz deleted successfully!");
-      setClassroomMaterials((prev) =>
-        prev.filter((item) => item._id !== selectedQuiz._id)
-      );
+      setIsDeleteQuizModalOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["classroomMaterials", id] });
     },
     onError: () => {
       showToast("error", "Failed to delete quiz. Please try again later.");
@@ -433,9 +432,11 @@ function ClassroomDetail() {
                                       )
                                     : "~"}{" "}
                                   -{" "}
-                                  {new Date(item?.endTime)?.toLocaleString(
-                                    "vi-VN"
-                                  ) ?? "~"}
+                                  {item.endTime
+                                    ? new Date(item?.endTime)?.toLocaleString(
+                                        "vi-VN"
+                                      )
+                                    : "~"}
                                 </p>
                               )}
                               <p className="text-sm text-gray-600">

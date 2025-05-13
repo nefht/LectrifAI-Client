@@ -31,7 +31,9 @@ function ShareUserModal({
   const { showToast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState<string>("");
+  // State lưu danh sách người dùng tìm kiếm
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
+  // State lưu danh sách người dùng đã chọn
   const [selectedUsers, setSelectedUsers] = useState<any[]>(
     listPermissions || []
   );
@@ -41,15 +43,13 @@ function ShareUserModal({
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("Selected item:", selectedItem);
-    console.log(listPermissions);
+    console.log("LIST PERMISSIONS", listPermissions);
+    setSelectedUsers(listPermissions);
+
     if (listPermissions && listPermissions.length > 0) {
       const listPermissionsWithoutOwner = listPermissions.filter(
         (per) => per.permissionType !== "OWNER"
       );
-      console.log("Without owner: ", listPermissionsWithoutOwner);
-      setSelectedUsers(listPermissions);
-
       if (selectedItem.isPublic) {
         setSharingMode("PUBLIC");
         setIsPublic(true);
@@ -110,7 +110,6 @@ function ShareUserModal({
         ];
       }
     });
-    console.log("Selected users:", selectedUsers);
   };
 
   const removeSelectedUser = (userId: string) => {
@@ -128,8 +127,6 @@ function ShareUserModal({
         user.userId === userId ? { ...user, permissionType } : user
       )
     );
-
-    console.log("Updated selected users:", selectedUsers);
   };
 
   const changeSharingMode = (mode: SharingMode) => {
@@ -154,46 +151,74 @@ function ShareUserModal({
 
   const handleShare = useMutation({
     mutationFn: async () => {
-      let sharedWith = [...selectedUsers];
-      if (isPrivate) {
-        sharedWith = [];
-      } else {
-        const sharedWithoutOwner = sharedWith.filter(
-          (per: any) => per.permissionType !== "OWNER"
+      try {
+        let sharedWith = [...selectedUsers];
+        const sharedOwner = sharedWith.filter(
+          (per: any) => per.permissionType === "OWNER"
         );
-        if (!(sharedWithoutOwner.length > 0) && !isPublic) {
-          showToast("warning", "You must select at least a user!");
-          return;
+        console.log("SHAREOWNER", sharedOwner);
+        if (isPrivate && sharingMode === "PRIVATE") {
+          if (
+            sharedOwner.length > 0 &&
+            sharedOwner[0].permissionType &&
+            sharedOwner[0].userId
+          ) {
+            sharedWith = [...sharedOwner];
+          } else {
+            sharedWith = [];
+          }
+          setSelectedUsers([]);
+        } else {
+          const sharedWithoutOwner = sharedWith.filter(
+            (per: any) => per.permissionType !== "OWNER"
+          );
+          if (!(sharedWithoutOwner.length > 0) && !isPublic) {
+            showToast("warning", "You must select at least a user!");
+            return;
+          }
         }
-      }
-      if (type === "lecture-video") {
-        const response = await lectureVideoService.shareLectureVideo(
-          selectedItem._id,
-          isPublic,
-          sharedWith
-        );
-        if (currentListPage) {
-          queryClient.invalidateQueries({
-            queryKey: ["lectureVideos", currentListPage, 10, ""],
-          });
+        if (type === "lecture-video") {
+          const response = await lectureVideoService.shareLectureVideo(
+            selectedItem._id,
+            isPublic,
+            sharedWith
+          );
+          console.log("RESPONSE", response);
+          if (currentListPage) {
+            queryClient.invalidateQueries({
+              queryKey: ["lectureVideos", currentListPage, 10, ""],
+            });
+          } else {
+            queryClient.invalidateQueries({
+              queryKey: ["lectureVideo", selectedItem._id],
+            });
+          }
+          showToast("success", "Set access permissions successfully!");
         }
-        showToast("success", "Set access permissions successfully!");
-      }
-      if (type === "quiz") {
-        const response = quizService.shareQuiz(
-          selectedItem._id,
-          isPublic,
-          sharedWith
-        );
-        showToast("success", "Set access permissions successfully!");
-        console.log("currentListPage", currentListPage);
-        if (currentListPage) {
-          queryClient.invalidateQueries({
-            queryKey: ["quizzes", currentListPage, 10, ""],
-          });
+        if (type === "quiz") {
+          const response = await quizService.shareQuiz(
+            selectedItem._id,
+            isPublic,
+            sharedWith
+          );
+          console.log("RESPONSE", response);
+          showToast("success", "Set access permissions successfully!");
+          if (currentListPage) {
+            queryClient.invalidateQueries({
+              queryKey: ["quizzes", currentListPage, 10, ""],
+            });
+          } else {
+            queryClient.invalidateQueries({
+              queryKey: ["quizSet", selectedItem._id],
+            });
+          }
         }
+
+        handleCloseModal();
+      } catch (error) {
+        console.error("Error sharing item:", error);
+        showToast("error", "Failed to set access permissions.");
       }
-      handleCloseModal();
     },
     onError: (error) => {
       showToast("error", "Failed to set access permissions.");
@@ -305,11 +330,6 @@ function ShareUserModal({
                             user?.userId !== selectedItem?.userId &&
                             user?.userId !== selectedItem?.userId?._id
                           ) {
-                            console.log("user", user);
-                            console.log("selectedItem", selectedItem);
-                            console.log(
-                              user.userId === selectedItem?.userId?._id
-                            );
                             return (
                               <div
                                 key={index}

@@ -72,34 +72,38 @@ function MinimalistTemplate02(data: any) {
         <Text
           style={{
             x: 0.5,
-            y: 0.4,
+            y: 0.3,
             w: "90%",
             h: 0.5,
             fontSize: 20,
             bold: true,
             align: "center",
-            fontFace: "Candara"
+            fontFace: "Candara",
           }}
         >
           {slideData.heading.toUpperCase()}
         </Text>
 
         {/* Bullet Points */}
-        <Text style={{ x: 0.5, y: 1.2, w: "90%", h: textHeight, fontSize: 15, fontFace: "Candara" }}>
+        <Text
+          style={{
+            x: 0.5,
+            y: 1,
+            w: "90%",
+            h: textHeight,
+            fontSize: 15,
+            fontFace: "Candara",
+          }}
+        >
           {slideData.bulletPoints.map((bulletPoint, index) => {
             if (Array.isArray(bulletPoint)) {
               return bulletPoint.map((subBullet, subIndex) => (
                 <Text.Bullet
                   key={`${index}-${subIndex}`}
                   style={{
-                    // x: 2,
-                    // y: 2 + (index + subIndex) * 0.5,
-                    // w: 8,
-                    // h: 1,
                     fontSize: subBulletPointFontSize,
                   }}
                 >
-                  {/* ◦ {subBullet} */}
                   {`      ◦     ` + subBullet}
                 </Text.Bullet>
               ));
@@ -108,15 +112,9 @@ function MinimalistTemplate02(data: any) {
                 <Text.Bullet
                   key={index}
                   style={{
-                    // x: 1,
-                    // y: 2 + index * 0.5,
-                    // w: 8,
-                    // h: 1,
-                    // breakLine: true,
                     fontSize: bulletPointFontSize,
                   }}
                 >
-                  {/* • {bulletPoint} */}
                   {`•   ` + bulletPoint}
                 </Text.Bullet>
               );
@@ -133,7 +131,7 @@ function MinimalistTemplate02(data: any) {
                 key={index}
                 src={{ kind: "path", path: image.imageUrl }}
                 style={{
-                  x: 1 + (imagesNum > 2 ? 3 : 4) * index,
+                  x: 0.5 + (imagesNum > 2 ? 3 : 4) * index,
                   y: "60%",
                   w: wRatio * 4,
                   h: hRatio * 4,
@@ -147,6 +145,28 @@ function MinimalistTemplate02(data: any) {
               />
             );
           })}
+
+        {/* Images source */}
+        {slideData.imageUrls && (
+          <Text
+            style={{
+              x: 0.1,
+              y: "95%",
+              w: "90%",
+              h: 0.5,
+              fontSize: 5,
+              fontFace: "Candara",
+            }}
+          >
+            {slideData.imageUrls.map((image, index) => {
+              return (
+                <Text.Bullet key={index}>
+                  {image.source ? `Image source: ${image.source}` : ""}
+                </Text.Bullet>
+              );
+            })}
+          </Text>
+        )}
       </Slide>,
     ];
   };
@@ -181,34 +201,38 @@ function MinimalistTemplate02(data: any) {
         <Text
           style={{
             x: 1,
-            y: 0.4,
+            y: 0.3,
             w: "85%",
             h: 0.5,
             fontSize: 20,
             bold: true,
             align: "center",
-            fontFace: "Candara"
+            fontFace: "Candara",
           }}
         >
           {slideData.heading.toUpperCase()}
         </Text>
 
         {/* Bullet Points */}
-        <Text style={{ x: 0.5, y: 1.2, w: "90%", h: textHeight, fontSize: 15, fontFace: "Candara" }}>
+        <Text
+          style={{
+            x: 0.5,
+            y: 1,
+            w: "90%",
+            h: textHeight,
+            fontSize: 15,
+            fontFace: "Candara",
+          }}
+        >
           {slideData.bulletPoints.map((bulletPoint, index) => {
             if (Array.isArray(bulletPoint)) {
               return bulletPoint.map((subBullet, subIndex) => (
                 <Text.Bullet
                   key={`${index}-${subIndex}`}
                   style={{
-                    // x: 2,
-                    // y: 2 + (index + subIndex) * 0.5,
-                    // w: 8,
-                    // h: 1,
                     fontSize: subBulletPointFontSize,
                   }}
                 >
-                  {/* ◦ {subBullet} */}
                   {`      ◦     ` + subBullet}
                 </Text.Bullet>
               ));
@@ -217,15 +241,9 @@ function MinimalistTemplate02(data: any) {
                 <Text.Bullet
                   key={index}
                   style={{
-                    // x: 1,
-                    // y: 2 + index * 0.5,
-                    // w: 8,
-                    // h: 1,
-                    // breakLine: true,
                     fontSize: bulletPointFontSize,
                   }}
                 >
-                  {/* • {bulletPoint} */}
                   {`•   ` + bulletPoint}
                 </Text.Bullet>
               );
@@ -242,7 +260,7 @@ function MinimalistTemplate02(data: any) {
                 key={index}
                 src={{ kind: "path", path: image.imageUrl }}
                 style={{
-                  x: 1 + (imagesNum > 2 ? 3 : 4) * index,
+                  x: 0.5 + (imagesNum > 2 ? 3 : 4) * index,
                   y: "60%",
                   w: wRatio * 4,
                   h: hRatio * 4,
@@ -256,6 +274,28 @@ function MinimalistTemplate02(data: any) {
               />
             );
           })}
+
+        {/* Images source */}
+        {slideData.imageUrls && (
+          <Text
+            style={{
+              x: 0.1,
+              y: "95%",
+              w: "90%",
+              h: 0.5,
+              fontSize: 5,
+              fontFace: "Candara",
+            }}
+          >
+            {slideData.imageUrls.map((image, index) => {
+              return (
+                <Text.Bullet key={index}>
+                  {image.source ? `Image source: ${image.source}` : ""}
+                </Text.Bullet>
+              );
+            })}
+          </Text>
+        )}
       </Slide>,
     ];
   };
@@ -293,13 +333,13 @@ function MinimalistTemplate02(data: any) {
           <Text
             style={{
               x: 0.5,
-              y: "40%",
-              w: "30%",
+              y: slideData.heading.length > 30 ? "35%" : "40%",
+              w: "27%",
               h: 0.5,
               fontSize: 28,
               bold: true,
               align: "left",
-              fontFace: "Candara"
+              fontFace: "Candara",
             }}
           >
             {slideData.heading.toUpperCase()}
@@ -307,7 +347,14 @@ function MinimalistTemplate02(data: any) {
 
           {/* Bullet Points */}
           <Text
-            style={{ x: "50%", y: 1.5, w: "50%", h: textHeight, fontSize: 15, fontFace: "Candara" }}
+            style={{
+              x: "53%",
+              y: 1.5,
+              w: "45%",
+              h: textHeight,
+              fontSize: 15,
+              fontFace: "Candara",
+            }}
           >
             {slideData.bulletPoints.map((bulletPoint, index) => {
               if (Array.isArray(bulletPoint)) {
@@ -315,14 +362,9 @@ function MinimalistTemplate02(data: any) {
                   <Text.Bullet
                     key={`${index}-${subIndex}`}
                     style={{
-                      // x: 2,
-                      // y: 2 + (index + subIndex) * 0.5,
-                      // w: 8,
-                      // h: 1,
                       fontSize: subBulletPointFontSize,
                     }}
                   >
-                    {/* ◦ {subBullet} */}
                     {`      ◦     ` + subBullet}
                   </Text.Bullet>
                 ));

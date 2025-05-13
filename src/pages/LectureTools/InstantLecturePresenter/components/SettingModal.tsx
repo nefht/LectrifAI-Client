@@ -21,6 +21,7 @@ function SettingModal({ isOpen, closeModal, setSettings }: SettingModalProps) {
   const [selectedSettings, setSelectedSettings] = useState<any>({
     teachingStyle: storedSettings.teachingStyle || "friendly",
     languageCode: storedSettings.languageCode || "vi-VN",
+    language: storedSettings.language || "Vietnamese",
     voiceStyle: storedSettings.voiceStyle || "FEMALE",
   });
 
@@ -55,6 +56,8 @@ function SettingModal({ isOpen, closeModal, setSettings }: SettingModalProps) {
                   setSelectedSettings((prev: any) => ({
                     ...prev,
                     languageCode: selectedValue,
+                    language: TTSLanguagesList.find(
+                      (lang) => lang.value === selectedValue)?.label || "",
                   }))
                 }
               />

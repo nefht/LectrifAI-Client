@@ -21,7 +21,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { useAuth } from "../../../hooks/useAuth";
 import ShareUserModal from "../../../components/ShareUserModal/ShareUserModal";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import DeleteModal from "../../../components/NotificationModal/DeleteModal";
 import { useToast } from "../../../hooks/useToast";
 import RenameModal from "../components/RenameModal";
@@ -43,6 +43,7 @@ function LecturesList({ searchTerm }: { searchTerm: string }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // Modal rename
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   // useEffect(() => {
   //   const fetchAllLectureVideos = async () => {
@@ -227,12 +228,15 @@ function LecturesList({ searchTerm }: { searchTerm: string }) {
     mutationFn: async (lectureId: string) => {
       await lectureVideoService.deleteLectureVideo(lectureId);
       setIsDeleteModalOpen(false);
-      setLectures((prevLectures) =>
-        prevLectures.filter(
-          (lecture) =>
-            lecture._id.$oid !== lectureId && lecture._id !== lectureId
-        )
-      );
+      // setLectures((prevLectures) =>
+      //   prevLectures.filter(
+      //     (lecture) =>
+      //       lecture._id.$oid !== lectureId && lecture._id !== lectureId
+      //   )
+      // );
+      queryClient.invalidateQueries({
+        queryKey: ["lectureVideos", page, limit, searchTerm],
+      });
     },
     onSuccess: (data) => {
       showToast("success", "Lecture deleted successfully");
@@ -394,24 +398,24 @@ function LecturesList({ searchTerm }: { searchTerm: string }) {
                                 </button>
                               )}
                             </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() =>
+                                    handleOpenShare.mutate(lecture)
+                                  }
+                                  className={`${
+                                    active
+                                      ? "bg-indigo-100 text-indigo-800 font-semibold"
+                                      : "text-gray-700"
+                                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                >
+                                  Share
+                                </button>
+                              )}
+                            </Menu.Item>
                             {isOwner && (
                               <>
-                                <Menu.Item>
-                                  {({ active }) => (
-                                    <button
-                                      onClick={() =>
-                                        handleOpenShare.mutate(lecture)
-                                      }
-                                      className={`${
-                                        active
-                                          ? "bg-indigo-100 text-indigo-800 font-semibold"
-                                          : "text-gray-700"
-                                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                    >
-                                      Share
-                                    </button>
-                                  )}
-                                </Menu.Item>
                                 <Menu.Item>
                                   {({ active }) => (
                                     <button

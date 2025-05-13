@@ -99,6 +99,20 @@ export const uploadUserAvatar = async (file: File) => {
   }
 };
 
+/**
+ * Delete avatar
+ * @returns
+ */
+export const removeUserAvatar = async () => {
+  try {
+    const response = await api.post("/user/remove-avatar");
+    return response.data;
+  } catch (error: any) {
+    console.error("Failed to delete avatar:", error);
+    throw new Error(error?.response?.data?.error || "Failed to delete avatar.");
+  }
+};
+
 const userService = {
   getAllUsers,
   getUserById,
@@ -106,6 +120,7 @@ const userService = {
   updateUser,
   updateUserProfile,
   uploadUserAvatar,
+  removeUserAvatar,
 };
 
 export default userService;

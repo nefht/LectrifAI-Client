@@ -1,12 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaUser,
-  FaClock,
-  FaVideo,
-  FaFileAlt,
-  FaQuestion,
   FaExternalLinkAlt,
-  FaUserCircle,
   FaChevronLeft,
   FaChevronRight,
   FaPhoneAlt,
@@ -75,35 +70,52 @@ function UserProfile() {
   const [activeTab, setActiveTab] = useState<"videos" | "quizzes">("videos");
 
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [currentPageLecture, setCurrentPageLecture] = useState(1);
+  const [currentPageQuiz, setCurrentPageQuiz] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [totalVideosPages, setTotalVideosPages] = useState(0);
+  const [totalQuizzesPages, setTotalQuizzesPages] = useState(0);
 
   useEffect(() => {
     const fetchUserById = async () => {
       const response = await userService.getUserById(id!);
       setUser(response);
     };
+    fetchUserById();
+  }, [id]);
 
+  useEffect(() => {
     const fetchLectureVideosByUserId = async () => {
       const response = await lectureVideoService.getPublicLectureVideosByUserId(
-        id!
+        id!,
+        currentPageLecture,
+        limit
       );
       setLectureVideos(response.data);
+      setTotalVideosPages(response.pagination.totalPages);
     };
 
-    const fetchQuizzesByUserId = async () => {
-      const response = await quizService.getPublicQuizzesByUserId(id!);
-      setQuizzes(response.data);
-    };
-
-    fetchUserById();
     fetchLectureVideosByUserId();
+  }, [id, currentPageLecture]);
+
+  useEffect(() => {
+    const fetchQuizzesByUserId = async () => {
+      const response = await quizService.getPublicQuizzesByUserId(
+        id!,
+        currentPageQuiz,
+        limit
+      );
+      setQuizzes(response.data);
+      setTotalQuizzesPages(response.pagination.totalPages);
+    };
+
     fetchQuizzesByUserId();
-  }, [id]);
+  }, [id, currentPageQuiz]);
 
   // Reset pagination when tab changes
   useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPageLecture(1);
+    setCurrentPageQuiz(1);
   }, [activeTab]);
 
   if (!user) {
@@ -118,23 +130,110 @@ function UserProfile() {
     return new Date(dateString).toLocaleDateString("vi-VN");
   };
 
-  // Lấy danh sách video và quiz hiện tại dựa trên trang hiện tại
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentVideos = lectureVideos.slice(indexOfFirstItem, indexOfLastItem);
-  const currentQuizzes = quizzes.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Tính toán số trang cho video và quiz
-  const totalVideosPages = Math.ceil(lectureVideos.length / itemsPerPage);
-  const totalQuizzesPages = Math.ceil(quizzes.length / itemsPerPage);
-  const totalPages =
-    activeTab === "videos" ? totalVideosPages : totalQuizzesPages;
-
   // Chuyển trang
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-  const nextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const paginate = (pageNumber: number) => {
+    console.log(pageNumber);
+    if (activeTab === "videos") {
+      setCurrentPageLecture(pageNumber);
+    } else {
+      setCurrentPageQuiz(pageNumber);
+    }
+  };
+
+  const nextPage = () => {
+    if (activeTab === "videos") {
+      setCurrentPageLecture((prev) => Math.min(prev + 1, totalVideosPages));
+    } else {
+      setCurrentPageQuiz((prev) => Math.min(prev + 1, totalQuizzesPages));
+    }
+  };
+  const prevPage = () => {
+    if (activeTab === "videos") {
+      setCurrentPageLecture((prev) => Math.max(prev - 1, 1));
+    } else {
+      setCurrentPageQuiz((prev) => Math.max(prev - 1, 1));
+    }
+  };
+
+  const renderPagination = (totalPages: number, currentPage: number) => {
+    return (
+      <>
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <nav className="flex items-center">
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className={`px-2 py-1 mx-1 rounded ${
+                  currentPage === 1
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-purple-600 hover:bg-purple-100"
+                }`}
+              >
+                <FaChevronLeft className="h-4 w-4" />
+              </button>
+
+              <div className="flex space-x-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(
+                    (page) =>
+                      page === 1 ||
+                      page === totalPages ||
+                      Math.abs(page - currentPage) <= 1
+                  )
+                  .map((page, index, array) => {
+                    // Add ellipsis
+                    if (index > 0 && page - array[index - 1] > 1) {
+                      return (
+                        <React.Fragment key={`ellipsis-${page}`}>
+                          <span className="px-3 py-1 text-gray-500">...</span>
+                          <button
+                            onClick={() => paginate(page)}
+                            className={`px-3 py-1 rounded-md ${
+                              currentPage === page
+                                ? "bg-purple-600 text-white"
+                                : "bg-transparent hover:bg-purple-200 text-purple-800"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        </React.Fragment>
+                      );
+                    }
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => paginate(page)}
+                        className={`px-3 py-1 rounded-md ${
+                          currentPage === page
+                            ? "bg-purple-600 text-white"
+                            : "bg-transparent hover:bg-purple-200 text-purple-800"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+              </div>
+
+              <button
+                onClick={nextPage}
+                disabled={currentPage === totalPages}
+                className={`px-2 py-1 mx-1 rounded ${
+                  currentPage === totalPages
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-purple-600 hover:bg-purple-100"
+                }`}
+              >
+                <FaChevronRight className="h-4 w-4" />
+              </button>
+            </nav>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <div className="min-h-full-screen bg-gray-50">
@@ -219,7 +318,7 @@ function UserProfile() {
             {/* Tab Content */}
             {activeTab === "videos" ? (
               <div className="space-y-4">
-                {currentVideos.map((video) => (
+                {lectureVideos.map((video) => (
                   <div
                     key={video._id}
                     className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow"
@@ -266,53 +365,11 @@ function UserProfile() {
                 ))}
 
                 {/* Pagination */}
-                {totalVideosPages > 1 && (
-                  <div className="flex justify-center mt-6">
-                    <nav className="flex items-center">
-                      <button
-                        onClick={prevPage}
-                        disabled={currentPage === 1}
-                        className={`px-2 py-1 mx-1 rounded ${
-                          currentPage === 1
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "text-purple-600 hover:bg-purple-100"
-                        }`}
-                      >
-                        <FaChevronLeft className="h-4 w-4" />
-                      </button>
-
-                      {Array.from({ length: totalVideosPages }, (_, index) => (
-                        <button
-                          key={index + 1}
-                          onClick={() => paginate(index + 1)}
-                          className={`px-3 py-1 mx-1 rounded ${
-                            currentPage === index + 1
-                              ? "bg-purple-600 text-white"
-                              : "text-purple-600 hover:bg-purple-100"
-                          }`}
-                        >
-                          {index + 1}
-                        </button>
-                      ))}
-
-                      <button
-                        onClick={nextPage}
-                        disabled={currentPage === totalVideosPages}
-                        className={`px-2 py-1 mx-1 rounded ${
-                          currentPage === totalVideosPages
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "text-purple-600 hover:bg-purple-100"
-                        }`}
-                      >
-                        <FaChevronRight className="h-4 w-4" />
-                      </button>
-                    </nav>
-                  </div>
-                )}
+                {renderPagination(totalVideosPages, currentPageLecture)}
               </div>
             ) : (
               <div className="space-y-4">
-                {currentQuizzes.map((quiz) => (
+                {quizzes.map((quiz) => (
                   <div
                     key={quiz._id}
                     className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow"
@@ -363,49 +420,7 @@ function UserProfile() {
                 ))}
 
                 {/* Pagination */}
-                {totalQuizzesPages > 1 && (
-                  <div className="flex justify-center mt-6">
-                    <nav className="flex items-center">
-                      <button
-                        onClick={prevPage}
-                        disabled={currentPage === 1}
-                        className={`px-2 py-1 mx-1 rounded ${
-                          currentPage === 1
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "text-purple-600 hover:bg-purple-100"
-                        }`}
-                      >
-                        <FaChevronLeft className="h-4 w-4" />
-                      </button>
-
-                      {Array.from({ length: totalQuizzesPages }, (_, index) => (
-                        <button
-                          key={index + 1}
-                          onClick={() => paginate(index + 1)}
-                          className={`px-3 py-1 mx-1 rounded ${
-                            currentPage === index + 1
-                              ? "bg-purple-600 text-white"
-                              : "text-purple-600 hover:bg-purple-100"
-                          }`}
-                        >
-                          {index + 1}
-                        </button>
-                      ))}
-
-                      <button
-                        onClick={nextPage}
-                        disabled={currentPage === totalQuizzesPages}
-                        className={`px-2 py-1 mx-1 rounded ${
-                          currentPage === totalQuizzesPages
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "text-purple-600 hover:bg-purple-100"
-                        }`}
-                      >
-                        <FaChevronRight className="h-4 w-4" />
-                      </button>
-                    </nav>
-                  </div>
-                )}
+                {renderPagination(totalQuizzesPages, currentPageQuiz)}
               </div>
             )}
           </div>

@@ -38,7 +38,7 @@ function QuizFromDocument({ languages }: QuizFromDocumentProps) {
               required
               name={EQuizMakerOptions.DOCUMENT_TEXT}
               className="w-full h-36 p-4 border border-gray-300 rounded-lg resize-none focus:ring-1 focus:ring-purple-500"
-              placeholder="Paste up to 8,000 words"
+              placeholder="Paste up to 10000 characters. Max. 20 MB for PDF file."
               value={quizMakerOptions[EQuizMakerOptions.DOCUMENT_TEXT]}
               minLength={200}
               maxLength={10000}
@@ -67,7 +67,7 @@ function QuizFromDocument({ languages }: QuizFromDocumentProps) {
               {/* Hiển thị thông tin file nếu đã tải lên */}
               {quizMakerOptions[EQuizMakerOptions.FILE] && (
                 <div
-                  className="flex items-center gap-4 w-full p-4 cursor-pointer border border-purple-300 bg-purple-50 rounded-lg"
+                  className="relative flex items-center gap-4 w-full p-4 cursor-pointer border border-purple-300 bg-purple-50 rounded-lg"
                   onClick={() =>
                     document.getElementById("file-upload")?.click()
                   }
@@ -87,6 +87,18 @@ function QuizFromDocument({ languages }: QuizFromDocumentProps) {
                       MB
                     </p>
                   </div>
+                  <button
+                    type="button"
+                    className="absolute top-0 right-0 text-red-500 text-sm font-semibold"
+                    onClick={() =>
+                      handleGetQuizMakerOptions({
+                        target: {
+                          name: EQuizMakerOptions.FILE,
+                          value: null,
+                        },
+                      })
+                    }
+                  />
                 </div>
               )}
             </>

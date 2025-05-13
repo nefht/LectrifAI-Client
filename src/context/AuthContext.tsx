@@ -63,12 +63,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  // Lưu authData vào localStorage khi thay đổi
+  // Lưu authData vào localStorage khi authData thay đổi
   useEffect(() => {
     if (authData) {
       localStorage.setItem("authData", JSON.stringify(authData));
     }
-  }, [authData, user]);
+  }, [authData]);
+
+  // Lưu authData vào localStorage khi user thay đổi
+  useEffect(() => {
+    if (user) {
+      const updatedAuthData = { ...authData, user };
+      localStorage.setItem("authData", JSON.stringify(updatedAuthData));
+    }
+  }, [user]);
 
   const login = (token: string, user: User) => {
     try {

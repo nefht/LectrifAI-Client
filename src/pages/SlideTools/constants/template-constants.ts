@@ -43,11 +43,11 @@ export const templateSamples = [
     style: "colorful",
     samples: [
       {
-        code: "colorful-1",
+        code: "colorful-01",
         image: colorful01,
       },
       {
-        code: "colorful-2",
+        code: "colorful-02",
         image: colorful02,
       },
       // {

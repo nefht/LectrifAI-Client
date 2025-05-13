@@ -7,5 +7,6 @@ export interface ExportSlideData {
     height: any;
     width: any;
     imageUrl: string;
+    source?: string;
   }[];
 }

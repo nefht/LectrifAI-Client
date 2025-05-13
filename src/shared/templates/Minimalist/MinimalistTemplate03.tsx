@@ -48,8 +48,13 @@ function MinimalistTemplate03(data: any) {
       0
     );
 
-    const bulletPointFontSize = totalBulletPoints > 4 ? 15 : 17;
-    const subBulletPointFontSize = totalBulletPoints > 4 ? 13 : 15;
+    let bulletPointFontSize = totalBulletPoints > 4 ? 15 : 17;
+    let subBulletPointFontSize = totalBulletPoints > 4 ? 13 : 15;
+
+    if (slideData?.imageUrls?.length > 0) {
+      bulletPointFontSize -= 2;
+      subBulletPointFontSize -= 2;
+    }
 
     const textHeight =
       totalBulletPoints > 6 ? totalBulletPoints * 0.25 : totalBulletPoints * 1;
@@ -91,9 +96,9 @@ function MinimalistTemplate03(data: any) {
         {/* Bullet Points */}
         <Text
           style={{
-            x: 1,
-            y: 1.2,
-            w: "80%",
+            x: 0.7,
+            y: 1,
+            w: "85%",
             h: textHeight,
             fontSize: 15,
             color: "#624738",
@@ -105,14 +110,9 @@ function MinimalistTemplate03(data: any) {
                 <Text.Bullet
                   key={`${index}-${subIndex}`}
                   style={{
-                    // x: 2,
-                    // y: 2 + (index + subIndex) * 0.5,
-                    // w: 8,
-                    // h: 1,
                     fontSize: subBulletPointFontSize,
                   }}
                 >
-                  {/* ◦ {subBullet} */}
                   {`      ◦     ` + subBullet}
                 </Text.Bullet>
               ));
@@ -121,15 +121,9 @@ function MinimalistTemplate03(data: any) {
                 <Text.Bullet
                   key={index}
                   style={{
-                    // x: 1,
-                    // y: 2 + index * 0.5,
-                    // w: 8,
-                    // h: 1,
-                    // breakLine: true,
                     fontSize: bulletPointFontSize,
                   }}
                 >
-                  {/* • {bulletPoint} */}
                   {`•   ` + bulletPoint}
                 </Text.Bullet>
               );
@@ -146,7 +140,7 @@ function MinimalistTemplate03(data: any) {
                 key={index}
                 src={{ kind: "path", path: image.imageUrl }}
                 style={{
-                  x: 1 + (imagesNum > 2 ? 3 : 4) * index,
+                  x: 0.5 + (imagesNum > 2 ? 3 : 4) * index,
                   y: "60%",
                   w: wRatio * 4,
                   h: hRatio * 4,
@@ -160,6 +154,25 @@ function MinimalistTemplate03(data: any) {
               />
             );
           })}
+
+        {/* Images source */}
+        {slideData.imageUrls && (
+          <Text
+            style={{
+              x: 0.1,
+              y: "95%",
+              w: "90%",
+              h: 0.5,
+              fontSize: 5,
+              color: "#664B34",
+              fontFace: "Candara",
+            }}
+          >
+            {slideData.imageUrls.map((image, index) => {
+              return <Text.Bullet key={index}>{image.source ? `Image source: ${image.source}` : ""}</Text.Bullet>;
+            })}
+          </Text>
+        )}
       </Slide>,
     ];
   };

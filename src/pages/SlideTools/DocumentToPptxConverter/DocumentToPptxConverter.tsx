@@ -44,7 +44,7 @@ function DocumentToPptxConverter() {
                 aria-hidden="true"
                 className="mx-auto size-12 text-purple-300"
               />
-              <div className="mt-4 flex text-sm/6 text-gray-600">
+              <div className="mt-4 flex items-center justify-center text-sm/6 text-gray-600">
                 <label className="relative cursor-pointer rounded-md bg-white font-semibold text-purple-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2 hover:text-purple-500">
                   <span>Upload a file</span>
                   <input
@@ -56,7 +56,7 @@ function DocumentToPptxConverter() {
                     onChange={handleFileChange}
                   />
                 </label>
-                <p className="pl-1">or drag and drop</p>
+                {/* <p className="pl-1">or drag and drop</p> */}
               </div>
               <p className="text-xs/5 text-gray-600">
                 .pdf, .doc, .docx, .txt, .md

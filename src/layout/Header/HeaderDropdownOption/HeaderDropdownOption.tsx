@@ -154,7 +154,7 @@ function HeaderDropdownOption({
                     </div>
                   )}
               </div>
-              <div
+              {/* <div
                 className={`grid ${
                   itemConstants?.callsToAction &&
                   itemConstants?.callsToAction?.length > 1
@@ -175,7 +175,7 @@ function HeaderDropdownOption({
                     {item.name}
                   </a>
                 ))}
-              </div>
+              </div> */}
             </PopoverPanel>
           </>
         )}
@@ -197,7 +197,7 @@ function HeaderDropdownOption({
         {[
           ...(itemConstants?.mainTools || []),
           ...(itemConstants?.otherTools || []),
-          ...(itemConstants?.callsToAction || []),
+          // ...(itemConstants?.callsToAction || []),
         ].map((item) => (
           <DisclosureButton
             key={item.name}

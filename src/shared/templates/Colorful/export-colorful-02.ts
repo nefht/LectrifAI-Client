@@ -83,29 +83,27 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
         } else if (index % 3 === 1) {
           slide.addText(slideData?.heading.toUpperCase(), {
             x: 0.2,
-            y: 0.2,
+            y: 0.1,
             w: "70%",
             h: 0.5,
             fontSize: 20,
             bold: true,
             align: "left",
             fontFace: "Candara",
-                lineSpacingMultiple: 1.3,
-
+            lineSpacingMultiple: 1.3,
           });
         } else {
           slide.addText(slideData?.heading.toUpperCase(), {
             x: "74%",
             y: 1.2,
             w: "24%",
-            h: 0.5,
-            fontSize: 26,
+            h: slideData?.heading?.length > 45 ? 1 : 0.5,
+            fontSize: slideData?.heading?.length > 45 ? 22 : 26,
             bold: true,
             align: "right",
             fontFace: "Candara",
             color: "#FFFFFF",
-                lineSpacingMultiple: 1.3,
-
+            lineSpacingMultiple: 1.3,
           });
         }
       } else {
@@ -114,14 +112,13 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
             x: "74%",
             y: 1.2,
             w: "24%",
-            h: 0.5,
-            fontSize: 26,
+            h: slideData?.heading?.length > 45 ? 1 : 0.5,
+            fontSize: slideData?.heading?.length > 45 ? 22 : 26,
             bold: true,
             align: "right",
             fontFace: "Candara",
             color: "#FFFFFF",
-                lineSpacingMultiple: 1.3,
-
+            lineSpacingMultiple: 1.3,
           });
         } else {
           slide.addText(slideData?.heading.toUpperCase(), {
@@ -133,8 +130,7 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
             bold: true,
             align: "left",
             fontFace: "Candara",
-                lineSpacingMultiple: 1.3,
-
+            lineSpacingMultiple: 1.3,
           });
         }
       }
@@ -177,7 +173,7 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
               text: bulletPoint,
               options: {
                 bullet: true, // Standard bullet
-                fontSize: bulletPointFontSize,
+                // fontSize: bulletPointFontSize,
                 indentLevel: 1, // Indent level for bullet point
                 lineSpacingMultiple: 1.3,
               },
@@ -194,7 +190,7 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
             y: 1.2,
             w: "90%",
             h: textHeight,
-            fontSize: 15,
+            fontSize: bulletPointFontSize,
             fontFace: "Candara",
           });
         } else if (index % 3 === 1) {
@@ -203,7 +199,7 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
             y: 1,
             w: "70%",
             h: textHeight,
-            fontSize: 15,
+            fontSize: 13,
             fontFace: "Candara",
           });
         } else {
@@ -212,29 +208,29 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
             y: 0.9,
             w: "70%",
             h: textHeight,
-            fontSize: 15,
+            fontSize: bulletPointFontSize,
             fontFace: "Candara",
           });
         }
       } else {
         if (index % 2 === 0) {
-         slide.addText(bulletPointsData?.flat(), {
-           x: 0.1,
-           y: 0.9,
-           w: "70%",
-           h: textHeight,
-           fontSize: 15,
-           fontFace: "Candara",
-         });
+          slide.addText(bulletPointsData?.flat(), {
+            x: 0.1,
+            y: 0.9,
+            w: "70%",
+            h: textHeight,
+            fontSize: 15,
+            fontFace: "Candara",
+          });
         } else {
-         slide.addText(bulletPointsData?.flat(), {
-           x: "30%",
-           y: "20%",
-           w: "65%",
-           h: textHeight,
-           fontSize: 15,
-           fontFace: "Candara",
-         });
+          slide.addText(bulletPointsData?.flat(), {
+            x: "30%",
+            y: "28%",
+            w: "65%",
+            h: textHeight,
+            fontSize: 15,
+            fontFace: "Candara",
+          });
         }
       }
 
@@ -246,7 +242,7 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
         slide.addImage({
           path: image.imageUrl,
           x: 0.75 + (imagesNum > 2 ? 3 : 4) * imgIndex,
-          y: "55%",
+          y: "60%",
           w: wRatio,
           h: hRatio,
           sizing: {
@@ -254,6 +250,28 @@ const exportColorful02 = (slideData: SlideData, fileName?: string) => {
             ...(wRatio > hRatio ? { w: 2.8, h: 1.8 } : { w: 1.8, h: 1.8 }),
           },
         });
+      });
+
+      // Add Images source
+      let arrImagesSource = (slideData?.imageUrls ?? []).map(
+        (image, imgIndex) => {
+          return {
+            text: image?.source ? `Image source: ${image?.source}` : "",
+            options: {
+              fontSize: 5,
+              color: "#664B34",
+              fontFace: "Candara",
+              breakLine: true,
+            },
+          };
+        }
+      );
+
+      slide.addText(arrImagesSource, {
+        x: 0.1,
+        y: "92%",
+        w: "90%",
+        h: 0.5,
       });
     }
   });

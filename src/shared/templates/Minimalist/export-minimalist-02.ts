@@ -52,7 +52,7 @@ const exportMinimalist02 = (slideData: SlideData, fileName?: string) => {
     if (index === lastIndex) {
       // End slide with specific background
       slide.background = { path: endSlideImg }; // Use the end slide image for the last slide
-      slide.addText(slideData?.heading, {
+      slide.addText(slideData?.heading?.toUpperCase(), {
         x: 0.5,
         y: "40%",
         w: "90%",
@@ -127,6 +127,11 @@ const exportMinimalist02 = (slideData: SlideData, fileName?: string) => {
 
       let bulletPointFontSize = totalBulletPoints > 4 ? 14 : 15;
       let subBulletPointFontSize = totalBulletPoints > 4 ? 12 : 13;
+
+      if ((slideData?.imageUrls ?? []).length > 0) {
+        bulletPointFontSize -= 1;
+        subBulletPointFontSize -= 1;
+      }
 
       let textHeight =
         totalBulletPoints >= 6
@@ -210,6 +215,27 @@ const exportMinimalist02 = (slideData: SlideData, fileName?: string) => {
             ...(wRatio > hRatio ? { w: 2.8, h: 1.8 } : { w: 1.8, h: 1.8 }),
           },
         });
+      });
+
+      // Add Images source
+      let arrImagesSource = (slideData?.imageUrls ?? []).map(
+        (image: any, imgIndex: number) => {
+          return {
+            text: image?.source ? `Image source: ${image?.source}` : "",
+            options: {
+              fontSize: 5,
+              fontFace: "Candara",
+              breakLine: true,
+            },
+          };
+        }
+      );
+
+      slide.addText(arrImagesSource, {
+        x: 0.1,
+        y: "92%",
+        w: "90%",
+        h: 0.5,
       });
     }
   });

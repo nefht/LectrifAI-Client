@@ -417,9 +417,14 @@ export const updateClassroomQuiz = async (
  * @param classroomId
  * @returns
  */
-export const getClassroomRanking = async (classroomId: string) => {
+export const getClassroomRanking = async (classroomId: string, page = 1, limit = 20) => {
   try {
-    const response = await api.get(`/student-answer/ranking/${classroomId}`);
+    const response = await api.get(`/student-answer/ranking/${classroomId}`, {
+      params: {
+        page,
+        limit,
+      },
+    });
     return response.data;
   } catch (error: any) {
     console.error("Error fetching classroom ranking:", error);
@@ -438,11 +443,19 @@ export const getClassroomRanking = async (classroomId: string) => {
  */
 export const getStudentQuizDetails = async (
   classroomId: string,
-  studentId: string
+  studentId: string,
+  page = 1,
+  limit = 10
 ) => {
   try {
     const response = await api.get(
-      `/student-answer/${classroomId}/student/${studentId}`
+      `/student-answer/${classroomId}/student/${studentId}`,
+      {
+        params: {
+          page,
+          limit,
+        },
+      }
     );
     return response.data;
   } catch (error: any) {

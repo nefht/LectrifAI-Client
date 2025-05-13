@@ -76,7 +76,7 @@ function QuizMaker() {
             quizMakerOptions?.[EQuizMakerOptions.QUESTION_TYPE],
             quizMakerOptions?.[EQuizMakerOptions.NUMBER_OF_QUESTIONS],
             quizMakerOptions?.[EQuizMakerOptions.SPECIFIC_REQUIREMENTS]
-          )
+          );
         }
         navigate(`/quiz/${response._id}`, {
           state: { message: "Quiz created successfully!" },
@@ -93,8 +93,9 @@ function QuizMaker() {
       const submitTab = tabs.find((tab) => tab.name === selectedTab);
       await submitTab?.handleSubmit();
     },
-    onError: (error) => {
-      showToast("error", "Create quiz unsuccessfully!");
+    onError: (error: any) => {
+      // showToast("error", "Create quiz unsuccessfully!");
+      showToast("error", error.message ?? "Create quiz unsuccessfully!");
       console.error("Error creating quiz:", error);
     },
   });

@@ -12,7 +12,7 @@ const mainTools = [
     name: "Lecture Video Generator",
     description: "Create lecture video from your slides",
     href: "/lecture/generate-video",
-    icon: ChartPieIcon,
+    icon: SquaresPlusIcon,
   },
   {
     name: "Instant Lecture Presenter",
@@ -32,7 +32,7 @@ const otherTools = [
     name: "Quizzes Maker",
     description: "Create quizzes for your students",
     href: "/quiz-maker",
-    icon: ChartPieIcon,
+    icon: CursorArrowRaysIcon,
   },
   // {
   //   name: "Classroom Management",

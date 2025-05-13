@@ -80,6 +80,11 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
       let bulletPointFontSize = totalBulletPoints > 4 ? 14 : 15;
       let subBulletPointFontSize = totalBulletPoints > 4 ? 12 : 13;
 
+      if ((slideData?.imageUrls ?? []).length > 0) {
+        bulletPointFontSize -= 1;
+        subBulletPointFontSize -= 1;
+      }
+
       let textHeight =
         totalBulletPoints >= 6
           ? totalBulletPoints * 0.25
@@ -139,6 +144,27 @@ const exportMinimalist01 = (slideData: SlideData, fileName?: string) => {
             ...(wRatio > hRatio ? { w: 2.8, h: 1.8 } : { w: 1.8, h: 1.8 }),
           },
         });
+      });
+
+      // Add Images source
+      let arrImagesSource = (slideData?.imageUrls ?? []).map(
+        (image, imgIndex) => {
+          return {
+            text: image?.source ? `Image source: ${image?.source}` : "",
+            options: {
+              fontSize: 5,
+              fontFace: "Candara",
+              breakLine: true,
+            },
+          };
+        }
+      );
+
+      slide.addText(arrImagesSource, {
+        x: 0.1,
+        y: "92%",
+        w: "90%",
+        h: 0.5,
       });
     }
   });

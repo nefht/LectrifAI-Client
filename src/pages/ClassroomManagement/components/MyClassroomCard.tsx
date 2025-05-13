@@ -16,7 +16,7 @@ import ClassroomCardBackground from "./ClassroomCardBackground";
 import AddStudentModal from "../../Classroom/ClassroomDetail/components/AddStudentsModal";
 import AddQuizModal from "../../Classroom/ClassroomDetail/components/AddQuizModal";
 import AddLectureVideoModal from "../../Classroom/ClassroomDetail/components/AddLectureVideoModal";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import classroomManagementService from "../services/classroomManagementService";
 import { useToast } from "../../../hooks/useToast";
 import RenameClassroomModal from "../../Classroom/ClassroomDetail/components/RenameClassroomModal";
@@ -24,14 +24,21 @@ import RenameClassroomModal from "../../Classroom/ClassroomDetail/components/Ren
 interface MyClassroomCardProps {
   classroom: any;
   setUserClassrooms: React.Dispatch<React.SetStateAction<any>>;
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
 }
 
 function MyClassroomCard({
   classroom,
   setUserClassrooms,
+  page,
+  limit,
+  searchTerm
 }: MyClassroomCardProps) {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const queryClient = useQueryClient();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
   const [isAddQuizModalOpen, setIsAddQuizModalOpen] = useState(false);
@@ -48,6 +55,9 @@ function MyClassroomCard({
       setUserClassrooms((prevClassrooms: any) =>
         prevClassrooms.filter((classroom: any) => classroom._id !== response._id)
       );
+      queryClient.invalidateQueries({
+        queryKey: ["myClassrooms", page, limit, searchTerm],
+      })
       setIsDeleteModalOpen(false);
       return response;
     },

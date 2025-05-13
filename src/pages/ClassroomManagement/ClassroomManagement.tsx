@@ -110,7 +110,7 @@ function ClassroomManagement() {
       setTotalPages(joinedClassroomsPagination.totalPages || 1);
       setTotalResults(joinedClassroomsPagination.total || 0);
     }
-  }, [selectedTab]);
+  }, [selectedTab, userClassroomsPagination, joinedClassroomsPagination]);
 
   const startIndex = (page - 1) * limit + 1;
   const endIndex = Math.min(page * limit, totalResults);
@@ -210,6 +210,9 @@ function ClassroomManagement() {
                     key={index}
                     classroom={classroom}
                     setUserClassrooms={setUserClassrooms}
+                    page={page}
+                    limit={limit}
+                    searchTerm={searchTerm}
                   />
                 ))}
               </>

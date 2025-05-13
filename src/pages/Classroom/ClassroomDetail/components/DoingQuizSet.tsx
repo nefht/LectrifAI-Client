@@ -247,8 +247,8 @@ function DoingQuizSet() {
 
   const handleSumbitAndGrade = async () => {
     try {
-      handleSubmitStudentAnswer.mutate();
-      handleGradeStudentAnswer.mutate();
+      await handleSubmitStudentAnswer.mutateAsync();
+      await handleGradeStudentAnswer.mutateAsync();
       // fetchStudentAnswer.refetch();
     } catch (error) {
       console.error("Error submitting and grading:", error);

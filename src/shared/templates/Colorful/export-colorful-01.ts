@@ -58,9 +58,9 @@ const exportColorful01 = (slideData: SlideData, fileName?: string) => {
     } else {
       // Heading
       slide.addText(slideData?.heading.toUpperCase(), {
-        x: 0.5,
-        y: 0.4,
-        w: "90%",
+        x: 1,
+        y: 0.1,
+        w: "80%",
         h: 0.5,
         fontSize: 18,
         bold: true,
@@ -80,8 +80,13 @@ const exportColorful01 = (slideData: SlideData, fileName?: string) => {
         0
       );
 
-      let bulletPointFontSize = totalBulletPoints > 4 ? 14 : 15;
-      let subBulletPointFontSize = totalBulletPoints > 4 ? 12 : 13;
+      let bulletPointFontSize = totalBulletPoints > 4 ? 13 : 14;
+      let subBulletPointFontSize = totalBulletPoints > 4 ? 11 : 12;
+
+      if ((slideData?.imageUrls ?? []).length > 0) {
+        bulletPointFontSize -= 1;
+        subBulletPointFontSize -= 1;
+      }
 
       let textHeight =
         totalBulletPoints >= 6
@@ -118,8 +123,8 @@ const exportColorful01 = (slideData: SlideData, fileName?: string) => {
       // Thêm bullet points vào slide
       slide.addText(bulletPointsData?.flat(), {
         x: 0.5,
-        y: 1,
-        w: "90%",
+        y: totalBulletPoints > 5 ? 0.8 : 1.2,
+        w: "85%",
         h: textHeight,
         margin: 1,
         fontFace: "Arial",
@@ -142,6 +147,28 @@ const exportColorful01 = (slideData: SlideData, fileName?: string) => {
             ...(wRatio > hRatio ? { w: 2.8, h: 1.8 } : { w: 1.8, h: 1.8 }),
           },
         });
+      });
+
+      // Add Images source
+      let arrImagesSource = (slideData?.imageUrls ?? []).map(
+        (image, imgIndex) => {
+          return {
+            text: image?.source ? `Image source: ${image?.source}` : "",
+            options: {
+              fontSize: 5,
+              color: "#664B34",
+              fontFace: "Candara",
+              breakLine: true,
+            },
+          };
+        }
+      );
+
+      slide.addText(arrImagesSource, {
+        x: 0.1,
+        y: "92%",
+        w: "90%",
+        h: 0.5,
       });
     }
   });

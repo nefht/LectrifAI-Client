@@ -71,7 +71,11 @@ export const createQuizWithFile = async (
     return response.data;
   } catch (error: any) {
     console.error("Failed to create quiz:", error);
-    throw new Error(error.response?.data?.error || "Failed to create quiz.");
+    throw new Error(
+      error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Failed to create quiz."
+    );
   }
 };
 
@@ -345,9 +349,18 @@ export const getRoomById = async (id: string) => {
  * @param userId
  * @returns
  */
-export const getPublicQuizzesByUserId = async (userId: string) => {
+export const getPublicQuizzesByUserId = async (
+  userId: string,
+  page: number,
+  limit: number
+) => {
   try {
-    const response = await api.get(`/quiz/user/${userId}`);
+    const response = await api.get(`/quiz/user/${userId}`, {
+      params: {
+        page,
+        limit,
+      },
+    });
     return response.data;
   } catch (error: any) {
     console.error("Failed to get public quizzes by userId:", error);

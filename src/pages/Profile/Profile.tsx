@@ -8,6 +8,7 @@ import {
   FiEye,
   FiEyeOff,
   FiSave,
+  FiTrash2,
 } from "react-icons/fi";
 import {
   Button,
@@ -21,7 +22,7 @@ import {
 import { useNavigate, useParams } from "react-router";
 import userService from "../../services/userSevice";
 import { useToast } from "../../hooks/useToast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import authService from "../Auth/services/authService";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -30,7 +31,7 @@ interface User {
   fullName: string;
   email: string;
   account: string;
-  avatarUrl: string | null;
+  avatarUrl?: string;
 }
 
 interface Profile {
@@ -50,12 +51,14 @@ interface PasswordChange {
 function Profile() {
   const { id } = useParams();
   const { user: currentUser, setUser: setCurrentUser } = useAuth();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [user, setUser] = useState<User | null>(null);
   // Avatar
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [removeAvatar, setRemoveAvatar] = useState(false);
   // Profile
   const [profile, setProfile] = useState<Profile>({
     userId: id || "",
@@ -81,23 +84,47 @@ function Profile() {
     }
   }, [id, currentUser]);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        if (id) {
-          const userData = await userService.getUserById(id);
-          setUser(userData);
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       if (id) {
+  //         const userData = await userService.getUserById(id);
+  //         setUser(userData);
 
-          const userProfile = await userService.getUserProfileByUserId(id);
-          setProfile(userProfile);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+  //         const userProfile = await userService.getUserProfileByUserId(id);
+  //         setProfile(userProfile);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user data:", error);
+  //     }
+  //   };
+
+  //   fetchUserData();
+  // }, [id]);
+
+  const fetchUserData = useQuery({
+    queryKey: ["user-data", id],
+    queryFn: async () => {
+      if (id) {
+        const userData = await userService.getUserById(id);
+        setUser(userData);
+        return userData;
       }
-    };
+    },
+    enabled: !!id,
+  });
 
-    fetchUserData();
-  }, [id]);
+  const fetchUserProfile = useQuery({
+    queryKey: ["user-profile", id],
+    queryFn: async () => {
+      if (id) {
+        const userProfile = await userService.getUserProfileByUserId(id);
+        setProfile(userProfile);
+        return userProfile;
+      }
+    },
+    enabled: !!id,
+  });
 
   const handleProfileChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -143,7 +170,14 @@ function Profile() {
       const file = e.target.files[0];
       setAvatarFile(file);
       setAvatarPreview(URL.createObjectURL(file));
+      setRemoveAvatar(false);
+      console.log(e.target.files[0]);
     }
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarFile(null);
+    setAvatarPreview(null);
   };
 
   const saveProfile = useMutation({
@@ -151,6 +185,19 @@ function Profile() {
       if (!user || !profile) return;
 
       try {
+        if (removeAvatar) {
+          await userService.removeUserAvatar();
+          setCurrentUser((prev) => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              avatarUrl: undefined,
+            };
+          });
+          setRemoveAvatar(false);
+          setAvatarFile(null);
+          setAvatarPreview(null);
+        }
         // Handle upload avatar nếu có file được chọn
         if (avatarFile) {
           const uploadAvatarRes = await userService.uploadUserAvatar(
@@ -163,10 +210,16 @@ function Profile() {
               avatarUrl: uploadAvatarRes.avatarUrl,
             };
           });
+          setAvatarFile(null);
+          setAvatarPreview(null);
         }
 
         // Update user info
-        const updatedUser = await userService.updateUser(user);
+        const updatedUserInfo = {
+          fullName: user.fullName,
+          email: user.email,
+        };
+        const updatedUser = await userService.updateUser(updatedUserInfo);
         setCurrentUser((prev) => {
           if (!prev) return null;
           return {
@@ -176,12 +229,22 @@ function Profile() {
           };
         });
 
+        console.log(profile);
         // Update profile info
-        await userService.updateUserProfile(profile);
+        const updatedProfile = {
+          bio: profile.bio,
+          dateOfBirth: profile.dateOfBirth,
+          phoneNumber: profile.phoneNumber,
+          isPublic: profile.isPublic,
+        };
+        await userService.updateUserProfile(updatedProfile);
         showToast("success", "Profile updated successfully");
-      } catch (error) {
+        queryClient.invalidateQueries({ queryKey: ["user-data", id] });
+        queryClient.invalidateQueries({ queryKey: ["user-profile", id] });
+      } catch (error: any) {
         console.error("Error updating profile:", error);
-        showToast("error", "Failed to update profile");
+        // showToast("error", "Failed to update profile");
+        showToast("error", error.message);
       }
     },
     onError: () => {
@@ -207,8 +270,10 @@ function Profile() {
         showToast("success", "Password changed successfully");
       }
     },
-    onError: () => {
-      showToast("error", "Failed to change password");
+    onError: (error: any) => {
+      console.error("Error changing password:", error);
+      // showToast("error", "Failed to change password");
+      showToast("error", error?.message);
     },
   });
 
@@ -264,7 +329,11 @@ function Profile() {
                   <div className="mb-4 relative">
                     <Avatar
                       size="xl"
-                      img={avatarPreview || user?.avatarUrl || undefined}
+                      img={
+                        avatarPreview ||
+                        (!removeAvatar && user?.avatarUrl) ||
+                        undefined
+                      }
                       alt="User avatar"
                       rounded
                       className="!object-cover"
@@ -297,6 +366,32 @@ function Profile() {
                     </div>
                     Upload Avatar
                   </Button>
+                  {avatarFile && (
+                    <Button
+                      color="red"
+                      size="sm"
+                      onClick={handleRemoveAvatar}
+                      className="mt-4"
+                    >
+                      <div className="flex items-center justify-center">
+                        <FiTrash2 className="mr-2" />
+                      </div>
+                      Remove Avatar
+                    </Button>
+                  )}
+                  {user?.avatarUrl && !avatarFile && (
+                    <Button
+                      color="red"
+                      size="sm"
+                      onClick={() => setRemoveAvatar(true)}
+                      className="mt-4"
+                    >
+                      <div className="flex items-center justify-center">
+                        <FiTrash2 className="mr-2" />
+                      </div>
+                      Remove Avatar
+                    </Button>
+                  )}
                 </div>
 
                 <div className="flex-1">

@@ -51,6 +51,15 @@
     li {
       white-space: pre-wrap !important;
     }
+    div {
+      word-break: break-word;
+    }
+  }
+
+  .instant-chat {
+    pre code {
+      text-wrap: wrap !important;
+    }
   }
 }
 

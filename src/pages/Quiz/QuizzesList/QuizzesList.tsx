@@ -21,7 +21,7 @@ import quizService from "../services/quizService";
 import { useAuth } from "../../../hooks/useAuth";
 import ShareUserModal from "../../../components/ShareUserModal/ShareUserModal";
 import DeleteModal from "../../../components/NotificationModal/DeleteModal";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../../../hooks/useToast";
 import EditInfoModal from "../QuizSet/components/EditInfoModal";
 
@@ -50,6 +50,7 @@ function QuizzesList({ searchTerm }: { searchTerm: string }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   // User permission
   const [userPermission, setUserPermission] = useState("");
+  const queryClient = useQueryClient();
 
   // useEffect(() => {
   //   const fetchAllQuizzes = async () => {
@@ -72,7 +73,7 @@ function QuizzesList({ searchTerm }: { searchTerm: string }) {
     queryFn: async () => {
       if (searchTerm !== "") {
         setPage(1);
-      };
+      }
       const response = await quizService.getAllQuizzes({
         page,
         limit,
@@ -247,7 +248,10 @@ function QuizzesList({ searchTerm }: { searchTerm: string }) {
     mutationFn: async (quizId: string) => {
       await quizService.deleteQuiz(quizId);
       setIsDeleteModalOpen(false);
-      setQuizzes((prev) => prev.filter((quiz) => quiz._id !== quizId));
+      // setQuizzes((prev) => prev.filter((quiz) => quiz._id !== quizId));
+      queryClient.invalidateQueries({
+        queryKey: ["quizzes", page, limit, searchTerm],
+      });
     },
     onSuccess: () => {
       showToast("success", "Quiz deleted successfully");
@@ -386,22 +390,22 @@ function QuizzesList({ searchTerm }: { searchTerm: string }) {
                                 </button>
                               )}
                             </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => handleOpenShare.mutate(quiz)}
+                                  className={`${
+                                    active
+                                      ? "bg-violet-100 text-violet-800 font-semibold"
+                                      : "text-gray-700"
+                                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                >
+                                  Share
+                                </button>
+                              )}
+                            </Menu.Item>
                             {isOwner && (
-                            <>
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    onClick={() => handleOpenShare.mutate(quiz)}
-                                    className={`${
-                                      active
-                                        ? "bg-violet-100 text-violet-800 font-semibold"
-                                        : "text-gray-700"
-                                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                  >
-                                    Share
-                                  </button>
-                                )}
-                              </Menu.Item>
+                              <>
                                 <Menu.Item>
                                   {({ active }) => (
                                     <button
@@ -419,7 +423,7 @@ function QuizzesList({ searchTerm }: { searchTerm: string }) {
                                     </button>
                                   )}
                                 </Menu.Item>
-                            </>
+                              </>
                             )}
                           </div>
                         </Menu.Items>

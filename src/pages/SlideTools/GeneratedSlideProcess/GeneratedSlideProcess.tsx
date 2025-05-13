@@ -9,7 +9,6 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useHeader } from "../../../hooks/useHeader";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
-import { useSlideExport } from "../../../hooks/useSlideExport";
 import { useToast } from "../../../hooks/useToast";
 import generatedSlideService from "../service/generatedSlideService";
 import { useGeneratedSlide } from "./hooks/useGeneratedSlide";

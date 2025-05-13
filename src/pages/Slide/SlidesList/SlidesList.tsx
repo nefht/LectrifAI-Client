@@ -19,7 +19,7 @@ import {
 import generatedSlideService from "../../SlideTools/service/generatedSlideService";
 import { useToast } from "../../../hooks/useToast";
 import DeleteModal from "../../../components/NotificationModal/DeleteModal";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 function SlidesList({ searchTerm }: { searchTerm: string }) {
   const navigate = useNavigate();
@@ -31,9 +31,11 @@ function SlidesList({ searchTerm }: { searchTerm: string }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSlide, setSelectedSlide] = useState<any>(null);
   const { showToast } = useToast();
-
-  useEffect(() => {
-    const fetchAllSlideContents = async () => {
+  const queryClient = useQueryClient();
+  
+  const fetchAllSlideContents = useQuery({
+    queryKey: ["slides", page, searchTerm],
+    queryFn: async () => {
       const response = await generatedSlideService.getAllSlideContents({
         page,
         limit,
@@ -42,10 +44,9 @@ function SlidesList({ searchTerm }: { searchTerm: string }) {
       setSlides(response.data);
       setTotalPages(response.pagination.totalPages || 1);
       setTotalResults(response.pagination.total || 0);
-    };
-
-    fetchAllSlideContents();
-  }, [page, searchTerm]);
+      return response;
+    },
+  });
 
   const startIndex = (page - 1) * limit + 1;
   const endIndex = Math.min(page * limit, totalResults);
@@ -112,18 +113,19 @@ function SlidesList({ searchTerm }: { searchTerm: string }) {
       const response = await generatedSlideService.deleteSlideContent(
         selectedSlide
       );
-    },
-    onSuccess: (data) => {
-      setSlides((prevSlides) =>
-        prevSlides.filter((slide) => slide._id !== selectedSlide)
-      );
       setIsDeleteModalOpen(false);
       showToast("success", "Slide deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["slides", page, searchTerm] });
+    },
+    onSuccess: (data) => {
+      // setSlides((prevSlides) =>
+      //   prevSlides.filter((slide) => slide._id !== selectedSlide)
+      // );
     },
     onError: (error: any) => {
       console.error("Error deleting slide:", error);
       showToast("error", "Failed to delete slide. Please try again.");
-    }
+    },
   });
 
   return (

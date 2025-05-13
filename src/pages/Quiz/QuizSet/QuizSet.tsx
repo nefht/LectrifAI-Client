@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { HiOutlineAcademicCap } from "react-icons/hi";
 import { IoLanguage, IoShareSocialOutline } from "react-icons/io5";
 import {
@@ -71,44 +71,60 @@ function QuizSet() {
   // Modal create multiple players room
   const [isCreateRoomModalOpen, setIsCreateRoomModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      const fetchQuizData = async () => {
+  // useEffect(() => {
+  //   if (id) {
+  //     const fetchQuizData = async () => {
+  //       const response = await quizService.getQuizById(id);
+  //       setQuizData(response.quizData.quizzes);
+
+  //       if (response.userId) {
+  //         setQuizSetInfo(response);
+  //         if (user && user.id === response.userId._id) {
+  //           setOwnerPermission(true);
+  //           setUserPermission("OWNER");
+  //         } else {
+  //           const permission = await quizService.getCurrentUserPermissionWithQuiz(
+  //             id
+  //           );
+  //           setUserPermission(permission.permissionType);
+  //         }
+  //       }
+  //     };
+
+  //     if (state?.message) {
+  //       showToast("success", state.message);
+  //     }
+
+  //     fetchQuizData();
+  //     // getUserPermission();
+  //   }
+  // }, [id]);
+
+  const fetchQuizData = useQuery({
+    queryKey: ["quizSet", id],
+    queryFn: async () => {
+      if (id) {
         const response = await quizService.getQuizById(id);
         setQuizData(response.quizData.quizzes);
-
-        if (response.userId) {
-          setQuizSetInfo(response);
-          if (user && user.id === response.userId._id) {
-            setOwnerPermission(true);
-            setUserPermission("OWNER");
-          } else {
-            const permission = await quizService.getCurrentUserPermissionWithQuiz(
-              id
-            );
-            setUserPermission(permission.permissionType);
-          }
+        setQuizSetInfo(response);
+        if (user && user.id === response.userId._id) {
+          setOwnerPermission(true);
+          setUserPermission("OWNER");
+        } else {
+          const permission = await quizService.getCurrentUserPermissionWithQuiz(
+            id
+          );
+          setUserPermission(permission.permissionType);
         }
-      };
 
-      // const getUserPermission = async () => {
-      //   if (ownerPermission) {
-      //   } else {
-      //     const response = await quizService.getCurrentUserPermissionWithQuiz(
-      //       id
-      //     );
-      //     setUserPermission(response.permissionType);
-      //   }
-      // };
-
-      if (state?.message) {
-        showToast("success", state.message);
+        if (state?.message) {
+          showToast("success", state.message);
+        }
+        return response;
       }
-
-      fetchQuizData();
-      // getUserPermission();
-    }
-  }, [id]);
+    }, 
+    enabled: !!id, 
+  })
 
   useEffect(() => {
     const textareas = document.querySelectorAll("textarea");
@@ -278,7 +294,7 @@ function QuizSet() {
                 <LuClipboardEdit /> Edit
               </button>
             )}
-            {(ownerPermissionTypes.includes(userPermission) ||
+            {(editablePermissionTypes.includes(userPermission) ||
               user?.id === quizSetInfo.userId) && (
               <button
                 onClick={() => handleOpenShare.mutate()}
@@ -367,7 +383,7 @@ function QuizSet() {
                 )}
               </Menu.Items>
             </Menu>
-            {(editablePermissionTypes.includes(userPermission) ||
+            {(ownerPermissionTypes.includes(userPermission) ||
               user?.id === quizSetInfo.userId) && (
               <button
                 className="flex items-center justify-center gap-2 bg-red-600/90 text-white font-semibold py-2 px-4 rounded-md mt-4 hover:bg-red-700 transition duration-200 active:ring-4 active:ring-red-400 active:ring-offset-0 focus:outline-none focus:ring-4 focus:ring-red-200 focus:ring-offset-0"

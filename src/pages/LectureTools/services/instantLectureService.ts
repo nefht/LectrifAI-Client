@@ -57,6 +57,7 @@ export const searchInstantLectures = async (keyword: string) => {
  * @param file Image file
  * @param teachingStyle Teaching style
  * @param languageCode Language code
+ * @param language Language
  * @param voiceType Voice type
  * @return message + audio
  */
@@ -65,6 +66,7 @@ export const createInstantLecture = async (
   file: File,
   teachingStyle: string,
   languageCode: string,
+  language: string,
   voiceType: string
 ) => {
   try {
@@ -75,6 +77,7 @@ export const createInstantLecture = async (
     formData.append("file", file);
     formData.append("teachingStyle", teachingStyle);
     formData.append("languageCode", languageCode);
+    formData.append("language", language);
     formData.append("voiceType", voiceType);
 
     const response = await fetch(
@@ -109,6 +112,7 @@ export const createInstantLecture = async (
  * @param file The file to send
  * @param teachingStyle The teaching style
  * @param languageCode The language code
+ * @param language The language
  * @param voiceType The voice type
  * @returns The response from the server
  */
@@ -118,6 +122,7 @@ export const sendMessage = async (
   file: File,
   teachingStyle: string,
   languageCode: string,
+  language: string,
   voiceType: string
 ) => {
   try {
@@ -128,6 +133,7 @@ export const sendMessage = async (
     formData.append("file", file);
     formData.append("teachingStyle", teachingStyle);
     formData.append("languageCode", languageCode);
+    formData.append("language", language);
     formData.append("voiceType", voiceType);
 
     const response = await fetch(

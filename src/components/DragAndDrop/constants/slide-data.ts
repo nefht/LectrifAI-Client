@@ -9,6 +9,7 @@ export interface SlideData {
       width: number;
       title: string;
       imageUrl: string;
+      source?: string;
     }[];
   }[];
 }

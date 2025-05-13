@@ -71,9 +71,9 @@ function InputConfiguration() {
             [EGeneratedLectureForm.FILE_ID]: response.file._id,
           });
           showToast("success", "File uploaded successfully.");
-        } catch (error) {
+        } catch (error: any) {
           console.error("Failed to upload slide:", error);
-          showToast("error", "Failed to upload slide.");
+          showToast("error", error?.message ?? "Failed to upload slide.");
         }
       }
     },
@@ -247,7 +247,7 @@ function InputConfiguration() {
                       drag and drop
                     </p>
                     <p className="text-xs text-purple-500 dark:text-indigo-400">
-                      PPTX, or PDF
+                      PPTX, or PDF (Max. 20 MB, Max. 40 pages)
                     </p>
                   </div>
                   <input

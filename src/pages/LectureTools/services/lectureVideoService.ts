@@ -18,7 +18,11 @@ export const uploadSlide = async (file: File) => {
     return response.data;
   } catch (error: any) {
     console.error("Failed to upload slide:", error);
-    throw new Error(error.response?.data?.error || "Failed to upload slide.");
+    throw new Error(
+      error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Failed to upload slide."
+    );
   }
 };
 
@@ -279,7 +283,10 @@ export const updateLectureVideo = async (
  */
 export const editLectureQuiz = async (id: string, lectureScript: any) => {
   try {
-    const response = await api.patch(`/lecture-script/edit-quiz/${id}`, lectureScript);
+    const response = await api.patch(
+      `/lecture-script/edit-quiz/${id}`,
+      lectureScript
+    );
     return response.data;
   } catch (error: any) {
     console.error("Failed to update lecture script:", error);
@@ -294,9 +301,18 @@ export const editLectureQuiz = async (id: string, lectureScript: any) => {
  * @param userId
  * @returns
  */
-export const getPublicLectureVideosByUserId = async (userId: string) => {
+export const getPublicLectureVideosByUserId = async (
+  userId: string,
+  page: number,
+  limit: number
+) => {
   try {
-    const response = await api.get(`/lecture-video/user/${userId}`);
+    const response = await api.get(`/lecture-video/user/${userId}`, {
+      params: {
+        page,
+        limit,
+      },
+    });
     return response.data;
   } catch (error: any) {
     console.error("Failed to get public lecture videos:", error);
@@ -304,7 +320,7 @@ export const getPublicLectureVideosByUserId = async (userId: string) => {
       error.response?.data?.error || "Failed to get public lecture videos."
     );
   }
-}
+};
 
 const lectureVideoService = {
   uploadSlide,

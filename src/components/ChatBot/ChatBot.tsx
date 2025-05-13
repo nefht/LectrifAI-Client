@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { Avatar } from "flowbite-react";
+import { Avatar, Tooltip } from "flowbite-react";
 import { motion } from "framer-motion";
 import { Rnd } from "react-rnd";
 import { FaComments, FaTimes } from "react-icons/fa";
@@ -8,6 +8,10 @@ import ChatInput from "./ChatInput";
 import MessageBubble from "./MessageBubble";
 import chatBotImg from "../../assets/images/chat-bot/bot-avatar.png";
 import chatBotService from "../../pages/LectureTools/services/chatBotService";
+import DeleteModal from "../NotificationModal/DeleteModal";
+import { useMutation } from "@tanstack/react-query";
+import { useToast } from "../../hooks/useToast";
+import { MdOutlineDelete } from "react-icons/md";
 
 interface ChatBotProps {
   lectureScriptId: string;
@@ -25,6 +29,8 @@ const ChatBot = ({ lectureScriptId }: ChatBotProps) => {
     },
   ]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Màn hình nhỏ hơn md (768px)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -118,8 +124,40 @@ const ChatBot = ({ lectureScriptId }: ChatBotProps) => {
     }
   };
 
+  const handleDeleteChat = useMutation({
+    mutationFn: async () => {
+      if (lectureId) {
+        await chatBotService.deleteChatMessage(lectureId);
+        setMessages([
+          {
+            text: "Hello, I am LectrifAI Chat Bot 🤖. How can I help you with your lecture?",
+            role: "model",
+          },
+        ]);
+      }
+      showToast("success", "Delete chat messages successfully");
+      setIsDeleteModalOpen(false);
+    },
+    onError: (error: any) => {
+      console.error("Failed to delete chat messages:", error);
+      showToast("error", "Failed to delete chat messages");
+    },
+  });
+
   return (
     <>
+      {/* Modal xác nhận xóa tin nhắn */}
+      <DeleteModal
+        open={isDeleteModalOpen}
+        setOpen={setIsDeleteModalOpen}
+        modalInformation={{
+          title: "Delete chat messages",
+          content: "Are you sure you want to delete all chat messages?",
+        }}
+        disabledButton={handleDeleteChat.isPending}
+        handleDelete={() => handleDeleteChat.mutate()}
+      />
+
       {/* Float Button mở chat */}
       {!isOpen && (
         <motion.button
@@ -135,7 +173,7 @@ const ChatBot = ({ lectureScriptId }: ChatBotProps) => {
       {isOpen && (
         <>
           {isMobile ? (
-            // 🔹 Mobile: Hiển thị full màn hình
+            // Mobile: Hiển thị full màn hình
             <motion.div
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: isOpen ? "0%" : "100%", opacity: isOpen ? 1 : 0 }}
@@ -145,12 +183,22 @@ const ChatBot = ({ lectureScriptId }: ChatBotProps) => {
               {/* Header ChatBot */}
               <div className="bg-purple-700 text-white p-3 flex justify-between items-center">
                 <span className="font-semibold text-lg">ChatBot</span>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="text-white hover:text-gray-200"
-                >
-                  <FaTimes size={18} />
-                </button>
+                <div className="flex gap-3">
+                  {messages.length > 1 && (
+                    <button
+                      onClick={() => setIsDeleteModalOpen(true)}
+                      className="text-white hover:text-gray-200"
+                    >
+                      <MdOutlineDelete size={18} className="active:scale-105"/>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="text-white hover:text-gray-200"
+                  >
+                    <FaTimes size={18} />
+                  </button>
+                </div>
               </div>
 
               {/* Nội dung chat */}
@@ -195,18 +243,30 @@ const ChatBot = ({ lectureScriptId }: ChatBotProps) => {
               maxWidth={window.innerWidth * 0.9}
               maxHeight={window.innerHeight * 0.9}
               dragHandleClassName="chatbot-header"
-              className="fixed z-[9999] bg-white shadow-lg rounded-2xl overflow-hidden"
+              className="fixed z-[9998] bg-white shadow-lg rounded-2xl overflow-hidden"
             >
               <div className="relative h-full">
                 {/* Header ChatBot */}
                 <div className="chatbot-header bg-purple-700 text-white p-3 flex justify-between items-center cursor-move">
                   <span className="font-semibold text-lg">ChatBot</span>
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="text-white hover:text-gray-200"
-                  >
-                    <FaTimes size={18} />
-                  </button>
+                  <div className="flex gap-3">
+                    {messages.length > 1 && (
+                     <Tooltip content="Delete chat messages">
+                        <button
+                          onClick={() => setIsDeleteModalOpen(true)}
+                          className="text-white hover:text-gray-200"
+                        >
+                          <MdOutlineDelete size={18} className="active:scale-105"/>
+                        </button>
+                     </Tooltip>
+                    )}
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="text-white hover:text-gray-200"
+                    >
+                      <FaTimes size={18} />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Nội dung chat */}
@@ -225,7 +285,7 @@ const ChatBot = ({ lectureScriptId }: ChatBotProps) => {
                       />
                     </div>
                   ))}
-                  <div ref={messagesEndRef} className="h-0" />
+                  <div ref={messagesEndRef} className="h-0 scroll-mb-[80px]" />
                 </div>
 
                 {/* Ô nhập tin nhắn */}

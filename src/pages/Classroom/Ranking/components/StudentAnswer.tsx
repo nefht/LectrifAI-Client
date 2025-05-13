@@ -159,9 +159,7 @@ function StudentAnswer({ studentAnswerId }: StudentAnswerProps) {
                     <div className="relative flex flex-col w-full">
                       <div className="flex items-center gap-3 mb-1">
                         <div className="py-0.5 px-2 bg-purple text-purple-600 font-semibold bg-purple-100 border border-purple-300 rounded-md text-[12px]">
-                          {(studentAnswerStatus === "graded" ||
-                            quiz.userScore) &&
-                            quiz?.userScore + " / "}{" "}
+                            {quiz.userScore + " / "}{" "}
                           {quiz.points} points
                         </div>
 
@@ -192,7 +190,6 @@ function StudentAnswer({ studentAnswerId }: StudentAnswerProps) {
                                 type="radio"
                                 name={`answer-${index}`}
                                 className={`w-5 h-5 text-purple-600 border-gray-300 focus:ring-purple-500 ${
-                                  studentAnswerStatus === "graded" &&
                                   option !== quiz.userAnswer
                                     ? option === quiz.answer
                                       ? "bg-green-500"
@@ -210,7 +207,7 @@ function StudentAnswer({ studentAnswerId }: StudentAnswerProps) {
                           {userAnswers[index]}
                         </div>
                       )}
-                      {(studentAnswerStatus === "graded" || quiz.userScore) && (
+                      {/* {quiz.userScore && ( */}
                         <>
                           <div className="mt-2 flex flex-col rounded-md mr-4 px-4 py-2 text-gray-800 mb-3 bg-green-100 border border-green-200">
                             <div className="font-medium text-gray-800">
@@ -233,7 +230,7 @@ function StudentAnswer({ studentAnswerId }: StudentAnswerProps) {
                             </div>
                           )}
                         </>
-                      )}
+                      {/* )} */}
                     </div>
                   </div>
                 </div>

@@ -8,6 +8,8 @@ import {
   FaAngleRight,
   FaEye,
   FaClock,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import { MdQuiz } from "react-icons/md";
 import classroomService from "../services/classroomService";
@@ -38,6 +40,15 @@ interface StudentQuiz {
   submittedAt: string;
 }
 
+interface Pagination {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
 function ClassroomRanking() {
   const { user } = useAuth();
   const { id: classroomId } = useParams();
@@ -57,12 +68,49 @@ function ClassroomRanking() {
   >("ranking");
   const [selectedQuiz, setSelectedQuiz] = useState<StudentQuiz | null>(null);
 
+  // Pagination states
+  const [rankingPagination, setRankingPagination] = useState<Pagination>({
+    totalItems: 0,
+    totalPages: 0,
+    currentPage: 1,
+    pageSize: 10,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
+  const [quizzesPagination, setQuizzesPagination] = useState<Pagination>({
+    totalItems: 0,
+    totalPages: 0,
+    currentPage: 1,
+    pageSize: 10,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
+
+  // Fetch classroom ranking data with pagination
+  const fetchRankingData = async (page = 1) => {
+    if (!classroomId) return;
+
+    try {
+      setLoading(true);
+      const response = await classroomService.getClassroomRanking(
+        classroomId,
+        page
+      );
+
+      setRankings(response.results);
+      setRankingPagination(response.pagination);
+      setLoading(false);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch ranking data");
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!classroomId) return;
 
-        setLoading(true);
         // Fetch classroom details to determine if user is owner
         const classroomResponse = await classroomService.getClassroomById(
           classroomId
@@ -72,20 +120,11 @@ function ClassroomRanking() {
         if (user && classroomResponse.userId._id === user.id) {
           setIsOwner(true);
         }
-        //  else {
-        //   navigate("/access-denied");
-        //   return;
-        // }
 
-        // Fetch rankings
-        const rankingResponse = await classroomService.getClassroomRanking(
-          classroomId
-        );
-        setRankings(rankingResponse);
-
-        setLoading(false);
+        // Fetch initial rankings data
+        await fetchRankingData(1);
       } catch (err: any) {
-        setError(err.message || "Failed to fetch ranking data");
+        setError(err.message || "Failed to fetch classroom data");
         setLoading(false);
       }
     };
@@ -93,7 +132,14 @@ function ClassroomRanking() {
     fetchData();
   }, [classroomId, navigate]);
 
-  const handleViewStudentQuizzes = async (student: RankingStudent) => {
+  const handlePageChange = async (page: number) => {
+    await fetchRankingData(page);
+  };
+
+  const handleViewStudentQuizzes = async (
+    student: RankingStudent,
+    page = 1
+  ) => {
     if (!isOwner || !classroomId) return;
 
     try {
@@ -102,16 +148,24 @@ function ClassroomRanking() {
 
       const response = await classroomService.getStudentQuizDetails(
         classroomId,
-        student.studentId
+        student.studentId,
+        page
       );
 
       setStudentQuizzes(response.quizzes);
+      setQuizzesPagination(response.pagination);
       setViewMode("quizzes");
       setQuizzesLoading(false);
     } catch (err: any) {
       setError(err.message || "Failed to fetch student quiz details");
       setQuizzesLoading(false);
     }
+  };
+
+  const handleQuizzesPageChange = async (page: number) => {
+    if (!selectedStudent || !classroomId) return;
+
+    await handleViewStudentQuizzes(selectedStudent, page);
   };
 
   const handleViewQuizDetail = (quiz: StudentQuiz) => {
@@ -132,7 +186,7 @@ function ClassroomRanking() {
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleString();
+    return date.toLocaleString("vi-VN");
   };
 
   const renderRankIcon = (rank: number) => {
@@ -140,6 +194,85 @@ function ClassroomRanking() {
     if (rank === 2) return <FaMedal className="text-gray-400 text-xl" />;
     if (rank === 3) return <FaMedal className="text-amber-700 text-xl" />;
     return <span className="font-bold">{rank}</span>;
+  };
+
+  // Render pagination controls
+  const renderPagination = (
+    pagination: Pagination,
+    onPageChange: (page: number) => void
+  ) => {
+    return (
+      <div className="flex justify-center items-center mt-4 mb-6 space-x-2">
+        <button
+          onClick={() => onPageChange(pagination.currentPage - 1)}
+          disabled={!pagination.hasPrevPage}
+          className={`px-3 py-1 rounded-md ${
+            pagination.hasPrevPage
+              ? "bg-purple-200 hover:bg-purple-300 text-purple-800"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          <FaChevronLeft />
+        </button>
+
+        {/* Page numbers */}
+        <div className="flex space-x-1">
+          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+            .filter(
+              (page) =>
+                page === 1 ||
+                page === pagination.totalPages ||
+                Math.abs(page - pagination.currentPage) <= 1
+            )
+            .map((page, index, array) => {
+              // Add ellipsis
+              if (index > 0 && page - array[index - 1] > 1) {
+                return (
+                  <React.Fragment key={`ellipsis-${page}`}>
+                    <span className="px-3 py-1 text-gray-500">...</span>
+                    <button
+                      onClick={() => onPageChange(page)}
+                      className={`px-3 py-1 rounded-md ${
+                        pagination.currentPage === page
+                          ? "bg-purple-600 text-white"
+                          : "bg-purple-100 hover:bg-purple-200 text-purple-800"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  </React.Fragment>
+                );
+              }
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => onPageChange(page)}
+                  className={`px-3 py-1 rounded-md ${
+                    pagination.currentPage === page
+                      ? "bg-purple-600 text-white"
+                      : "bg-purple-100 hover:bg-purple-200 text-purple-800"
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+        </div>
+
+        <button
+          onClick={() => onPageChange(pagination.currentPage + 1)}
+          disabled={!pagination.hasNextPage}
+          className={`px-3 py-1 rounded-md ${
+            pagination.hasNextPage
+              ? "bg-purple-200 hover:bg-purple-300 text-purple-800"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          <FaChevronRight />
+        </button>
+      </div>
+    );
   };
 
   // Render the students ranking list
@@ -251,6 +384,11 @@ function ClassroomRanking() {
             </table>
           </div>
         )}
+
+        {/* Pagination for ranking */}
+        {!loading &&
+          rankings.length > 0 &&
+          renderPagination(rankingPagination, handlePageChange)}
       </div>
     );
   };
@@ -338,12 +476,17 @@ function ClassroomRanking() {
                         <span
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-lg 
                           ${
-                            quiz.status === "graded"
+                            quiz.status === "graded" ||
+                            (quiz.score && quiz.status !== "disconnected")
                               ? "bg-green-100 text-green-800"
+                              : quiz.status === "submitted"
+                              ? "bg-blue-100 text-blue-800"
                               : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
-                          {quiz.status}
+                          {quiz.score && quiz.status !== "disconnected"
+                            ? "graded"
+                            : quiz.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -367,6 +510,11 @@ function ClassroomRanking() {
             </table>
           </div>
         )}
+
+        {/* Pagination for quizzes */}
+        {!quizzesLoading &&
+          studentQuizzes.length > 0 &&
+          renderPagination(quizzesPagination, handleQuizzesPageChange)}
       </div>
     );
   };
@@ -394,7 +542,7 @@ function ClassroomRanking() {
           </div>
           <p className="mt-1 text-sm text-gray-500">
             Score: {selectedQuiz.score} / {selectedQuiz.totalScore} | Status:{" "}
-            {selectedQuiz.status}
+            {selectedQuiz.score ? "graded" : selectedQuiz.status}
           </p>
         </div>
       </div>
@@ -403,9 +551,13 @@ function ClassroomRanking() {
 
   // Main render
   return (
-    <div className={`container mx-auto ${(viewMode === "ranking" || viewMode === "quizzes" ) ? "px-4 2xl:px-28 pt-4 pb-8": 
-        "px-0 pt-0 pb-0"
-    }`}>
+    <div
+      className={`container mx-auto ${
+        viewMode === "ranking" || viewMode === "quizzes"
+          ? "px-4 2xl:px-28 pt-4 pb-8"
+          : "px-0 pt-0 pb-0"
+      }`}
+    >
       {viewMode === "ranking" && renderRankingList()}
       {viewMode === "quizzes" && renderStudentQuizzes()}
       {viewMode === "quizDetail" && (

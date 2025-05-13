@@ -5,6 +5,7 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import { useEffect, useRef } from "react";
 
 interface DropdownProps {
   label: string;
@@ -23,6 +24,15 @@ export default function DropdownInput({
   selectedValue,
   onChange,
 }: DropdownProps) {
+  const hiddenSelectRef = useRef<HTMLSelectElement>(null);
+
+  // Đồng bộ giá trị với hidden select element khi selectedValue thay đổi
+  useEffect(() => {
+    if (hiddenSelectRef.current) {
+      hiddenSelectRef.current.value = selectedValue;
+    }
+  }, [selectedValue]);
+
   return (
     <div className="w-full">
       <label className="dark:text-white font-semibold">
@@ -44,7 +54,6 @@ export default function DropdownInput({
                 className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
               />
             </ListboxButton>
-
             <ListboxOptions
               transition
               className="absolute z-40 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
@@ -70,26 +79,27 @@ export default function DropdownInput({
             </ListboxOptions>
           </div>
         </Listbox>
-        {/* Validate */}
-        {/* {required && (
-          <div className="hidden absolute top-0 right-0 w-full h-full bg-red-300">
-            <select
-              required={required}
-              value={selectedValue}
-              onChange={onChange}
-              className="z-10 max-h-56 w-full overflow-auto rounded-md"
-            >
-              <option value="" defaultChecked disabled>
-                Select {label}
+
+        {/* Hidden select để validate */}
+        {required && (
+          <select
+            ref={hiddenSelectRef}
+            required={required}
+            value={selectedValue}
+            onChange={(e) => onChange(e.target.value)}
+            className="absolute opacity-0 h-0 w-0 overflow-hidden p-0"
+            aria-hidden="true"
+          >
+            <option value="" disabled>
+              Select {label}
+            </option>
+            {options.map((option, index) => (
+              <option key={index} value={option.value}>
+                {option.label}
               </option>
-              {options.map((option, index) => (
-                <option key={index} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        )} */}
+            ))}
+          </select>
+        )}
       </div>
     </div>
   );

@@ -144,6 +144,28 @@ const exportMinimalist03 = (slideData: SlideData, fileName?: string) => {
           },
         });
       });
+
+      // Add Images source
+      let arrImagesSource = (slideData?.imageUrls ?? []).map(
+        (image, imgIndex) => {
+          return {
+            text: image?.source ? `Image source: ${image?.source}` : "",
+            options: {
+              fontSize: 5,
+              color: "#664B34",
+              fontFace: "Candara",
+              breakLine: true,
+            },
+          };
+        }
+      );
+
+      slide.addText(arrImagesSource, {
+        x: 0.1,
+        y: "92%",
+        w: "90%",
+        h: 0.5,
+      });
     }
   });
 

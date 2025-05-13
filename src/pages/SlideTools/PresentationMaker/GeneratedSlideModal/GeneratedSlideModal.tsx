@@ -88,26 +88,6 @@ export default function GeneratedSlideModal({
     }
   };
 
-  // // Validate form
-  // const validateForm = () => {
-  //   const requiredFields = [
-  //     EGeneratedSlideForm.TOPIC,
-  //     EGeneratedSlideForm.NUMBER_OF_SLIDES,
-  //   ];
-  //   const fieldLabels = {
-  //     [EGeneratedSlideForm.TOPIC]: "Topic",
-  //     [EGeneratedSlideForm.NUMBER_OF_SLIDES]: "Number of slides",
-  //   };
-  //   const newErrors = validateRequiredFields(
-  //     presentationOptions,
-  //     requiredFields,
-  //     fieldLabels
-  //   );
-
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
-
   // Submit form
   const handleSubmit = useMutation({
     mutationFn: async (event: React.FormEvent) => {

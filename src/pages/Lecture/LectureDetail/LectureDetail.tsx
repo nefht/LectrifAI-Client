@@ -15,7 +15,7 @@ import {
   MdOutlineDelete,
   MdOutlineQuiz,
 } from "react-icons/md";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import ShareUserModal from "../../../components/ShareUserModal/ShareUserModal";
 import RenameModal from "../components/RenameModal";
 import DeleteModal from "../../../components/NotificationModal/DeleteModal";
@@ -53,26 +53,24 @@ function LectureDetail() {
     setHeaderClass("bg-white shadow-none");
   });
 
-  useEffect(() => {
-    const fetchLectureVideo = async () => {
-      try {
-        if (id) {
-          const response = await lectureVideoService.getLectureVideo(id);
-          const lectureScript = response.lectureScriptId.lectureScript.slides;
+  const fetchLectureVideo = useQuery({
+    queryKey: ["lectureVideo", id],
+    enabled: !!id,
+    queryFn: async () => {
+      if (id) {
+        const response = await lectureVideoService.getLectureVideo(id);
+        const lectureScript = response.lectureScriptId.lectureScript.slides;
 
-          setLectureScriptId(response?.lectureScriptId?._id);
-          setLectureScript(lectureScript);
-          setLectureVideo(response);
-          console.log(response);
-          setUserPermission(response.permissionType);
-        }
-      } catch (error: any) {
-        console.error("Failed to get lecture video:", error);
+        setLectureScriptId(response?.lectureScriptId?._id);
+        setLectureScript(lectureScript);
+        setLectureVideo(response);
+        console.log(response);
+        setUserPermission(response.permissionType);
+
+        return response;
       }
-    };
-
-    fetchLectureVideo();
-  }, [id]);
+    },
+  })
 
   const handleTimeUpdate = () => {
     if (!videoRef.current) return;
@@ -130,6 +128,7 @@ function LectureDetail() {
       const response = await lectureVideoService.getLectureVideoPermissions(id);
       setListPermissions(response || []);
       setIsShareModalOpen(true);
+      console.log(response);
     },
   });
 
